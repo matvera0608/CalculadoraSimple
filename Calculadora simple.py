@@ -3,6 +3,7 @@ import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuen
 
 #Colores
 celeste_claro = "#BDE3FF"
+rojo_claro = "#FFCBCB"
 celeste_oscuro = "#003367"
 blanco = "#FFFFFF"
 negro = "#000000"
@@ -33,7 +34,6 @@ def Calcular():
     elif división:
         dividir()
 
-
 #Esta sección tendrán funciones para los cálculos
 def sumar():
     #las variables necesarias
@@ -55,24 +55,81 @@ def sumar():
             resultado = int(númeroA + númeroB)
             mostrarResultado(resultado)
         except ValueError as errorDeValidación:
-            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido 🫵🏻🤬😡: {errorDeValidación}")
+            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
     else:
         mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE SUMA ")
 
 def restar():
-    númeroA = 0
-    númeroB = 0
-    return
+    #las variables necesarias
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.split("-")
+    signoCorrecto = "-" in entrada
+    noTieneDosOperandos = len(parte) != 2
+    
+    if signoCorrecto:
+        
+        if noTieneDosOperandos:
+            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en -")
+            return
+        
+        #creo un try-except para manejar mejor las excepciones o errores de validación
+        try:
+            númeroA = float(parte[0].strip())
+            númeroB = float(parte[1].strip())
+            resultado = int(númeroA - númeroB)
+            mostrarResultado(resultado)
+        except ValueError as errorDeValidación:
+            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+    else:
+        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE RESTA ")
 
 def multiplicar():
-    númeroA = 0
-    númeroB = 0
-    return
+     #las variables necesarias
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.split("*")
+    signoCorrecto = "*" in entrada
+    noTieneDosOperandos = len(parte) != 2
+    
+    if signoCorrecto:
+        
+        if noTieneDosOperandos:
+            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en *")
+            return
+        
+        #creo un try-except para manejar mejor las excepciones o errores de validación
+        try:
+            númeroA = float(parte[0].strip())
+            númeroB = float(parte[1].strip())
+            resultado = int(númeroA * númeroB)
+            mostrarResultado(resultado)
+        except ValueError as errorDeValidación:
+            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+    else:
+        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE MULTIPLICACIÓN")
 
 def dividir():
-    númeroA = 0
-    númeroB = 0
-    return
+     #las variables necesarias
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.replace("÷", "/").split("/")
+    signoCorrecto = ("/" in entrada) or ("÷" in entrada)
+    noTieneDosOperandos = len(parte) != 2
+    
+    if signoCorrecto:
+        
+        if noTieneDosOperandos:
+            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en / o ÷")
+            return
+        
+        #creo un try-except para manejar mejor las excepciones o errores de validación
+        try:
+            númeroA = float(parte[0].strip())
+            númeroB = float(parte[1].strip())
+            resultado = int(númeroA / númeroB)
+            mostrarResultado(resultado)
+        except ValueError as errorDeValidación:
+            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+    else:
+        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE DIVISIÓN")
 
 def sacarNPotencia():
     númeroA = 0
@@ -92,6 +149,16 @@ def mostrarResultado(res):
     PantallaParaResultadoEjercicio.config(state="readonly")
 
 
+#Esta función borra de a 1 número. No borra completamente al presionarlo
+#el botón Borrar
+def borrarÚltimo():
+    PantallaParaEscribirNúmeros.config(state="normal")
+    textoActual = PantallaParaEscribirNúmeros.get()
+    nuevoTexto = textoActual[:-1]
+    PantallaParaEscribirNúmeros.delete(0, tk.END)
+    PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
+    
+
 # -*- coding: utf-8 -*-
 #defino la función con valor de devolución o de retorno llamada calculadora()
 #que va todos los botones necesarios para los cálculos necesarios
@@ -102,19 +169,24 @@ def pantallaCalculadora(ventanaPrincipal):
     
     PantallaParaEscribirNúmeros = Entry(ventanaPrincipal, font=("Century", 25), bg=celeste_claro, fg=celeste_oscuro, bd=1, justify="right")
     PantallaParaEscribirNúmeros.config(state="normal")
-    PantallaParaEscribirNúmeros.place(x=0, y=0, width=anchura, height=altura)
+    PantallaParaEscribirNúmeros.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="we")
+    ventanaPrincipal.columnconfigure(0, weight=1)
+    ventanaPrincipal.columnconfigure(1, weight=1)
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
     
-    PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 20), bg=celeste_claro, fg=celeste_oscuro, bd=1, justify="right")
-    PantallaParaResultadoEjercicio.place(x=200, y=400, width=anchura-200, height=altura-50)
-    PantallaParaResultadoEjercicio.config(state="readonly")
-    
+    PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 20), bg=celeste_claro, fg=celeste_oscuro, bd=1, justify="right", state="readonly")
+    PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
+
 def Botón(ventanaPrincipal):
     
     BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=celeste_claro, fg=negro, bd=1, justify="right", command=Calcular)
     BotónCalcular.place(x=0, y=400 + 15, width=(100//2) + 10, height=(50//2))
     BotónCalcular.config(state="normal")
+    
+    BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=rojo_claro, fg=negro, bd=1, justify="right", command=borrarÚltimo)
+    BotónBorrar.place(x=0, y=400 + 45, width=(100//2) + 10, height=(50//2))
+    BotónBorrar.config(state="normal")
     
     BotónSuma = Button(ventanaPrincipal, text="+", font=("Century", 25//2), bg=rojo_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "+"))
     BotónSuma.place(x=+0, y=100, width=25, height=25)
@@ -140,13 +212,14 @@ def Botón(ventanaPrincipal):
     BotónRaíz.place(x=+125, y=100, width=25, height=25)
     BotónRaíz.config(state="normal")
     
-    
+#Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():
+    global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
     ventanaPrincipal.title("Calculadora sencilla")
-    ventanaPrincipal.geometry("360x640")
-    ventanaPrincipal.maxsize(360, 640)
-    ventanaPrincipal.minsize(360, 640)
+    ventanaPrincipal.geometry("400x700")
+    ventanaPrincipal.maxsize(400, 700)
+    ventanaPrincipal.minsize(400, 700)
     ventanaPrincipal.config(bg="white")
     ventanaPrincipal.resizable(10, 10)
     
