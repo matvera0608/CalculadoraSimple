@@ -15,6 +15,55 @@ azul_oscuro = "#000AC0"
 naranja_oscuro = "#CA7600"
 violeta_oscuro = "#7F00CE"
 
+#Crearé una función que formatea los números con . (punto) y , (coma)
+#donde los puntos van en los millares y la coma en la milésima
+def formatearNúmero(número):
+    número = PantallaParaEscribirNúmeros.get()
+    try:
+        número = float(número.replace(",", "."))
+        parteEntera = int(número)
+        parteDecimal = abs(número - parteEntera)
+        tieneDecimal = parteDecimal > 0
+        
+        expresiónEnteraFormateada = f"{parteEntera:,},".replace(",", ".")
+        
+        if tieneDecimal:
+            expresiónDecimalFormateada = f"{parteDecimal:.10f}".split(".")[1].rstrip("0")
+            resultado = f"{expresiónEnteraFormateada}, {expresiónDecimalFormateada}"
+        else:
+            resultado = expresiónEnteraFormateada
+        
+        PantallaParaEscribirNúmeros.delete(0, tk.END)
+        PantallaParaEscribirNúmeros.insert(0, resultado)
+
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+        return "Error"
+
+#Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
+def formatearNúmeroResultado(número):
+    número = PantallaParaResultadoEjercicio.get()
+    try:
+        número = float(número.replace(",", "."))
+        parteEntera = int(número)
+        parteDecimal = abs(número - parteEntera)
+        tieneDecimal = parteDecimal > 0
+        
+        expresiónEnteraFormateada = f"{parteEntera},".replace(",", ".")
+        
+        if tieneDecimal:
+            expresiónDecimalFormateada = f"{parteDecimal:.10f}".split(".")[1].rstrip("0")
+            resultado = f"{expresiónEnteraFormateada}{expresiónDecimalFormateada}"
+        else:
+            resultado = expresiónEnteraFormateada
+        
+        PantallaParaResultadoEjercicio.delete(0, tk.END)
+        PantallaParaResultadoEjercicio.insert(0, resultado)
+
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+        return "Error"
+
 #Crearé una función que llame a las funciones aritméticas según los signos
 #para el botón de Calcular
 def Calcular():
@@ -23,6 +72,8 @@ def Calcular():
     resta = "-" in entrada
     multiplicación = "*" in entrada
     división = ("/" in entrada) or ("÷" in entrada)
+    potencia = "^" in entrada
+    raiz = "ⁿ√" in entrada
     
     #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
     if suma:
@@ -33,6 +84,10 @@ def Calcular():
         multiplicar()
     elif división:
         dividir()
+    elif potencia and not raiz:
+        sacarNPotencia()
+    elif raiz:
+        sacarNRaíz()
 
 #Esta sección tendrán funciones para los cálculos
 def sumar():
@@ -100,7 +155,7 @@ def multiplicar():
         try:
             númeroA = float(parte[0].strip())
             númeroB = float(parte[1].strip())
-            resultado = int(númeroA * númeroB)
+            resultado = (númeroA * númeroB)
             mostrarResultado(resultado)
         except ValueError as errorDeValidación:
             mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
@@ -132,14 +187,53 @@ def dividir():
         mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE DIVISIÓN")
 
 def sacarNPotencia():
-    númeroA = 0
-    númeroB = 0
-    return
-
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.split("^")
+    signoCorrecto = "^" in entrada
+    noTieneDosOperandos = len(parte) != 2
+    
+    if signoCorrecto:
+        
+        #Acá compruebo que los datos permitan solamente 2 números nada más.
+        if noTieneDosOperandos:
+            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ^")
+            return
+        #el try es para controlar cualquier excepción de código
+        try:
+            númeroA = int(parte[0].strip())
+            númeroB = int(parte[1].strip())
+            resultado = int(númeroA ** númeroB)
+            mostrarResultado(resultado)
+        except ValueError as errorDeValidación:
+            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+    else:
+        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE POTENCIA")
+            
 def sacarNRaíz():
-    númeroA = 0
-    númeroB = 0
-    return
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.split("ⁿ√")
+    signoCorrecto = "ⁿ√" in entrada
+    noTieneDosOperandos = len(parte) != 2
+
+    if signoCorrecto:
+
+        #Acá compruebo que los datos permitan solamente 2 números nada más.
+        if noTieneDosOperandos:
+            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ⁿ√")
+            return
+
+        try:
+            númeroA = float(parte[1].strip())
+            númeroB = float(parte[0].strip())
+            if númeroB == 0 or númeroA == 0:
+                mensajeDeTexto.showerror("ERROR", "El índice de la raíz no puede ser cero ni tampoco el radicando")
+                return
+            resultado = int(númeroA ** (1/númeroB))
+            mostrarResultado(resultado)
+        except ValueError as errorDeValidación:
+            mensajeDeTexto.showinfo("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+    else:
+        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE RAÍZ")
 
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
@@ -147,7 +241,6 @@ def mostrarResultado(res):
     PantallaParaResultadoEjercicio.delete(0, tk.END)
     PantallaParaResultadoEjercicio.insert(tk.END, res)
     PantallaParaResultadoEjercicio.config(state="readonly")
-
 
 #Esta función borra de a 1 número. No borra completamente al presionarlo
 #el botón Borrar
@@ -158,6 +251,17 @@ def borrarÚltimo():
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
     
+#Esta función borra de a 1 número. No borra completamente al presionarlo
+#el botón Borrar
+def borrarTODO():
+    PantallaParaEscribirNúmeros.config(state="normal")
+    PantallaParaEscribirNúmeros.delete(0, tk.END)
+    
+    PantallaParaResultadoEjercicio.config(state="normal")
+    PantallaParaResultadoEjercicio.delete(0, tk.END)
+    PantallaParaResultadoEjercicio.config(state="readonly")
+    PantallaParaEscribirNúmeros.focus_set()
+
 
 # -*- coding: utf-8 -*-
 #defino la función con valor de devolución o de retorno llamada calculadora()
@@ -171,45 +275,54 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.config(state="normal")
     PantallaParaEscribirNúmeros.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="we")
     ventanaPrincipal.columnconfigure(0, weight=1)
-    ventanaPrincipal.columnconfigure(1, weight=1)
+    ventanaPrincipal.columnconfigure(1, weight=2)
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
     
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 20), bg=celeste_claro, fg=celeste_oscuro, bd=1, justify="right", state="readonly")
-    PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
+    PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=550, sticky="we")
 
+#esta función llamada Botón con el argumento puesto para obtener los datos de
+#la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
 def Botón(ventanaPrincipal):
     
+    altura = 25
+    anchura = 25
+    
     BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=celeste_claro, fg=negro, bd=1, justify="right", command=Calcular)
-    BotónCalcular.place(x=0, y=400 + 15, width=(100//2) + 10, height=(50//2))
+    BotónCalcular.place(x=190, y=665, width=(100//2) + 10, height=(50//2))
     BotónCalcular.config(state="normal")
     
     BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=rojo_claro, fg=negro, bd=1, justify="right", command=borrarÚltimo)
-    BotónBorrar.place(x=0, y=400 + 45, width=(100//2) + 10, height=(50//2))
+    BotónBorrar.place(x=260, y=665, width=(100//2) + 10, height=(50//2))
     BotónBorrar.config(state="normal")
     
-    BotónSuma = Button(ventanaPrincipal, text="+", font=("Century", 25//2), bg=rojo_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "+"))
-    BotónSuma.place(x=+0, y=100, width=25, height=25)
+    BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=rojo_claro, fg=negro, bd=1, justify="center", command=borrarTODO)
+    BotónBorrarTODO.place(x=330, y=660, width=(100//2) + 10, height=(50//2) + 5)
+    BotónBorrarTODO.config(state="normal")
+    
+    BotónSuma = Button(ventanaPrincipal, text="+", font=("Century", 25), bg=rojo_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "+"))
+    BotónSuma.place(x=50, y=100, width=anchura*2, height=altura*2)
     BotónSuma.config(state="normal")
     
-    BotónResta = Button(ventanaPrincipal, text="-", font=("Century", 25//2), bg=amarillo_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "-"))
-    BotónResta.place(x=+25, y=100, width=25, height=25)
+    BotónResta = Button(ventanaPrincipal, text="-", font=("Century", 25), bg=amarillo_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "-"))
+    BotónResta.place(x=100, y=100, width=anchura*2, height=altura*2)
     BotónResta.config(state="normal")
     
-    BotónMultiplicación = Button(ventanaPrincipal, text="*", font=("Century", 25//2), bg=verde_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "*"))
-    BotónMultiplicación.place(x=+50, y=100, width=25, height=25)
+    BotónMultiplicación = Button(ventanaPrincipal, text="*", font=("Century", 25), bg=verde_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "*"))
+    BotónMultiplicación.place(x=150, y=100, width=anchura*2, height=altura*2)
     BotónMultiplicación.config(state="normal")
     
-    BotónDivisión = Button(ventanaPrincipal, text="÷", font=("Century", 25//2), bg=azul_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "÷"))
-    BotónDivisión.place(x=+75, y=100, width=25, height=25)
+    BotónDivisión = Button(ventanaPrincipal, text="÷", font=("Century", 25), bg=azul_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "÷"))
+    BotónDivisión.place(x=200, y=100, width=anchura*2, height=altura*2)
     BotónDivisión.config(state="normal")
     
-    BotónPotencia = Button(ventanaPrincipal, text="^", font=("Century", 25//2), bg=violeta_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "^"))
-    BotónPotencia.place(x=+100, y=100, width=25, height=25)
+    BotónPotencia = Button(ventanaPrincipal, text="^", font=("Century", 25), bg=violeta_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "^"))
+    BotónPotencia.place(x=250, y=100, width=anchura*2, height=altura*2)
     BotónPotencia.config(state="normal")
     
-    BotónRaíz = Button(ventanaPrincipal, text="ⁿ√", font=("Century", 25//2), bg=naranja_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "ⁿ√"))
-    BotónRaíz.place(x=+125, y=100, width=25, height=25)
+    BotónRaíz = Button(ventanaPrincipal, text="ⁿ√", font=("Century", 25), bg=naranja_oscuro, fg=negro, bd=1, justify="left", command=lambda: PantallaParaEscribirNúmeros.insert(tk.END, "ⁿ√"))
+    BotónRaíz.place(x=300, y=100, width=anchura*2, height=altura*2)
     BotónRaíz.config(state="normal")
     
 #Esta función muestra la interfaz de la calculadora principal para la ventana
