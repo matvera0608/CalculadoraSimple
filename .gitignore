@@ -1,0 +1,18 @@
+# Archivos de Python (si usás)
+__pycache__/
+*.pyc
+
+# Configuraciones de editores
+.vscode/
+.idea/
+
+# Archivos temporales
+*.log
+*.tmp
+
+# Bases de datos
+*.sqlite
+
+# Archivos del sistema
+.DS_Store
+Thumbs.db
