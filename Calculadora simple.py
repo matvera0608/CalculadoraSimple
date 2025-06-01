@@ -97,50 +97,79 @@ def calculadora():
 #Crearé una función que formatea los números con . (punto) y , (coma)
 #donde los puntos van en los millares y la coma en la milésima
 def formatearNúmero(númeroComoTexto):
+    # Tomo el valor actual de la pantalla
     número = str(númeroComoTexto)
+
+    # Elimino cualquier punto existente y convierto la coma decimal a punto para poder convertir a float
+    númeroSinPuntos = número.replace(".", "")
+    númeroNormalizado = númeroSinPuntos.replace(",", ".")
+
+    #Controlo que no me permita cualquier signo que no sea punto
     try:
-        número = float(número.replace(",", "."))
-        parteEntera = int(número)
-        parteDecimal = abs(número - parteEntera)
-        tieneDecimal = parteDecimal > 0
-        
-        expresiónEnteraFormateada = f"{parteEntera:,}".replace(",", ".")
-        
-        if tieneDecimal:
-            expresiónDecimalFormateada = f"{parteDecimal:.10f}".split(".")[1].rstrip("0")
-            resultado = f"{expresiónEnteraFormateada}, {expresiónDecimalFormateada}"
-        else:
-            resultado = expresiónEnteraFormateada
-            
-        return resultado
-
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+        #Si el usuario sólo pone una coma esto se vuelve a punto
+        #Y float (".") tirará un ValueError, que se captura
+        valor = float(númeroNormalizado)
+    except ValueError:
         return "Error"
+    # Convertir de nuevo a string conservando la parte decimal si existe
+    valorFormateado = f"{valor:.10f}".rstrip("0").rstrip(".")
+    parteEntera, parteDecimal, _ = valorFormateado.partition(".")
 
+    parteEnteraFormateada = ""
+    for índice, carácter in enumerate(reversed(parteEntera)):
+        esSeparadorDeMil = índice != 0 and índice % 3 == 0
+        if esSeparadorDeMil:
+            parteEnteraFormateada = "." + parteEnteraFormateada
+        parteEnteraFormateada = carácter + parteEnteraFormateada
+    if parteDecimal:
+        resultado = f"{parteEnteraFormateada},{parteDecimal}"
+    else:
+        resultado = f"{parteEnteraFormateada},{parteDecimal}" if parteDecimal else parteEnteraFormateada
+    
+    #Aquí voy a actualizar la pantalla del resultado
+    PantallaParaEscribirNúmeros.delete(0, tk.END)
+    PantallaParaEscribirNúmeros.insert(0, resultado)
+    
+    return resultado
 #Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
-def formatearNúmeroResultado():
-    número = PantallaParaResultadoEjercicio.get()
+# Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
+def formatearNúmeroResultado(númeroComoTexto):
+    # Uso el argumento en vez de obtener directamente el valor de la pantalla
+    número = str(númeroComoTexto)
+    
+    #Manejo excepción con un try except
     try:
-        número = float(número.replace(",", "."))
-        parteEntera = int(número)
-        parteDecimal = abs(número - parteEntera)
-        tieneDecimal = parteDecimal > 0
-        
-        expresiónEnteraFormateada = f"{parteEntera:,}".replace(",", ".")
-        
-        if tieneDecimal:
-            expresiónDecimalFormateada = f"{parteDecimal:.10f}".split(".")[1].rstrip("0")
-            resultado = f"{expresiónEnteraFormateada},{expresiónDecimalFormateada}"
-        else:
-            resultado = expresiónEnteraFormateada
-        
-        PantallaParaResultadoEjercicio.delete(0, tk.END)
-        PantallaParaResultadoEjercicio.insert(0, resultado)
+        valor = float(número)
+    except ValueError:
+        return
 
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-        return "Error"
+    # Convertir de nuevo a string conservando la parte decimal si existe
+    if valor.is_integer():
+        valorFormateado = str(int(valor)) 
+    else: 
+        f"{valor:.10f}".rstrip("0").rstrip(".")
+
+    parteEntera, parteDecimal, _ = valorFormateado.partition(".")
+
+    parteEnteraFormateada = ""
+    for índice, carácter in enumerate(reversed(parteEntera)):
+        esSeparadorDeMil = índice != 0 and índice % 3 == 0
+        if esSeparadorDeMil:
+            parteEnteraFormateada = "." + parteEnteraFormateada
+        parteEnteraFormateada = carácter + parteEnteraFormateada
+
+    if parteDecimal:
+        resultado = f"{parteEnteraFormateada},{parteDecimal}"
+    else:
+        resultado = parteEnteraFormateada
+
+    # Actualizo la pantalla de resultado
+    PantallaParaResultadoEjercicio.config(state="normal")
+    PantallaParaResultadoEjercicio.delete(0, tk.END)
+    PantallaParaResultadoEjercicio.insert(0, resultado)
+    PantallaParaResultadoEjercicio.config(state="readonly")
+
+    return resultado
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
@@ -153,6 +182,8 @@ def convertirATipoFloat(texto):
         
     if hayComa:
         limpiar_texto = texto_sinPuntos.replace(",", ".")
+    else:
+        limpiar_texto = texto_sinPuntos
     
     #crearé un try-except para manejar posible excepción y mantener robusta la conversión
     #así no tener que recibir mensajes molestos de excepción
@@ -165,6 +196,12 @@ def convertirATipoFloat(texto):
 def formatearEntrada(*args):
     #Crear una variable llamada entrada
     entrada = PantallaParaEscribirNúmeros.get()
+    
+    estáVacío_o_terminaEnComa = not entrada or entrada[-1] == ","
+    
+    if estáVacío_o_terminaEnComa:
+        return
+    
     #Acá voy a formatear los 2 números para que puedan ser legibles
     for signo in ["+", "-", "*","÷", "/"]:
         if signo in entrada:
@@ -386,9 +423,10 @@ def sacarNRaíz():
 
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
+    resultadoFormateado = formatearNúmeroResultado(res)
     PantallaParaResultadoEjercicio.config(state="normal")
     PantallaParaResultadoEjercicio.delete(0, tk.END)
-    PantallaParaResultadoEjercicio.insert(tk.END, res)
+    PantallaParaResultadoEjercicio.insert(tk.END, resultadoFormateado)
     PantallaParaResultadoEjercicio.config(state="readonly")
 
 #Esta función borra de a 1 número. No borra completamente al presionarlo
