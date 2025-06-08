@@ -38,8 +38,8 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=1, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
     
-    # PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 15), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=1, justify="right", state="readonly")
-    # PantallaParaResultadoEjercicio.grid(row=50//4, column=0, columnspan=15, padx=0, pady=50, sticky="we")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century" , 20), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=1, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=51, column=0, columnspan=15, padx=10, pady=(0, 20), sticky="we")
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
@@ -95,15 +95,15 @@ def Botón(ventanaPrincipal):
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
 
     BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
-    BotónCalcular.grid(row=8, column=0, padx=1, pady=20)
+    BotónCalcular.grid(row=7, column=2, padx=0, pady=0, sticky="nsew")
     BotónCalcular.config(state="normal")
 
     BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
-    BotónBorrar.grid(row=8, column=1, padx=1, pady=20)
+    BotónBorrar.grid(row=7, column=3, padx=0, pady=0, sticky="nsew")
     BotónBorrar.config(state="normal")
 
     BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
-    BotónBorrarTODO.grid(row=8, column=2, padx=1, pady=20)
+    BotónBorrarTODO.grid(row=8, column=3, padx=0, pady=0, sticky="nsew")
     BotónBorrarTODO.config(state="normal")
 
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
