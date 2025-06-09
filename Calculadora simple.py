@@ -6,7 +6,7 @@ color = {
 "celeste_claro": "#BDE3FF",
 "rojo_claro": "#FFCBCB",
 "celeste_oscuro": "#003367",
-"beige": "#C3C37B",
+"beige": "#98985D",
 "blanco": "#FFFFFF",
 "negro": "#000000",
 "gris": "#AAAAAA",
@@ -92,28 +92,30 @@ def Botón(ventanaPrincipal):
             btn_letra = color["celeste_oscuro"]
             
         # La variable btn corresponde al botón
-        btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", int(30/2)),
+        btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", int(30/2), "bold"),
         bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
 
     BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
     BotónCalcular.grid(row=7, column=1, padx=0, pady=1/2, sticky="nsew")
-    BotónCalcular.config(state="normal")
+    BotónCalcular.config(state="normal", wraplength=60)
 
     BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
     BotónBorrar.grid(row=7, column=2, padx=0, pady=1/2, sticky="nsew")
-    BotónBorrar.config(state="normal")
+    BotónBorrar.config(state="normal", wraplength=40)
 
     BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
     BotónBorrarTODO.grid(row=7, column=3, padx=1/2, pady=0, sticky="nsew")
-    BotónBorrarTODO.config(state="normal")
+    BotónBorrarTODO.config(state="normal", wraplength=40)
 
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
     for i in range(7):
-        ventanaPrincipal.grid_rowconfigure(i, weight=1)
+        ventanaPrincipal.grid_rowconfigure(i, weight=1, minsize=60)
     for j in range(4):
-        ventanaPrincipal.grid_columnconfigure(j, weight=1)
+        ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
+        
+    ventanaPrincipal.grid_columnconfigure(3, minsize=100)
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():
@@ -401,8 +403,12 @@ def dividir():
             PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
             PantallaParaResultadoEjercicio.config(state="readonly")
         else:
-            resultado = númeroA/númeroB
-            mostrarResultado(resultado)
+            resultado_división = númeroA//númeroB
+            mostrarResultado(resultado_división)
+            
+            resultado_módulo = númeroA % númeroB
+            mostrarResultado(resultado_módulo)
+            
         
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
