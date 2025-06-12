@@ -42,6 +42,9 @@ def pantallaCalculadora(ventanaPrincipal):
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
     PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 20), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaRestoDivisión.grid(row=51, column=0, columnspan=8, padx=10, pady=(0, 20), sticky="we")
+    módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=color["blanco"], fg=color["negro"])
+    módulo.grid(row=51, column=0, padx=0, pady=(0, 20), sticky="nsew")
+    
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
@@ -97,25 +100,24 @@ def Botón(ventanaPrincipal):
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
 
     BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
-    BotónCalcular.grid(row=7, column=1, padx=0, pady=1/2, sticky="nsew")
-    BotónCalcular.config(state="normal", wraplength=60)
+    BotónCalcular.grid(row=7, column=2, padx=1, pady=1, sticky="nsew")
+    
 
     BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
-    BotónBorrar.grid(row=7, column=2, padx=0, pady=1/2, sticky="nsew")
-    BotónBorrar.config(state="normal", wraplength=40)
+    BotónBorrar.grid(row=7, column=3, padx=1, pady=1, sticky="nsew")
 
     BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
-    BotónBorrarTODO.grid(row=7, column=3, padx=1/2, pady=0, sticky="nsew")
-    BotónBorrarTODO.config(state="normal", wraplength=40)
+    BotónBorrarTODO.grid(row=8, column=3, padx=1, pady=0, sticky="nsew")
 
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
-    for i in range(7):
+    for i in range(9):
         ventanaPrincipal.grid_rowconfigure(i, weight=1, minsize=60)
     for j in range(4):
         ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
         
     ventanaPrincipal.grid_columnconfigure(3, minsize=100)
+    BotónBorrarTODO.config(wraplength=60)
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():
