@@ -1,7 +1,12 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
 
-#Colores
+"""
+EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
+Y BOTONES DE LA CALCULADORA PERSONALIZADA.
+"""
+
+# Diccionario de colores
 color = {
 "celeste_claro": "#BDE3FF",
 "rojo_claro": "#FFCBCB",
@@ -22,7 +27,7 @@ color = {
 #defino la función con valor de devolución o de retorno llamada calculadora()
 #que va todos los botones necesarios para los cálculos necesarios
 def pantallaCalculadora(ventanaPrincipal):
-    global anchura, altura, PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio
+    global anchura, altura, PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
     anchura = min(360, 550)
     altura = 100
 
@@ -40,10 +45,10 @@ def pantallaCalculadora(ventanaPrincipal):
     
     # Suponiendo que las otras dos Entry usan columnspan=15,
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
-    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 20), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=51, column=0, columnspan=8, padx=10, pady=(0, 20), sticky="we")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=10, column=2, columnspan=2, padx=5, sticky="nsew")
     módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=color["blanco"], fg=color["negro"])
-    módulo.grid(row=51, column=0, padx=0, pady=(0, 20), sticky="nsew")
+    módulo.grid(row=10, column=0, columnspan=2,padx=5, sticky="w")
     
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -132,6 +137,29 @@ def calculadora():
     Botón(ventanaPrincipal)
 
     return ventanaPrincipal
+
+    """Esta función crea la ventana principal de la calculadora.
+
+    Returns:
+        tkinter.Tk: La ventana principal de la calculadora.
+    1. Crea una ventana principal con título "Calculadora sencilla".
+    2. Configura el tamaño de la ventana a 400x700 píxeles
+    3. Establece el color de fondo de la ventana a blanco.
+    4. Desactiva la capacidad de cambiar el tamaño de la ventana.
+    5. Llama a las funciones pantallaCalculadora y Botón para configurar la interfaz de la calculadora.
+    6. Devuelve la ventana principal para que pueda ser utilizada por otras funciones o métodos
+    7. La función no toma argumentos y no tiene efectos secundarios fuera de la ventana creada.
+    8. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+    9. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+    10. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+    11. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+    12. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+    """
+
+""" 
+EN ESTA SECCIÓN DEFINO LAS FUNCIONES QUE REALIZAN LOS CÁLCULOS
+Y MANEJAN LA LÓGICA DE LA CALCULADORA.
+"""
 
 #Crearé una función que formatea los números con . (punto) y , (coma)
 #donde los puntos van en los millares y la coma en la milésima
@@ -226,7 +254,8 @@ def convertirATipoFloat(texto):
     except ValueError:
         return None
 
-
+#En esta función solamente se formatea la entrada para la introducción de millares
+#cuando presiono los 000 después de presionar un número diferente a 0 me pone automáticamente los puntos
 def formatearEntrada(*args):
     #Crear una variable llamada entrada
     entrada = PantallaParaEscribirNúmeros.get()
@@ -376,17 +405,22 @@ def multiplicar():
 def dividir():
      #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("÷")
-    if "/" in entrada:
+    
+    if "÷" in entrada:
+        parte = entrada.split("÷")
+    elif "/" in entrada:
         parte = entrada.split("/")
-    signoCorrecto = "÷" in entrada or "/" in entrada
+    else:
+        mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ÷")
+        return
     
     noTieneDosOperandos = len(parte) != 2
     
     
-    if not signoCorrecto and noTieneDosOperandos:
-        mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ÷")
-        return
+    if noTieneDosOperandos:
+       mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ÷")
+       return
+    
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
         númeroA = convertirATipoFloat(parte[0].strip())
@@ -408,8 +442,12 @@ def dividir():
             resultado_división = númeroA//númeroB
             mostrarResultado(resultado_división)
             
-            resultado_módulo = númeroA % númeroB
-            mostrarResultado(resultado_módulo)
+            # Mostrar el módulo (resto) de la división
+            resultado_módulo = int(númeroA % númeroB)
+            PantallaRestoDivisión.config(state="normal")
+            PantallaRestoDivisión.delete(0, tk.END)
+            PantallaRestoDivisión.insert(0, str(resultado_módulo))
+            PantallaRestoDivisión.config(state="readonly")
             
         
     except ValueError as errorDeValidación:
@@ -490,6 +528,9 @@ def borrarTODO():
     PantallaParaResultadoEjercicio.config(state="normal")
     PantallaParaResultadoEjercicio.delete(0, tk.END)
     PantallaParaResultadoEjercicio.config(state="readonly")
+    PantallaRestoDivisión.config(state="normal")
+    PantallaRestoDivisión.delete(0, tk.END)
+    PantallaRestoDivisión.config(state="readonly")
     PantallaParaEscribirNúmeros.focus_set()
 
 #Defino una variable para disparar la interfaz gráfica de calculadora
