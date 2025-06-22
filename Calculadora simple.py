@@ -138,23 +138,24 @@ def calculadora():
 
     return ventanaPrincipal
 
-    """Esta función crea la ventana principal de la calculadora.
 
-    Returns:
-        tkinter.Tk: La ventana principal de la calculadora.
-    1. Crea una ventana principal con título "Calculadora sencilla".
-    2. Configura el tamaño de la ventana a 400x700 píxeles
-    3. Establece el color de fondo de la ventana a blanco.
-    4. Desactiva la capacidad de cambiar el tamaño de la ventana.
-    5. Llama a las funciones pantallaCalculadora y Botón para configurar la interfaz de la calculadora.
-    6. Devuelve la ventana principal para que pueda ser utilizada por otras funciones o métodos
-    7. La función no toma argumentos y no tiene efectos secundarios fuera de la ventana creada.
-    8. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
-    9. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
-    10. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
-    11. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
-    12. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
-    """
+"""Esta función crea la ventana principal de la calculadora.
+
+Returns:
+    tkinter.Tk: La ventana principal de la calculadora.
+1. Crea una ventana principal con título "Calculadora sencilla".
+2. Configura el tamaño de la ventana a 400x700 píxeles
+3. Establece el color de fondo de la ventana a blanco.
+4. Desactiva la capacidad de cambiar el tamaño de la ventana.
+5. Llama a las funciones pantallaCalculadora y Botón para configurar la interfaz de la calculadora.
+6. Devuelve la ventana principal para que pueda ser utilizada por otras funciones o métodos
+7. La función no toma argumentos y no tiene efectos secundarios fuera de la ventana creada.
+8. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+9. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+10. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+11. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+12. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
+"""
 
 """ 
 EN ESTA SECCIÓN DEFINO LAS FUNCIONES QUE REALIZAN LOS CÁLCULOS
@@ -167,6 +168,7 @@ def formatearNúmero(númeroComoTexto):
     # Tomo el valor actual de la pantalla
     número = str(númeroComoTexto).strip()
     
+    #Verifica que tenga una coma cuando el usuario coloca
     if número.endswith(','):
         return número
     
@@ -296,6 +298,7 @@ def Calcular():
     división = ("/" in entrada) or ("÷" in entrada)
     potencia = "^" in entrada
     raiz = "ⁿ√" in entrada
+    porcentaje = "%" in entrada
     
     #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
     if suma:
@@ -310,6 +313,8 @@ def Calcular():
         sacarNPotencia()
     elif raiz:
         sacarNRaíz()
+    elif porcentaje:
+        sacarPorcentaje()
 
 #Esta sección tendrán funciones para los cálculos
 def sumar():
@@ -501,6 +506,27 @@ def sacarNRaíz():
             mensajeDeTexto.showinfo("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
     else:
         mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE RAÍZ")
+
+#Saco el porcentaje de cada número puesto
+def sacarPorcentaje():
+    entrada = PantallaParaEscribirNúmeros.get()
+    
+    tienePorcentaje = "%" not in entrada
+    
+    #Me acostumbro a poner try-except para refozar cualquier control de datos
+    try:
+        if tienePorcentaje:
+            mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE PORCENTAJE AL ESPECIFICAR")
+            return
+        else:
+            parte = entrada.replace("%", "").strip()
+            número = float(parte)
+            resultado = número / 100
+            mostrarResultado(resultado)
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"Algo no está bien")
+    
+
 
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
