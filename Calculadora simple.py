@@ -292,6 +292,14 @@ def formatearEntrada(*args):
 #para el botón de Calcular
 def Calcular():
     entrada = PantallaParaEscribirNúmeros.get()
+
+    def calcularExpresiónCompleta():
+        try:
+            resultado = eval(entrada.replace("×", "*").replace("÷", "/"))
+            mostrarResultado(resultado)
+        except Exception:
+            mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
+    
     suma = "+" in entrada
     resta = "-" in entrada
     multiplicación = ("×" in entrada) or ("*" in entrada)
@@ -315,6 +323,8 @@ def Calcular():
         sacarNRaíz()
     elif porcentaje:
         sacarPorcentaje()
+    else:
+        calcularExpresiónCompleta()
 
 #Esta sección tendrán funciones para los cálculos
 def sumar():
