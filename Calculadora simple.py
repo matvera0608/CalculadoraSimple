@@ -300,6 +300,10 @@ def Calcular():
         except Exception:
             mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
     
+    operadores = "+-*/÷×"
+    
+    calcularExpresiónCompleta()
+    
     suma = "+" in entrada
     resta = "-" in entrada
     multiplicación = ("×" in entrada) or ("*" in entrada)
@@ -324,67 +328,38 @@ def Calcular():
     elif porcentaje:
         sacarPorcentaje()
     else:
-        calcularExpresiónCompleta()
+        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha realizado ninguna operación")
+    
 
 #Esta sección tendrán funciones para los cálculos
 def sumar():
     #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("+")
-    signoCorrecto = "+" in entrada
-    noTieneDosOperandos = len(parte) != 2
-    
-    if signoCorrecto:
-        
-        if noTieneDosOperandos:
-            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en +")
-            return
-        
         #creo un try-except para manejar mejor las excepciones o errores de validación
-        try:
-            númeroA = convertirATipoFloat(parte[0].strip())
-            númeroB = convertirATipoFloat(parte[1].strip())
-            
-            invalidación = númeroA is None or númeroB is None
-        
-            if invalidación:
-                mensajeDeTexto.showerror("ERROR", "Hay un error inválido")
-                return
-        
-            resultado = númeroA + númeroB
-        
-            mostrarResultado(resultado)
-        except ValueError as errorDeValidación:
-            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-    else:
-        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE SUMA ")
+    try:
+        #este resultado ya hace suma dinámica con n cantidad de números
+        resultado = sum(float(p.strip().replace(",", ".")) for p in parte if p.strip() != "")
+        mostrarResultado(resultado)
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
 def restar():
     #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("-")
-    signoCorrecto = "-" in entrada
-    noTieneDosOperandos = len(parte) != 2
-    
-    
-    if not signoCorrecto and noTieneDosOperandos:
-        mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en +")
-        return
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
-        númeroA = convertirATipoFloat(parte[0].strip())
-        númeroB = convertirATipoFloat(parte[1].strip())
-        
-        invalidación = númeroA is None or númeroB is None
-        
-        if invalidación:
-            mensajeDeTexto.showerror("ERROR", "Hay un error inválido")
+        partes = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
+        falta_de_operandos = len(partes) < 2
+        if falta_de_operandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para restar.")
             return
-        
-        resultado = númeroA - númeroB
-        
+        resultado = partes[0]
+        #Acá itero para ir restando los números hasta llegar a negativo
+        for n in partes[1:]:
+            resultado -= n
         mostrarResultado(resultado)
-        
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
