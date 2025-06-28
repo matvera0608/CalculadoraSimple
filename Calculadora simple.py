@@ -295,14 +295,22 @@ def Calcular():
 
     def calcularExpresiónCompleta():
         try:
-            resultado = eval(entrada.replace("×", "*").replace("÷", "/"))
+            expresión = entrada.replace("×", "*").replace("÷", "/").replace(",", ".")
+            resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
             mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
+            return
     
     operadores = "+-*/÷×"
     
-    calcularExpresiónCompleta()
+    cantidad_de_signos = sum(entrada.count(op) for op in operadores)
+    
+    siHaySignos_o_Paréntesis = cantidad_de_signos > 1 or ("(" in entrada or ")" in entrada)
+    
+    if siHaySignos_o_Paréntesis:
+        calcularExpresiónCompleta()
+        return
     
     suma = "+" in entrada
     resta = "-" in entrada
@@ -328,7 +336,7 @@ def Calcular():
     elif porcentaje:
         sacarPorcentaje()
     else:
-        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha realizado ninguna operación")
+        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha detectado ninguna operación")
     
 
 #Esta sección tendrán funciones para los cálculos
