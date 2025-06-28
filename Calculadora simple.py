@@ -165,43 +165,50 @@ Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 #Crearé una función que formatea los números con . (punto) y , (coma)
 #donde los puntos van en los millares y la coma en la milésima
 def formatearNúmero(númeroComoTexto):
-    # Tomo el valor actual de la pantalla
-    número = str(númeroComoTexto).strip()
+    # # Tomo el valor actual de la pantalla
+    # número = str(númeroComoTexto).strip()
     
-    #Verifica que tenga una coma cuando el usuario coloca
-    if número.endswith(','):
-        return número
+    # #Verifica que tenga una coma cuando el usuario coloca
+    # if número.endswith(','):
+    #     return número
     
-    # Elimino cualquier punto existente y convierto la coma decimal a punto para poder convertir a float
-    númeroSinPuntos = número.replace(".", "")
-    númeroNormalizado = númeroSinPuntos.replace(",", ".")
+    # # Elimino cualquier punto existente y convierto la coma decimal a punto para poder convertir a float
+    # númeroSinPuntos = número.replace(".", "")
+    # númeroNormalizado = númeroSinPuntos.replace(",", ".")
     #Controlo que no me permita cualquier signo que no sea punto
     try:
         #Si el usuario sólo pone una coma esto se vuelve a punto
         #Y float (".") tirará un ValueError, que se captura
-        valor = float(númeroNormalizado)
+        valor = float(númeroComoTexto.replace(",", "."))
+        #Acá formatea si y solo si es entero
+        if valor.is_integer():
+            return f"{int(valor):,}".replace(",", ".")
+        else:
+            parteEntera, parteDecimal = str(valor).split(".")
+            parteEntera = f"{int(parteEntera):,}".replace(",", ".")
+            valorFormateado = f"{parteEntera},{parteDecimal}"
+            return valorFormateado
     except ValueError:
-        return número
+        return "Error"
     # Convertir de nuevo a string conservando la parte decimal si existe
-    valorFormateado = f"{valor:.10f}".rstrip("0").rstrip(".")
-    parteEntera, _ , parteDecimal = valorFormateado.partition(".")
+    
 
-    parteEnteraFormateada = ""
-    for índice, carácter in enumerate(reversed(parteEntera)):
-        esSeparadorDeMil = índice != 0 and índice % 3 == 0
-        if esSeparadorDeMil:
-            parteEnteraFormateada = "." + parteEnteraFormateada
-        parteEnteraFormateada = carácter + parteEnteraFormateada
-    if parteDecimal:
-        resultado = f"{parteEnteraFormateada},{parteDecimal}"
-    else:
-        resultado = f"{parteEnteraFormateada}"
+    # parteEnteraFormateada = ""
+    # for índice, carácter in enumerate(reversed(parteEntera)):
+    #     esSeparadorDeMil = índice != 0 and índice % 3 == 0
+    #     if esSeparadorDeMil:
+    #         parteEnteraFormateada = "." + parteEnteraFormateada
+    #     parteEnteraFormateada = carácter + parteEnteraFormateada
+    # if parteDecimal:
+    #     resultado = f"{parteEnteraFormateada},{parteDecimal}"
+    # else:
+    #     resultado = f"{parteEnteraFormateada}"
     
     #Aquí voy a actualizar la pantalla del resultado
-    PantallaParaEscribirNúmeros.delete(0, tk.END)
-    PantallaParaEscribirNúmeros.insert(0, resultado)
+    # PantallaParaEscribirNúmeros.delete(0, tk.END)
+    # PantallaParaEscribirNúmeros.insert(0, resultado)
     
-    return resultado
+
 #Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
 # Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
 def formatearNúmeroResultado(númeroComoTexto):
@@ -271,15 +278,19 @@ def formatearEntrada(*args):
     for signo in ["+", "-", "*","×", "÷", "/"]:
         if signo in entrada:
             partes = entrada.replace("÷", "/").split(signo)
-            if len(partes) == 2:
-                izquierda = formatearNúmero(partes[0].strip())
-                derecha = formatearNúmero(partes[1].strip())
-                formatoTieneError = izquierda == "Error" or derecha == "Error"
-                if formatoTieneError:
+            #Mejora propuesta, ahora puede formatear miles a más de 2 números
+            #puestos por el usuario. Voy a debuggear.
+            nuevaParte = []
+            for parte in partes:
+                parteFormateada = formatearNúmero(parte.strip())
+                ErrorDeParte = parteFormateada == "Error"
+                
+                if ErrorDeParte:
                     return
-                nuevoTexto = f"{izquierda}{signo}{derecha}"
-                PantallaParaEscribirNúmeros.delete(0, tk.END)
-                PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
+                nuevaParte.append(parteFormateada)
+            nuevoTexto = f"{signo}".join(nuevaParte)
+            PantallaParaEscribirNúmeros.delete(0, tk.END)
+            PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
             return
     nuevoTexto = formatearNúmero(entrada)
     TextoNoTieneError = nuevoTexto != "Error"
@@ -295,7 +306,7 @@ def Calcular():
 
     def calcularExpresiónCompleta():
         try:
-            expresión = entrada.replace("×", "*").replace("÷", "/").replace(",", ".")
+            expresión = entrada.replace(".", "").replace("×", "*").replace("÷", "/")
             resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
@@ -375,26 +386,22 @@ def multiplicar():
      #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("*")
-    signoCorrecto = "*" in entrada
-    noTieneDosOperandos = len(parte) != 2
     
-    
-    if not signoCorrecto and noTieneDosOperandos:
-        mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en +")
-        return
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
-        númeroA = convertirATipoFloat(parte[0].strip())
-        númeroB = convertirATipoFloat(parte[1].strip())
+        #Acá hago la multiplicación de cantidad enésima de números, es decir, más de 2 en adelante.
+        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
         
-        invalidación = númeroA is None or númeroB is None
+        falta_de_operandos = len(números) < 2
         
-        if invalidación:
-            mensajeDeTexto.showerror("ERROR", "Hay un error inválido")
+        if falta_de_operandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para multiplicar.")
             return
         
-        resultado = númeroA * númeroB
-        
+        resultado = 1
+        #Acá itero para ir restando los números hasta llegar a negativo
+        for n in números:
+            resultado *= n
         mostrarResultado(resultado)
         
     except ValueError as errorDeValidación:
@@ -403,76 +410,72 @@ def multiplicar():
 def dividir():
      #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
-    
-    if "÷" in entrada:
-        parte = entrada.split("÷")
-    elif "/" in entrada:
-        parte = entrada.split("/")
-    else:
-        mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ÷")
-        return
-    
-    noTieneDosOperandos = len(parte) != 2
-    
-    
-    if noTieneDosOperandos:
-       mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ÷")
-       return
-    
+    parte = entrada.replace("÷", "/").split("/")
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
-        númeroA = convertirATipoFloat(parte[0].strip())
-        númeroB = convertirATipoFloat(parte[1].strip())
         
-        invalidación = númeroA is None or númeroB is None
-        divisiónEntre0 = númeroB == 0
         
-        if invalidación:
-            mensajeDeTexto.showerror("ERROR", "Hay un error inválido")
+        #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
+        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
+        
+        falta_de_operandos = len(números) < 2
+        
+        if falta_de_operandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para multiplicar.")
             return
         
-        if divisiónEntre0:
-            PantallaParaResultadoEjercicio.config(state="normal")
-            PantallaParaResultadoEjercicio.delete(0, tk.END)
-            PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
-            PantallaParaResultadoEjercicio.config(state="readonly")
-        else:
-            resultado_división = númeroA//númeroB
-            mostrarResultado(resultado_división)
+        resultado = números[0]
+        #Acá itero para ir restando los números hasta llegar a negativo
+        for n in números[1:]:
+            divisiónEntre0 = n == 0
+            if divisiónEntre0:
+                PantallaParaResultadoEjercicio.config(state="normal")
+                PantallaParaResultadoEjercicio.delete(0, tk.END)
+                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
+                PantallaParaResultadoEjercicio.config(state="readonly")
+                return
+            resultado /= n
             
-            # Mostrar el módulo (resto) de la división
-            resultado_módulo = int(númeroA % númeroB)
+        mostrarResultado(resultado)
+        
+        son_dos_enteros = len(números) == 2 and all(n.is_integer() for n in números)
+        # Mostrar el módulo (resto) de la división cuando sea posible y son 2 números enteros
+        if son_dos_enteros:
+            resultado_módulo = int(números[0]) % int(números[1])
             PantallaRestoDivisión.config(state="normal")
             PantallaRestoDivisión.delete(0, tk.END)
             PantallaRestoDivisión.insert(0, str(resultado_módulo))
-            PantallaRestoDivisión.config(state="readonly")
-            
-        
+            PantallaRestoDivisión.config(state="readonly")   
+        else:
+            PantallaRestoDivisión.config(state="normal")
+            PantallaRestoDivisión.delete(0, tk.END)
+            PantallaRestoDivisión.insert(0, "-")
+            PantallaRestoDivisión.config(state="readonly")   
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
 def sacarNPotencia():
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("^")
-    signoCorrecto = "^" in entrada
-    noTieneDosOperandos = len(parte) != 2
     
-    if signoCorrecto:
+    #el try es para controlar cualquier excepción de código
+    try:
+        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
         
-        #Acá compruebo que los datos permitan solamente 2 números nada más.
-        if noTieneDosOperandos:
-            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ^")
+        NotieneDosOperandos = len(números) < 2
+        
+        if NotieneDosOperandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para calcular potencia.")
             return
-        #el try es para controlar cualquier excepción de código
-        try:
-            númeroA = int(parte[0].strip())
-            númeroB = int(parte[1].strip())
-            resultado = int(númeroA ** númeroB)
-            mostrarResultado(resultado)
-        except ValueError as errorDeValidación:
-            mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-    else:
-        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE POTENCIA")
+        #Acá itero para calcular potencias múltiples siempre de derecha
+        #a izquierda
+        resultado = números[-1]
+        for base in reversed(números[:-1]):
+            resultado = base ** resultado
+            
+        mostrarResultado(resultado)
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
             
 def sacarNRaíz():
     entrada = PantallaParaEscribirNúmeros.get()
@@ -517,16 +520,20 @@ def sacarPorcentaje():
             resultado = número / 100
             mostrarResultado(resultado)
     except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"Algo no está bien")
+        mensajeDeTexto.showerror("ERROR", f"Algo no está bien: {errorDeValidación}")
     
-
 
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
-    resultadoFormateado = formatearNúmeroResultado(res)
     PantallaParaResultadoEjercicio.config(state="normal")
     PantallaParaResultadoEjercicio.delete(0, tk.END)
-    PantallaParaResultadoEjercicio.insert(tk.END, resultadoFormateado)
+    
+    if isinstance(res, (int, float)):
+        resultadoFormateado = f"{res:,.0f}".replace(",", ".")
+        PantallaParaResultadoEjercicio.insert(0, resultadoFormateado)
+    else:
+        PantallaParaResultadoEjercicio.insert(0, str(res))
+    
     PantallaParaResultadoEjercicio.config(state="readonly")
 
 #Esta función borra de a 1 número. No borra completamente al presionarlo
