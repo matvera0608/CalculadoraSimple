@@ -165,16 +165,6 @@ Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 #Crearé una función que formatea los números con . (punto) y , (coma)
 #donde los puntos van en los millares y la coma en la milésima
 def formatearNúmero(númeroComoTexto):
-    # # Tomo el valor actual de la pantalla
-    # número = str(númeroComoTexto).strip()
-    
-    # #Verifica que tenga una coma cuando el usuario coloca
-    # if número.endswith(','):
-    #     return número
-    
-    # # Elimino cualquier punto existente y convierto la coma decimal a punto para poder convertir a float
-    # númeroSinPuntos = número.replace(".", "")
-    # númeroNormalizado = númeroSinPuntos.replace(",", ".")
     #Controlo que no me permita cualquier signo que no sea punto
     try:
         #Si el usuario sólo pone una coma esto se vuelve a punto
@@ -186,28 +176,9 @@ def formatearNúmero(númeroComoTexto):
         else:
             parteEntera, parteDecimal = str(valor).split(".")
             parteEntera = f"{int(parteEntera):,}".replace(",", ".")
-            valorFormateado = f"{parteEntera},{parteDecimal}"
-            return valorFormateado
+            return f"{parteEntera},{parteDecimal}"
     except ValueError:
         return "Error"
-    # Convertir de nuevo a string conservando la parte decimal si existe
-    
-
-    # parteEnteraFormateada = ""
-    # for índice, carácter in enumerate(reversed(parteEntera)):
-    #     esSeparadorDeMil = índice != 0 and índice % 3 == 0
-    #     if esSeparadorDeMil:
-    #         parteEnteraFormateada = "." + parteEnteraFormateada
-    #     parteEnteraFormateada = carácter + parteEnteraFormateada
-    # if parteDecimal:
-    #     resultado = f"{parteEnteraFormateada},{parteDecimal}"
-    # else:
-    #     resultado = f"{parteEnteraFormateada}"
-    
-    #Aquí voy a actualizar la pantalla del resultado
-    # PantallaParaEscribirNúmeros.delete(0, tk.END)
-    # PantallaParaEscribirNúmeros.insert(0, resultado)
-    
 
 #Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
 # Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
@@ -349,7 +320,6 @@ def Calcular():
     else:
         mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha detectado ninguna operación")
     
-
 #Esta sección tendrán funciones para los cálculos
 def sumar():
     #las variables necesarias
@@ -358,7 +328,9 @@ def sumar():
         #creo un try-except para manejar mejor las excepciones o errores de validación
     try:
         #este resultado ya hace suma dinámica con n cantidad de números
-        resultado = sum(float(p.strip().replace(",", ".")) for p in parte if p.strip() != "")
+        resultado = sum(float(p.strip().replace(".", "").replace(",", ".")) 
+                        for p in parte if p.strip() != ""
+                        )
         mostrarResultado(resultado)
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
