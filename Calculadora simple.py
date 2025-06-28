@@ -237,38 +237,35 @@ def convertirATipoFloat(texto):
 #En esta función solamente se formatea la entrada para la introducción de millares
 #cuando presiono los 000 después de presionar un número diferente a 0 me pone automáticamente los puntos
 def formatearEntrada(*args):
-    #Crear una variable llamada entrada
     entrada = PantallaParaEscribirNúmeros.get()
-    
-    estáVacío_o_terminaEnComa = not entrada or entrada[-1] == ","
-    
-    if estáVacío_o_terminaEnComa:
+    if not entrada or entrada[-1] == ",":
         return
-    
-    #Acá voy a formatear los 2 números para que puedan ser legibles
-    for signo in ["+", "-", "*","×", "÷", "/"]:
-        if signo in entrada:
-            partes = entrada.replace("÷", "/").split(signo)
-            #Mejora propuesta, ahora puede formatear miles a más de 2 números
-            #puestos por el usuario. Voy a debuggear.
-            nuevaParte = []
-            for parte in partes:
-                parteFormateada = formatearNúmero(parte.strip())
-                ErrorDeParte = parteFormateada == "Error"
-                
-                if ErrorDeParte:
-                    return
-                nuevaParte.append(parteFormateada)
-            nuevoTexto = f"{signo}".join(nuevaParte)
-            PantallaParaEscribirNúmeros.delete(0, tk.END)
-            PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
-            return
-    nuevoTexto = formatearNúmero(entrada)
-    TextoNoTieneError = nuevoTexto != "Error"
-    
-    if TextoNoTieneError:
+    entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
+    signo = ["+", "-", "*", "×", "÷", "/"]
+    nuevaEntrada = ""
+    númeroActual = ""
+    #Itero para controlar que el punto tenga que ir en su lugar
+    #correspondiente
+    for caracter in entradaProcesada:
+        caracterNoEstáEnSigno = caracter not in signo
+        if caracterNoEstáEnSigno:
+            númeroActual += caracter
+        else:
+            #Este formatea primero el número antes del signo de operación
+            númeroFormateado = formatearNúmero(númeroActual.strip())
+            if númeroFormateado == "Error":
+                return
+            else:
+                nuevaEntrada += númeroFormateado + caracter
+                númeroActual = ""
+        #Este añade el último número si ha quedado algo
+        if númeroActual:
+            númeroFormateado = formatearNúmero(númeroActual.strip())
+            if númeroFormateado == "Error":
+                return
+            nuevaEntrada += númeroFormateado
         PantallaParaEscribirNúmeros.delete(0, tk.END)
-        PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
+        PantallaParaEscribirNúmeros.insert(0, númeroActual)
 
 #Crearé una función que llame a las funciones aritméticas según los signos
 #para el botón de Calcular
