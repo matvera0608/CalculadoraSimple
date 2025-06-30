@@ -183,43 +183,53 @@ def formatearNúmero(númeroComoTexto):
 
 #Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
 # Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
-def formatearNúmeroResultado(númeroComoTexto):
-    # Uso el argumento en vez de obtener directamente el valor de la pantalla
-    número = str(númeroComoTexto)
-    
-    #Manejo excepción con un try except
+def formatearNúmeroResultado(valor):
     try:
-        valor = float(número)
-    except ValueError:
-        return
+        valor = float(valor)
+        if valor.is_integer():
+            return f"{int(valor):,}".replace(",", ".")
+        else:
+            parteEntera, parteDecimal = str(valor).split(".")
+            parteEntera = f"{int(parteEntera):,}".replace(",", ".")
+            return f"{parteEntera},{parteDecimal}"
+    except:
+        return str(valor)
+    # # Uso el argumento en vez de obtener directamente el valor de la pantalla
+    # número = str(númeroComoTexto)
+    
+    # #Manejo excepción con un try except
+    # try:
+    #     valor = float(número)
+    # except ValueError:
+    #     return
 
-    # Convertir de nuevo a string conservando la parte decimal si existe
-    if valor.is_integer():
-        valorFormateado = str(int(valor)) 
-    else: 
-        valorFormateado = f"{valor:.10f}".rstrip("0").rstrip(".")
+    # # Convertir de nuevo a string conservando la parte decimal si existe
+    # if valor.is_integer():
+    #     valorFormateado = str(int(valor)) 
+    # else: 
+    #     valorFormateado = f"{valor:.10f}".rstrip("0").rstrip(".")
 
-    parteEntera, _, parteDecimal  = valorFormateado.partition(".")
+    # parteEntera, _, parteDecimal  = valorFormateado.partition(".")
 
-    parteEnteraFormateada = ""
-    for índice, carácter in enumerate(reversed(parteEntera)):
-        esSeparadorDeMil = índice != 0 and índice % 3 == 0
-        if esSeparadorDeMil:
-            parteEnteraFormateada = "." + parteEnteraFormateada
-        parteEnteraFormateada = carácter + parteEnteraFormateada
+    # parteEnteraFormateada = ""
+    # for índice, carácter in enumerate(reversed(parteEntera)):
+    #     esSeparadorDeMil = índice != 0 and índice % 3 == 0
+    #     if esSeparadorDeMil:
+    #         parteEnteraFormateada = "." + parteEnteraFormateada
+    #     parteEnteraFormateada = carácter + parteEnteraFormateada
 
-    if parteDecimal:
-        resultado = f"{parteEnteraFormateada},{parteDecimal}"
-    else:
-        resultado = parteEnteraFormateada
+    # if parteDecimal:
+    #     resultado = f"{parteEnteraFormateada},{parteDecimal}"
+    # else:
+    #     resultado = parteEnteraFormateada
 
-    # Actualizo la pantalla de resultado
-    PantallaParaResultadoEjercicio.config(state="normal")
-    PantallaParaResultadoEjercicio.delete(0, tk.END)
-    PantallaParaResultadoEjercicio.insert(0, resultado)
-    PantallaParaResultadoEjercicio.config(state="readonly")
+    # # Actualizo la pantalla de resultado
+    # PantallaParaResultadoEjercicio.config(state="normal")
+    # PantallaParaResultadoEjercicio.delete(0, tk.END)
+    # PantallaParaResultadoEjercicio.insert(0, resultado)
+    # PantallaParaResultadoEjercicio.config(state="readonly")
 
-    return resultado
+    # return str(resultado)
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
@@ -269,18 +279,20 @@ def formatearEntrada(*args):
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
     
   
-def insertarMil():
-    PantallaParaEscribirNúmeros.insert(tk.END, "000")
-    formatearEntrada()  # Se ejecuta el formateo completo
+# def insertarMil():
+#     PantallaParaEscribirNúmeros.insert(tk.END, "000")
+#     formatearEntrada()  # Se ejecuta el formateo completo
 
 #Crearé una función que llame a las funciones aritméticas según los signos
 #para el botón de Calcular
 def Calcular():
     entrada = PantallaParaEscribirNúmeros.get()
 
+    #Esta función calcula la expresión completa como
+    #una operación combinada
     def calcularExpresiónCompleta():
         try:
-            expresión = entrada.replace(".", "").replace("×", "*").replace("÷", "/")
+            expresión = entrada.replace(".", "").replace(",", ".").replace("×", "*").replace("÷", "/")
             resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
@@ -358,21 +370,35 @@ def restar():
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
 def multiplicar():
-     #las variables necesarias
+    #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("*")
     
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
         #Acá hago la multiplicación de cantidad enésima de números, es decir, más de 2 en adelante.
-        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
+        números = []
+        
+        # Este bucle recorre cada parte separada por el operador '*'.
+        # Si la parte contiene un porcentaje ('%'), lo convierte al valor decimal correspondiente.
+        # Por ejemplo, para calcular 60 * 80%, convierte '80%' en 0.8 y realiza la multiplicación: 60 * 0.8 = 48.
+        for p in parte:
+            if p.strip() == "":
+                continue
+            if "%" in p:
+            # Elimina el símbolo '%' y convierte el número a decimal dividiéndolo por 100
+                p = p.replace("%", "")
+                n = float(p.strip().replace(".", "").replace(",", "."))/100
+            else:
+                n = float(p.strip().replace(".", "").replace(",", "."))
+            números.append(n)
         
         falta_de_operandos = len(números) < 2
         
         if falta_de_operandos:
             mensajeDeTexto.showerror("Error", "Faltan operandos para multiplicar.")
             return
-        
+            
         resultado = 1
         #Acá itero para ir restando los números hasta llegar a negativo
         for n in números:
@@ -388,10 +414,8 @@ def dividir():
     parte = entrada.replace("÷", "/").split("/")
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
-        
-        
         #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
-        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
+        números = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
         
         falta_de_operandos = len(números) < 2
         
@@ -409,7 +433,7 @@ def dividir():
                 PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
-            resultado /= n
+            resultado //= n
             
         mostrarResultado(resultado)
         
@@ -492,7 +516,7 @@ def sacarPorcentaje():
         else:
             parte = entrada.replace("%", "").strip()
             número = float(parte)
-            resultado = número / 100
+            resultado = número/100
             mostrarResultado(resultado)
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"Algo no está bien: {errorDeValidación}")
