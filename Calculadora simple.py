@@ -167,9 +167,10 @@ Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 def formatearNúmero(númeroComoTexto):
     #Controlo que no me permita cualquier signo que no sea punto
     try:
-        #Si el usuario sólo pone una coma esto se vuelve a punto
-        #Y float (".") tirará un ValueError, que se captura
-        valor = float(númeroComoTexto.replace(",", "."))
+        #Voy a crear una variable llamada NúmeroLimpio para
+        #formatear esctrictamente el número a escribir
+        númeroLimpio = númeroComoTexto.replace(".", "").replace(",", ".")
+        valor = float(númeroLimpio)
         #Acá formatea si y solo si es entero
         if valor.is_integer():
             return f"{int(valor):,}".replace(",", ".")
@@ -258,14 +259,19 @@ def formatearEntrada(*args):
             else:
                 nuevaEntrada += númeroFormateado + caracter
                 númeroActual = ""
-        #Este añade el último número si ha quedado algo
-        if númeroActual:
-            númeroFormateado = formatearNúmero(númeroActual.strip())
-            if númeroFormateado == "Error":
-                return
-            nuevaEntrada += númeroFormateado
-        PantallaParaEscribirNúmeros.delete(0, tk.END)
-        PantallaParaEscribirNúmeros.insert(0, númeroActual)
+    #Este añade el último número si ha quedado algo
+    if númeroActual:
+        númeroFormateado = formatearNúmero(númeroActual.strip())
+        if númeroFormateado == "Error":
+            return
+        nuevaEntrada += númeroFormateado
+    PantallaParaEscribirNúmeros.delete(0, tk.END)
+    PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
+    
+  
+def insertarMil():
+    PantallaParaEscribirNúmeros.insert(tk.END, "000")
+    formatearEntrada()  # Se ejecuta el formateo completo
 
 #Crearé una función que llame a las funciones aritméticas según los signos
 #para el botón de Calcular
@@ -494,15 +500,10 @@ def sacarPorcentaje():
 
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
+    resultadoFormateado = formatearNúmeroResultado(res)
     PantallaParaResultadoEjercicio.config(state="normal")
     PantallaParaResultadoEjercicio.delete(0, tk.END)
-    
-    if isinstance(res, (int, float)):
-        resultadoFormateado = f"{res:,.0f}".replace(",", ".")
-        PantallaParaResultadoEjercicio.insert(0, resultadoFormateado)
-    else:
-        PantallaParaResultadoEjercicio.insert(0, str(res))
-    
+    PantallaParaResultadoEjercicio.insert(tk.END, resultadoFormateado)
     PantallaParaResultadoEjercicio.config(state="readonly")
 
 #Esta función borra de a 1 número. No borra completamente al presionarlo
