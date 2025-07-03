@@ -252,15 +252,17 @@ def formatearEntrada(*args):
     if not entrada or entrada[-1] == ",":
         return
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signo = ["+", "-", "*", "×", "÷", "/"]
+    signo = ["+", "-", "*", "×", "÷", "/", "(",")","%"]
     nuevaEntrada = ""
     númeroActual = ""
     #Itero para controlar que el punto tenga que ir en su lugar
     #correspondiente
-    for caracter in entradaProcesada:
-        caracterNoEstáEnSigno = caracter not in signo
-        if caracterNoEstáEnSigno:
+    for i, caracter in enumerate(entradaProcesada):
+        caracterEstáEnSigno = caracter  in signo
+        if caracterEstáEnSigno:
             númeroActual += caracter
+        elif caracter == "%":
+            nuevaEntrada += "%"
         else:
             #Este formatea primero el número antes del signo de operación
             númeroFormateado = formatearNúmero(númeroActual.strip())
@@ -293,6 +295,7 @@ def Calcular():
     def calcularExpresiónCompleta():
         try:
             expresión = entrada.replace(".", "").replace(",", ".").replace("×", "*").replace("÷", "/")
+            expresión = expresión.replace("%", "/100") #esta expresión reemplaza el porcentaje por la centésima parte para que haga el cálculo sin tirar la excepción
             resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
