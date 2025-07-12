@@ -27,9 +27,10 @@ color = {
 #defino la función con valor de devolución o de retorno llamada calculadora()
 #que va todos los botones necesarios para los cálculos necesarios
 def pantallaCalculadora(ventanaPrincipal):
-    global anchura, altura, PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
-    anchura = min(360, 550)
-    altura = 100
+    global PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
+
+    for i in range(8):
+        ventanaPrincipal.columnconfigure(i, weight=0)
 
     PantallaParaEscribirNúmeros = Entry(ventanaPrincipal, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
     PantallaParaEscribirNúmeros.config(state="normal")
@@ -129,9 +130,8 @@ def calculadora():
     global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
     ventanaPrincipal.title("Calculadora sencilla")
-    ventanaPrincipal.geometry("400x700")
+    ventanaPrincipal.geometry("400x800")
     ventanaPrincipal.config(bg="white")
-    ventanaPrincipal.resizable(False, False)  # Esto desactiva el cambio de tamaño en ambas direcciones
 
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
@@ -194,42 +194,6 @@ def formatearNúmeroResultado(valor):
             return f"{parteEntera},{parteDecimal}"
     except:
         return str(valor)
-    # # Uso el argumento en vez de obtener directamente el valor de la pantalla
-    # número = str(númeroComoTexto)
-    
-    # #Manejo excepción con un try except
-    # try:
-    #     valor = float(número)
-    # except ValueError:
-    #     return
-
-    # # Convertir de nuevo a string conservando la parte decimal si existe
-    # if valor.is_integer():
-    #     valorFormateado = str(int(valor)) 
-    # else: 
-    #     valorFormateado = f"{valor:.10f}".rstrip("0").rstrip(".")
-
-    # parteEntera, _, parteDecimal  = valorFormateado.partition(".")
-
-    # parteEnteraFormateada = ""
-    # for índice, carácter in enumerate(reversed(parteEntera)):
-    #     esSeparadorDeMil = índice != 0 and índice % 3 == 0
-    #     if esSeparadorDeMil:
-    #         parteEnteraFormateada = "." + parteEnteraFormateada
-    #     parteEnteraFormateada = carácter + parteEnteraFormateada
-
-    # if parteDecimal:
-    #     resultado = f"{parteEnteraFormateada},{parteDecimal}"
-    # else:
-    #     resultado = parteEnteraFormateada
-
-    # # Actualizo la pantalla de resultado
-    # PantallaParaResultadoEjercicio.config(state="normal")
-    # PantallaParaResultadoEjercicio.delete(0, tk.END)
-    # PantallaParaResultadoEjercicio.insert(0, resultado)
-    # PantallaParaResultadoEjercicio.config(state="readonly")
-
-    # return str(resultado)
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
@@ -251,32 +215,48 @@ def formatearEntrada(*args):
     entrada = PantallaParaEscribirNúmeros.get()
     if not entrada or entrada[-1] == ",":
         return
+    
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signo = ["+", "-", "*", "×", "÷", "/", "(",")","%"]
+    signos = ["+", "-", "*", "/", "%", "ⁿ√", "^", "(", ")"]
     nuevaEntrada = ""
     númeroActual = ""
-    #Itero para controlar que el punto tenga que ir en su lugar
-    #correspondiente
-    for i, caracter in enumerate(entradaProcesada):
-        caracterEstáEnSigno = caracter  in signo
-        if caracterEstáEnSigno:
-            númeroActual += caracter
-        elif caracter == "%":
-            nuevaEntrada += "%"
-        else:
-            #Este formatea primero el número antes del signo de operación
-            númeroFormateado = formatearNúmero(númeroActual.strip())
-            if númeroFormateado == "Error":
-                return
-            else:
-                nuevaEntrada += númeroFormateado + caracter
+    i = 0
+
+    while i < len(entradaProcesada):
+        # Detectar raíz enésima
+        if entradaProcesada[i:i+2] == "ⁿ√":
+            if númeroActual.strip():
+                númeroFormateado = formatearNúmero(númeroActual.strip())
+                if númeroFormateado == "Error":
+                    return
+                nuevaEntrada += númeroFormateado
                 númeroActual = ""
-    #Este añade el último número si ha quedado algo
-    if númeroActual:
+            nuevaEntrada += "ⁿ√"
+            i += 2
+            continue
+        
+        caracter = entradaProcesada[i]
+
+        if caracter in signos:
+            if númeroActual.strip():
+                númeroFormateado = formatearNúmero(númeroActual.strip())
+                if númeroFormateado == "Error":
+                    return
+                nuevaEntrada += númeroFormateado
+                númeroActual = ""
+            nuevaEntrada += caracter
+        else:
+            númeroActual += caracter
+        i += 1
+
+    # Añadir el último número si quedó algo
+    if númeroActual.strip():
         númeroFormateado = formatearNúmero(númeroActual.strip())
         if númeroFormateado == "Error":
             return
         nuevaEntrada += númeroFormateado
+
+    # Mostrar en pantalla
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
     
@@ -294,8 +274,10 @@ def Calcular():
     #una operación combinada
     def calcularExpresiónCompleta():
         try:
-            expresión = entrada.replace(".", "").replace(",", ".").replace("×", "*").replace("÷", "/")
-            expresión = expresión.replace("%", "/100") #esta expresión reemplaza el porcentaje por la centésima parte para que haga el cálculo sin tirar la excepción
+            expresión = entrada.replace(".", "")
+            expresión = expresión.replace(",", ".")  # convertir coma a punto decimal
+            expresión = expresión.replace("×", "*").replace("÷", "/")
+            expresión = expresión.replace("%", "/100")  # manejar porcentaje
             resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
@@ -440,9 +422,9 @@ def dividir():
             
         mostrarResultado(resultado)
         
-        son_dos_enteros = len(números) == 2 and all(n.is_integer() for n in números)
+        son_dos_o_más_enteros = len(números) >= 2 and all(n.is_integer() for n in números)
         # Mostrar el módulo (resto) de la división cuando sea posible y son 2 números enteros
-        if son_dos_enteros:
+        if son_dos_o_más_enteros:
             resultado_módulo = int(números[0]) % int(números[1])
             PantallaRestoDivisión.config(state="normal")
             PantallaRestoDivisión.delete(0, tk.END)
@@ -493,12 +475,12 @@ def sacarNRaíz():
             return
 
         try:
-            númeroA = float(parte[1].strip())
-            númeroB = float(parte[0].strip())
+            númeroA = float(parte[1].strip().replace(".", "").replace(",", "."))
+            númeroB = float(parte[0].strip().replace(".", "").replace(",", "."))
             if númeroB == 0 or númeroA == 0:
                 mensajeDeTexto.showerror("ERROR", "El índice de la raíz no puede ser cero ni tampoco el radicando")
                 return
-            resultado = int(númeroA ** (1/númeroB))
+            resultado = (númeroA ** (1/númeroB))
             mostrarResultado(resultado)
         except ValueError as errorDeValidación:
             mensajeDeTexto.showinfo("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
