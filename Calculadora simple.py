@@ -46,6 +46,9 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
+    PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
+    PantallaParaEscribirNúmeros.bind("<BackSpace>", lambda e: borrarÚltimo())
+    PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
 
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
@@ -282,9 +285,7 @@ def formatearEntrada(*args):
 #para el botón de Calcular
 def Calcular():
     entrada = PantallaParaEscribirNúmeros.get()
-
-    #Esta función calcula la expresión completa como
-    #una operación combinada
+    #Esta función calcula la expresión completa como una operación combinada
     def calcularExpresiónCompleta():
         try:
             expresión = entrada.replace(".", "")
@@ -341,15 +342,16 @@ def sumar():
         #creo un try-except para manejar mejor las excepciones o errores de validación
     try:
         #este resultado ya hace suma dinámica con n cantidad de números
-        partes = sum(float(p.strip().replace(".", "").replace(",", ".")) 
-                        for p in parte if p.strip() != ""
-                    )
+        partes = [float(p.strip().replace(".", "").replace(",", ".")) 
+                        for p in parte if p.strip() != ""]
+       
         #Creo una condición para que me obligue a poner mínimo 2 números para hacer la operación.
         falta_de_operandos = len(partes) < 2
         if falta_de_operandos:
             mensajeDeTexto.showerror("Error", "Faltan operandos para sumar.")
             return
-        mostrarResultado(partes)
+        resultado = sum(partes)
+        mostrarResultado(resultado)
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
@@ -433,7 +435,7 @@ def dividir():
             if divisiónEntre0:
                 PantallaParaResultadoEjercicio.config(state="normal")
                 PantallaParaResultadoEjercicio.delete(0, tk.END)
-                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
+                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡", )
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
             resultado //= n
