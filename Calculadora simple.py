@@ -8,19 +8,25 @@ Y BOTONES DE LA CALCULADORA PERSONALIZADA.
 
 # Diccionario de colores
 color = {
-"celeste_claro": "#BDE3FF",
+"celeste_claro": "#B4E0FF",
 "rojo_claro": "#FFCBCB",
-"celeste_oscuro": "#003367",
-"beige": "#98985D",
+"celeste_oscuro": "#003E67",
+"beige": "#A8A862",
 "blanco": "#FFFFFF",
 "negro": "#000000",
 "gris": "#AAAAAA",
 "rojo_oscuro": "#B10000",
+"rojo_resaltado": "#B66666",
 "amarillo_oscuro": "#BBB800",
+"amarillo_resaltado": "#BEBD61",
 "verde_oscuro": "#009D00",
+"verde_resaltado":"#67B167",
 "azul_oscuro": "#000AC0",
+"azul_claro": "#000AC0",
 "naranja_oscuro": "#CA7600",
-"violeta_oscuro": "#7F00CE"
+"naranja_resaltado": "#C79653",
+"violeta_oscuro": "#7F00CE",
+"violeta_claro": "#A36BC5"
 }
 
 # -*- coding: utf-8 -*-
@@ -130,7 +136,7 @@ def calculadora():
     global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
     ventanaPrincipal.title("Calculadora sencilla")
-    ventanaPrincipal.geometry("400x800")
+    ventanaPrincipal.geometry("350x800")
     ventanaPrincipal.config(bg="white")
 
     pantallaCalculadora(ventanaPrincipal)
@@ -217,11 +223,13 @@ def formatearEntrada(*args):
         return
     
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signos = ["+", "-", "*", "/", "%", "ⁿ√", "^", "(", ")"]
+    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
-
+    
+    #Se cambió de for a while, porque este bucle tiene más control. En cambio for solo recorre de a un carácter a la vez, sin saber qué viene después.
+    #El while lo que tiene es que a pesar de que hay que crear un índice te deja manejar personalizadamente sin ser de un carácter a la vez.
     while i < len(entradaProcesada):
         # Detectar raíz enésima
         if entradaProcesada[i:i+2] == "ⁿ√":
@@ -236,7 +244,8 @@ def formatearEntrada(*args):
             continue
         
         caracter = entradaProcesada[i]
-
+        
+        #Controlo que el caracter esté en signo para formatear mejor y controlado.
         if caracter in signos:
             if númeroActual.strip():
                 númeroFormateado = formatearNúmero(númeroActual.strip())
@@ -244,9 +253,13 @@ def formatearEntrada(*args):
                     return
                 nuevaEntrada += númeroFormateado
                 númeroActual = ""
-            nuevaEntrada += caracter
+            
+            if not nuevaEntrada or nuevaEntrada[-1] not in signos:
+                nuevaEntrada += caracter
         else:
             númeroActual += caracter
+
+
         i += 1
 
     # Añadir el último número si quedó algo
@@ -328,10 +341,15 @@ def sumar():
         #creo un try-except para manejar mejor las excepciones o errores de validación
     try:
         #este resultado ya hace suma dinámica con n cantidad de números
-        resultado = sum(float(p.strip().replace(".", "").replace(",", ".")) 
+        partes = sum(float(p.strip().replace(".", "").replace(",", ".")) 
                         for p in parte if p.strip() != ""
-                        )
-        mostrarResultado(resultado)
+                    )
+        #Creo una condición para que me obligue a poner mínimo 2 números para hacer la operación.
+        falta_de_operandos = len(partes) < 2
+        if falta_de_operandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para sumar.")
+            return
+        mostrarResultado(partes)
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
@@ -537,8 +555,6 @@ def borrarTODO():
     PantallaRestoDivisión.delete(0, tk.END)
     PantallaRestoDivisión.config(state="readonly")
     PantallaParaEscribirNúmeros.focus_set()
-
-#Defino una variable para disparar la interfaz gráfica de calculadora
 
 calculadora_principal = calculadora()
 
