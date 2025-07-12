@@ -226,7 +226,7 @@ def formatearEntrada(*args):
         return
     
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√"]
+    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√", "(", ")"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
@@ -257,11 +257,19 @@ def formatearEntrada(*args):
                 nuevaEntrada += númeroFormateado
                 númeroActual = ""
             
-            if not nuevaEntrada or nuevaEntrada[-1] not in signos:
+            if caracter in "()":
+                
+                multiplicaciónImplícita = nuevaEntrada and (nuevaEntrada[-1].isdigit or nuevaEntrada[-1] == ")") and caracter  == "("
+                
+                if multiplicaciónImplícita:
+                    nuevaEntrada += "*"
+                
+                nuevaEntrada += caracter
+                
+            elif not nuevaEntrada or nuevaEntrada[-1] not in signos or nuevaEntrada[-1] in "()":
                 nuevaEntrada += caracter
         else:
             númeroActual += caracter
-
 
         i += 1
 
