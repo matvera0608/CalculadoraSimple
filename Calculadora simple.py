@@ -257,12 +257,15 @@ def formatearEntrada(*args):
                 nuevaEntrada += númeroFormateado
                 númeroActual = ""
             
-            if caracter in "()":
+            bloqueoParéntesisDobles = caracter == "(" and nuevaEntrada and nuevaEntrada[-1] == "("
+            
+            if bloqueoParéntesisDobles:
+                i += 1
+                continue
+            multiplicaciónImplícita = nuevaEntrada and (nuevaEntrada[-1].isdigit or nuevaEntrada[-1] == ")" or not nuevaEntrada in signos) and caracter  == "("
                 
-                multiplicaciónImplícita = nuevaEntrada and (nuevaEntrada[-1].isdigit or nuevaEntrada[-1] == ")") and caracter  == "("
-                
-                if multiplicaciónImplícita:
-                    nuevaEntrada += "*"
+            if multiplicaciónImplícita:
+                nuevaEntrada += "*"
                 
                 nuevaEntrada += caracter
                 
