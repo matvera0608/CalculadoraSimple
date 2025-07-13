@@ -47,7 +47,6 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.focus_set()
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
-    PantallaParaEscribirNúmeros.bind("<BackSpace>", lambda e: borrarÚltimo())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
 
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
@@ -57,8 +56,10 @@ def pantallaCalculadora(ventanaPrincipal):
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
     PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaRestoDivisión.grid(row=10, column=2, columnspan=2, padx=5, sticky="nsew")
-    módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=color["blanco"], fg=color["negro"])
-    módulo.grid(row=10, column=0, columnspan=2,padx=5, sticky="w")
+    # En Tkinter, no se puede hacer un fondo completamente transparente en widgets estándar.
+    # Pero puedes simularlo usando el color del fondo de la ventana principal.
+    módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=ventanaPrincipal["bg"], fg=color["negro"])
+    módulo.grid(row=10, column=0, columnspan=3,padx=5, sticky="w")
     
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -70,7 +71,7 @@ def Botón(ventanaPrincipal):
     botones = [
     ("00", 1, 0, 1, 2), ("000", 1, 2, 1, 2),
     ("%", 2, 0, 1, 1), ("ⁿ√", 2, 1, 1, 1), ("^", 2, 2, 1, 1), ("÷", 2, 3, 1, 1),
-    ("7", 3, 0, 1, 1), ("8", 3, 1, 1, 1), ("9", 3, 2, 1, 1), ("*", 3, 3, 1, 1),
+    ("7", 3, 0, 1, 1), ("8", 3, 1, 1, 1), ("9", 3, 2, 1, 1), ("×", 3, 3, 1, 1),
     ("4", 4, 0, 1, 1), ("5", 4, 1, 1, 1), ("6", 4, 2, 1, 1), ("-", 4, 3, 1, 1),
     ("1", 5, 0, 1, 1), ("2", 5, 1, 1, 1), ("3", 5, 2, 1, 1), ("+", 5, 3, 2, 1),
     ("0", 6, 0, 1, 2), (",", 6, 2, 1, 1)
@@ -86,7 +87,7 @@ def Botón(ventanaPrincipal):
         elif texto in ("-"):
             btn_fondo = color["amarillo_oscuro"]
             btn_letra = color["blanco"]
-        elif texto in ("*"):
+        elif texto in ("×"):
             btn_fondo = color["azul_oscuro"]
             btn_letra = color["blanco"]
         elif texto in ("÷"):
@@ -114,15 +115,14 @@ def Botón(ventanaPrincipal):
         bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
 
-    BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
-    BotónCalcular.grid(row=7, column=2, padx=1, pady=1, sticky="nsew")
+    # BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
+    # BotónCalcular.grid(row=7, column=0, padx=1, pady=1, sticky="nsew")
     
+    # BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
+    # BotónBorrar.grid(row=7, column=1, padx=1, pady=1, sticky="nsew")
 
-    BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
-    BotónBorrar.grid(row=7, column=3, padx=1, pady=1, sticky="nsew")
-
-    BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
-    BotónBorrarTODO.grid(row=8, column=3, padx=1, pady=0, sticky="nsew")
+    # BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
+    # BotónBorrarTODO.grid(row=7, column=2, padx=1, pady=1, sticky="nsew")
 
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
@@ -132,7 +132,7 @@ def Botón(ventanaPrincipal):
         ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
         
     ventanaPrincipal.grid_columnconfigure(3, minsize=100)
-    BotónBorrarTODO.config(wraplength=60)
+    # BotónBorrarTODO.config(wraplength=60)
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():
@@ -256,24 +256,25 @@ def formatearEntrada(*args):
                     return
                 nuevaEntrada += númeroFormateado
                 númeroActual = ""
-            
-            bloqueoParéntesisDobles = caracter == "(" and nuevaEntrada and nuevaEntrada[-1] == "("
-            
-            if bloqueoParéntesisDobles:
-                i += 1
-                continue
-            multiplicaciónImplícita = nuevaEntrada and (nuevaEntrada[-1].isdigit or nuevaEntrada[-1] == ")" or not nuevaEntrada in signos) and caracter  == "("
+            es_paréntesis = caracter == "("
+            if es_paréntesis and nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
+                último_número = nuevaEntrada[-1]
                 
-            if multiplicaciónImplícita:
-                nuevaEntrada += "*"
+                if último_número.isdigit():
+                    nuevaEntrada += "*("
                 
-                nuevaEntrada += caracter
+                elif último_número == "(" and len(nuevaEntrada) > 1 and nuevaEntrada[-2].isdigit():
+                    nuevaEntrada += "*("
                 
-            elif not nuevaEntrada or nuevaEntrada[-1] not in signos or nuevaEntrada[-1] in "()":
+                elif último_número != "(":
+                    nuevaEntrada += "("
+                else:
+                    i += 1
+                    continue
+            else:
                 nuevaEntrada += caracter
         else:
-            númeroActual += caracter
-
+            nuevaEntrada += caracter
         i += 1
 
     # Añadir el último número si quedó algo
@@ -287,13 +288,7 @@ def formatearEntrada(*args):
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
     
-  
-# def insertarMil():
-#     PantallaParaEscribirNúmeros.insert(tk.END, "000")
-#     formatearEntrada()  # Se ejecuta el formateo completo
-
-#Crearé una función que llame a las funciones aritméticas según los signos
-#para el botón de Calcular
+#Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
 def Calcular():
     entrada = PantallaParaEscribirNúmeros.get()
     #Esta función calcula la expresión completa como una operación combinada
