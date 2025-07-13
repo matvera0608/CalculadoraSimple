@@ -199,7 +199,7 @@ def formatearNúmeroResultado(valor):
             return f"{int(valor):,}".replace(",", ".")
         else:
             parteEntera, parteDecimal = str(valor).split(".")
-            parteEntera = f"{int(parteEntera):,}".replace(",", ".")
+            parteEntera, parteDecimal = f"{valor:.10f}".rstrip("0").rstrip(".").split(".")
             return f"{parteEntera},{parteDecimal}"
     except:
         return str(valor)
@@ -296,7 +296,7 @@ def formatearEntrada(*args):
                     númeroActual = ""
                 nuevaEntrada += caracter
         else:
-            nuevaEntrada += caracter
+            númeroActual += caracter
         i += 1
 
     # Añadir el último número si quedó algo
