@@ -138,7 +138,7 @@ def Botón(ventanaPrincipal):
 def calculadora():
     global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
-    ventanaPrincipal.title("Calculadora sencilla")
+    ventanaPrincipal.title("RamiroCalc")
     ventanaPrincipal.geometry("350x800")
     ventanaPrincipal.config(bg="white")
 
@@ -250,38 +250,51 @@ def formatearEntrada(*args):
         
         #Controlo que el caracter esté en signo para formatear mejor y controlado.
         if caracter in signos:
-            if númeroActual.strip():
-                númeroFormateado = formatearNúmero(númeroActual.strip())
-                if númeroFormateado == "Error":
-                    return
-                nuevaEntrada += númeroFormateado
-                númeroActual = ""
-            es_paréntesis_apertura = caracter == "("
+            es_paréntesis_apertura = caracter == "(" #Así quedó, me costó un montón identar. Existe en vscode una manera de identar sin tener que ser manualmente?
             es_paréntesis_cierre = caracter == ")"
-            if es_paréntesis_apertura and nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
-                último_número = nuevaEntrada[-1]
+            if es_paréntesis_apertura:
+                if númeroActual.strip():
+                    númeroFormateado = formatearNúmero(númeroActual.strip())
+                    if númeroFormateado == "Error":
+                        return
+                    nuevaEntrada += númeroFormateado
+                    númeroActual = ""
+                if nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
+                    último_número = nuevaEntrada[-1]
                 
-                if último_número.isdigit():
-                    nuevaEntrada += "*("
+                    if último_número.isdigit():
+                        nuevaEntrada += "*("
                 
-                elif último_número == "(" and len(nuevaEntrada) > 1 and nuevaEntrada[-2].isdigit():
-                    nuevaEntrada += "*("
+                    elif último_número == "(" and len(nuevaEntrada) > 1 and nuevaEntrada[-2].isdigit():
+                        nuevaEntrada += "*("
                 
-                elif último_número != "(":
+                    elif último_número != "(":
+                        nuevaEntrada += "("
+                    else:
+                        i += 1
+                        continue
+                else:
                     nuevaEntrada += "("
+            ##Este es otro bloque para el paréntesis de cierre. No sé si está bien así bien identado?.
+            ##Estoy enfrentando un problema, cuando escribo un número con unidad de mil me limpió el punto.
+            elif es_paréntesis_cierre:
+                if not nuevaEntrada or nuevaEntrada[-1] in signos:
+                    i += 1
+                    continue
+                
+                if nuevaEntrada.count("(") > nuevaEntrada.count(")"):
+                    nuevaEntrada += ")"
                 else:
                     i += 1
                     continue
             else:
+                if númeroActual.strip():
+                    númeroFormateado = formatearNúmero(númeroActual.strip())
+                    if númeroFormateado == "Error":
+                        return
+                    nuevaEntrada += númeroFormateado
+                    númeroActual = ""
                 nuevaEntrada += caracter
-            ##Este es otro bloque para el paréntesis de cierre. No sé si está bien así bien identado?.
-            ##Estoy enfrentando un problema, cuando escribo un número con unidad de mil me limpió el punto.
-            if es_paréntesis_cierre:
-                if not nuevaEntrada or nuevaEntrada[-1] in signos:
-                # No permitas cerrar si no hay nada antes o si antes hay otro signo
-                    i += 1
-                    continue
-                nuevaEntrada += ")"
         else:
             nuevaEntrada += caracter
         i += 1
