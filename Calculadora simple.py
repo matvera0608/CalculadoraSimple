@@ -256,8 +256,9 @@ def formatearEntrada(*args):
                     return
                 nuevaEntrada += númeroFormateado
                 númeroActual = ""
-            es_paréntesis = caracter == "("
-            if es_paréntesis and nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
+            es_paréntesis_apertura = caracter == "("
+            es_paréntesis_cierre = caracter == ")"
+            if es_paréntesis_apertura and nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
                 último_número = nuevaEntrada[-1]
                 
                 if último_número.isdigit():
@@ -273,6 +274,14 @@ def formatearEntrada(*args):
                     continue
             else:
                 nuevaEntrada += caracter
+            ##Este es otro bloque para el paréntesis de cierre. No sé si está bien así bien identado?.
+            ##Estoy enfrentando un problema, cuando escribo un número con unidad de mil me limpió el punto.
+            if es_paréntesis_cierre:
+                if not nuevaEntrada or nuevaEntrada[-1] in signos:
+                # No permitas cerrar si no hay nada antes o si antes hay otro signo
+                    i += 1
+                    continue
+                nuevaEntrada += ")"
         else:
             nuevaEntrada += caracter
         i += 1
@@ -532,7 +541,6 @@ def sacarPorcentaje():
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"Algo no está bien: {errorDeValidación}")
     
-
 #En esta función sólo muestro el resultado según la operación matemática donde se llame
 def mostrarResultado(res):
     resultadoFormateado = formatearNúmeroResultado(res)
@@ -565,5 +573,4 @@ def borrarTODO():
     PantallaParaEscribirNúmeros.focus_set()
 
 calculadora_principal = calculadora()
-
 calculadora_principal.mainloop()
