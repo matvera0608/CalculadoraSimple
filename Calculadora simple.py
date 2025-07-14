@@ -11,9 +11,11 @@ color = {
 "celeste_claro": "#B4E0FF",
 "rojo_claro": "#FFCBCB",
 "celeste_oscuro": "#003E67",
-"beige": "#A8A862",
+"beige": "#A5A55F",
+"beige_resaltado": "#B7B78A",
 "blanco": "#FFFFFF",
 "negro": "#000000",
+"negro_resaltado": "#242424",
 "gris": "#AAAAAA",
 "rojo_oscuro": "#B10000",
 "rojo_resaltado": "#B66666",
@@ -22,11 +24,11 @@ color = {
 "verde_oscuro": "#009D00",
 "verde_resaltado":"#67B167",
 "azul_oscuro": "#000AC0",
-"azul_claro": "#000AC0",
+"azul_resaltado": "#4F54B9",
 "naranja_oscuro": "#CA7600",
 "naranja_resaltado": "#C79653",
 "violeta_oscuro": "#7F00CE",
-"violeta_claro": "#A36BC5"
+"violeta_resaltado": "#A36BC5"
 }
 
 # -*- coding: utf-8 -*-
@@ -85,28 +87,36 @@ def Botón(ventanaPrincipal):
         # Asigno colores diferentes para operadores y para números.
         if texto in ("+"):
             btn_fondo = color["rojo_oscuro"]
+            btn_fondoResaltado = color["rojo_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("-"):
             btn_fondo = color["amarillo_oscuro"]
+            btn_fondoResaltado = color["amarillo_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("×"):
             btn_fondo = color["azul_oscuro"]
+            btn_fondoResaltado = color["azul_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("÷"):
             btn_fondo = color["verde_oscuro"]
+            btn_fondoResaltado = color["verde_resaltado"]
             btn_letra = color["blanco"]  
         elif texto in ("^"):
             btn_fondo = color["naranja_oscuro"]
+            btn_fondoResaltado = color["naranja_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("ⁿ√"):
             btn_fondo = color["violeta_oscuro"]
+            btn_fondoResaltado = color["violeta_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("%"):
             btn_fondo = color["negro"]
+            btn_fondoResaltado = color["negro_resaltado"]
             btn_letra = color["blanco"]
         elif texto in ("00", "000", "0", ",", "1", "2", "3", "4", "5", "6", "7", "8", "9"):
             # Para los números, uso un color claro y un texto oscuro.
             btn_fondo = color["beige"]
+            btn_fondoResaltado = color["beige_resaltado"]
             btn_letra = color["negro"]
         else:
             btn_fondo = color["celeste_claro"]
@@ -116,7 +126,11 @@ def Botón(ventanaPrincipal):
         btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", 20, "bold"),
         bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
-
+        btn.config(cursor="hand2")
+        
+        btn.bind("<ButtonPress-1>", resaltar, btn_fondo=btn_fondoResaltado)
+        btn.bind("<ButtonRelease-1>", restaurar, btn_fondo=btn_fondo)
+        
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
     for i in range(9):
@@ -580,10 +594,23 @@ def borrarTODO():
     PantallaRestoDivisión.config(state="readonly")
     PantallaParaEscribirNúmeros.focus_set()
 
-#Esta función actuará como evento
+#Este espacio es para eventos como escribir ceros, resaltar botones, etc.
+#Esta función escribe ceros en la pantalla de números, formateando la entrada
 def escribirCeros(núm):
     PantallaParaEscribirNúmeros.insert(tk.END, núm)
     formatearEntrada()
+
+# Esta función resalta el botón al hacer clic y cambia su color de fondo
+# y lo restaura al color original al soltar el clic.
+def resaltar(btn, color):
+    btn.config(bg=color)
+    return lambda e: resaltar(btn, color)
+    
+# Esta función restaura el color de fondo del botón al color original
+# después de que se suelta el clic.
+def restaurar(btn, color):
+    btn.config(bg=color)
+    return lambda e: restaurar(btn, color)
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()

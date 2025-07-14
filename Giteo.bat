@@ -14,7 +14,7 @@ SET "msg5=EN PROCESO DE REFACTORIZACIÓN DE CÓDIGO."
 SET "msg6=DOCUMENTACIÓN ACTUALIZADA."
 SET "msg7=EN MEJORA CONTINUA, PERO YA PARECE UNA APP DE CALCULADORA."
 SET "msg8=YA ES APTO PARA JUGAR UN POCO CON LA CALCULADORA."
-SET "msg9=NO ES NECESARIO DEPENDER 100'%' DEL MOUSE."
+SET "msg9=NO ES NECESARIO DEPENDER 100%% DEL MOUSE."
 
 :: --- SELECCION DE MENSAJE DE COMMIT ---
 echo.
@@ -32,7 +32,7 @@ echo 10. Ingresar un mensaje personalizado
 echo.
 
 :SELECT_COMMIT_MSG
-SET /P "opcion=Ingresa el número del mensaje o '10' para uno personalizado: "
+SET /P "opcion=Ingresa el número del mensaje o '10' para uno personalizado u otros números deseados: "
 
 :: Usamos IF/ELSE IF para manejar las opciones numéricas y el salto a personalizado
 IF "%opcion%"=="1" (
@@ -63,7 +63,7 @@ IF "%opcion%"=="1" (
 GOTO CONTINUE_GIT_OPERATIONS
 
 :CUSTOM_MESSAGE
-SET /P "COMMIT_MESSAGE=Ingresa tu mensaje de commit personalizado: "
+SET /P "COMMIT_MESSAGE=Commitea tu mensaje: "
 IF "%COMMIT_MESSAGE%"=="" (
     echo El mensaje personalizado no puede estar vacío. Volviendo al menú...
     GOTO SELECT_COMMIT_MSG
@@ -79,5 +79,3 @@ git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
 git push -u origin main
-
-pause
