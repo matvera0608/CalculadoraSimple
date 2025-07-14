@@ -124,12 +124,14 @@ def Botón(ventanaPrincipal):
             
         # La variable btn corresponde al botón
         btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", 20, "bold"),
-        bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
+        bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value),formatearEntrada()],relief="flat",highlightthickness=0, activebackground=btn_fondoResaltado, activeforeground=btn_letra)
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
         btn.config(cursor="hand2")
         
-        btn.bind("<ButtonPress-1>", resaltar, btn_fondo=btn_fondoResaltado)
-        btn.bind("<ButtonRelease-1>", restaurar, btn_fondo=btn_fondo)
+        resaltar, restaurar = clickearBotón(btn, btn_fondoResaltado, btn_fondo, btn_letra)
+        # Aquí se aplica la función clickearBotón para resaltar y restaurar el color del botón al hacer clic.
+        btn.bind("<Button-1>", resaltar)
+        btn.bind("<ButtonRelease-1>", restaurar)
         
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
@@ -139,6 +141,7 @@ def Botón(ventanaPrincipal):
         ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
         
     ventanaPrincipal.grid_columnconfigure(3, minsize=100)
+
     # BotónBorrarTODO.config(wraplength=60)
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
@@ -600,17 +603,14 @@ def escribirCeros(núm):
     PantallaParaEscribirNúmeros.insert(tk.END, núm)
     formatearEntrada()
 
-# Esta función resalta el botón al hacer clic y cambia su color de fondo
-# y lo restaura al color original al soltar el clic.
-def resaltar(btn, color):
-    btn.config(bg=color)
-    return lambda e: resaltar(btn, color)
-    
-# Esta función restaura el color de fondo del botón al color original
-# después de que se suelta el clic.
-def restaurar(btn, color):
-    btn.config(bg=color)
-    return lambda e: restaurar(btn, color)
+# Esta función resalta el botón al hacer clic y lo restaura al soltarlo usando bind para que se resalte y restaure el color del botón a nivel interno y visual.
+# En comparación con el anterior, 
+def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
+    def resaltar(event):
+        btn.config(bg=colorResaltado, fg=letraOriginal)
+    def restaurar(event):
+        btn.config(bg=colorOrginal, fg=letraOriginal)
+    return resaltar, restaurar
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()
