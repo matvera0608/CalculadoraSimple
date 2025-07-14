@@ -45,9 +45,12 @@ def pantallaCalculadora(ventanaPrincipal):
     ventanaPrincipal.columnconfigure(1, weight=2)
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
+    #Sección de eventos
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
+    PantallaParaEscribirNúmeros.bind("<Alt-Key-0>", lambda e: escribirCeros("00"))
+    PantallaParaEscribirNúmeros.bind("<Control-Key-0>", lambda e: escribirCeros("000"))
 
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
@@ -66,8 +69,7 @@ def pantallaCalculadora(ventanaPrincipal):
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
 def Botón(ventanaPrincipal):
     
-    #Acá creo una lista con todos los botones correspondientes
-    #de la calculadora
+    #Acá creo una lista con todos los botones correspondientes de la calculadora
     botones = [
     ("00", 1, 0, 1, 2), ("000", 1, 2, 1, 2),
     ("%", 2, 0, 1, 1), ("ⁿ√", 2, 1, 1, 1), ("^", 2, 2, 1, 1), ("÷", 2, 3, 1, 1),
@@ -111,18 +113,9 @@ def Botón(ventanaPrincipal):
             btn_letra = color["celeste_oscuro"]
             
         # La variable btn corresponde al botón
-        btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", int(30/2), "bold"),
+        btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", 20, "bold"),
         bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
         btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
-
-    # BotónCalcular = Button(ventanaPrincipal, text="Calcular", font=("Century", 10), bg=color["celeste_claro"], fg=color["negro"], bd=1, justify="right", command=Calcular)
-    # BotónCalcular.grid(row=7, column=0, padx=1, pady=1, sticky="nsew")
-    
-    # BotónBorrar = Button(ventanaPrincipal, text="Borrar", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="right", command=borrarÚltimo)
-    # BotónBorrar.grid(row=7, column=1, padx=1, pady=1, sticky="nsew")
-
-    # BotónBorrarTODO = Button(ventanaPrincipal, text="Borrar\ntodo", font=("Century", 10), bg=color["rojo_claro"], fg=color["negro"], bd=1, justify="center", command=borrarTODO)
-    # BotónBorrarTODO.grid(row=7, column=2, padx=1, pady=1, sticky="nsew")
 
     #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
     #posible para que la calculadora se vea bien
@@ -226,7 +219,7 @@ def formatearEntrada(*args):
         return
     
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√", "(", ")"]
+    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
@@ -310,6 +303,8 @@ def formatearEntrada(*args):
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
     
+# --- EVENTOS PARA USAR TECLADO ---
+
 #Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
 def Calcular():
     entrada = PantallaParaEscribirNúmeros.get()
@@ -584,6 +579,11 @@ def borrarTODO():
     PantallaRestoDivisión.delete(0, tk.END)
     PantallaRestoDivisión.config(state="readonly")
     PantallaParaEscribirNúmeros.focus_set()
+
+#Esta función actuará como evento
+def escribirCeros(núm):
+    PantallaParaEscribirNúmeros.insert(tk.END, núm)
+    formatearEntrada()
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()
