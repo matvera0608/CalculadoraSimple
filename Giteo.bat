@@ -78,7 +78,35 @@ git init
 git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
+git pull origin main
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: Hubo un problema al pulear cambios con git pull.
+    echo Por favor, revisa manualmente los conflictos si los hay,
+    echo y ejecuta el script de nuevo.
+    echo.
+    pause
+    GOTO END_SCRIPT
+)
+
+
+echo Intentando subir cambios a GitHub...
+
 rem git remote add origin https://github.com/matvera0608/CalculadoraSimple
 git push -u origin main
+
+IF %ERRORLEVEL% NEQ 0 (
+    echo.
+    echo ERROR: Falló al pushear los cambios.
+    echo Por favor, revisa el mensaje de error de Git.
+    echo.
+    pause
+    GOTO END_SCRIPT
+)
+
+echo.
+echo ¡Giteo completado exitosamente!
+:END_SCRIPT
 
 pause
