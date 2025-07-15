@@ -1,5 +1,7 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
+from calc_divisas import calculadora_de_divisas
+
 
 """
 EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
@@ -158,7 +160,8 @@ def calculadora():
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
     
-    ventanaPrincipal.bind("<Control-key-M",)
+    ventanaPrincipal.bind("<Alt-Key-C>", abrir__calculadora__de__divisas)
+    ventanaPrincipal.bind("<Alt-Key-L>", abrir__calculadora__de__divisas)
     
     return ventanaPrincipal
 
@@ -180,7 +183,6 @@ Returns:
 11. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
 12. La función no tiene un valor de retorno explícito, pero devuelve la ventana principal de la calculadora.
 """
-
 """ 
 EN ESTA SECCIÓN DEFINO LAS FUNCIONES QUE REALIZAN LOS CÁLCULOS
 Y MANEJAN LA LÓGICA DE LA CALCULADORA.
@@ -616,6 +618,9 @@ def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
     def restaurar(event):
         btn.config(bg=colorOrginal, fg=letraOriginal)
     return resaltar, restaurar
+
+def abrir__calculadora__de__divisas(event=None):
+    calculadora_de_divisas()
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()
