@@ -78,7 +78,7 @@ git init
 git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
-git remote add origin "https://github.com/matvera0608/CalculadoraSimple"
+rem git remote add origin https://github.com/matvera0608/CalculadoraSimple
 git push -u origin main
 
 pause
