@@ -160,7 +160,7 @@ def calculadora():
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
     
-    ventanaPrincipal.bind("<Alt-L>", abrir__calculadora__de__divisas)
+    ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
     
     return ventanaPrincipal
 
