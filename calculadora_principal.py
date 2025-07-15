@@ -53,14 +53,14 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
-    PantallaParaEscribirNúmeros.bind("<Alt-Key-0>", lambda e: escribirCeros("00"))
-    PantallaParaEscribirNúmeros.bind("<Control-Key-0>", lambda e: escribirCeros("000"))
+    PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
+    PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros("000"))
 
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
     
     #Sección de eventos
-    PantallaParaResultadoEjercicio.bind("<Control-Key-C>", lambda e: mostrarResultado())
+    PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
     
     # Suponiendo que las otras dos Entry usan columnspan=15,
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
@@ -160,8 +160,7 @@ def calculadora():
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
     
-    ventanaPrincipal.bind("<Alt-Key-C>", abrir__calculadora__de__divisas)
-    ventanaPrincipal.bind("<Alt-Key-L>", abrir__calculadora__de__divisas)
+    ventanaPrincipal.bind("<Alt-L>", abrir__calculadora__de__divisas)
     
     return ventanaPrincipal
 
