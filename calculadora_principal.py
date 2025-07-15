@@ -157,7 +157,9 @@ def calculadora():
 
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
-
+    
+    ventanaPrincipal.bind("<Control-key-M",)
+    
     return ventanaPrincipal
 
 
