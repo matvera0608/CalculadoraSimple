@@ -57,6 +57,9 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
     
+    #Sección de eventos
+    PantallaParaResultadoEjercicio.bind("<Control-Key-C>", lambda e: mostrarResultado())
+    
     # Suponiendo que las otras dos Entry usan columnspan=15,
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
     PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
