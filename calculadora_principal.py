@@ -1,6 +1,6 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
-from calc_divisas import calculadora_de_divisas
+# from calc_divisas import calculadora_de_divisas
 
 
 """

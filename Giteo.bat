@@ -78,6 +78,8 @@ git init
 git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
+
+echo esta sección es para dar control al pull
 git pull origin main
 
 IF %ERRORLEVEL% NEQ 0 (
