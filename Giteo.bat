@@ -3,18 +3,20 @@ chcp 65001
 
 echo Giteo.bat
 echo Iniciando subida a GitHub...
+echo ESTA HERRAMIENTA ES COMPATIBLE CON TODOS LOS LENGUAJES DE PROGRAMACIÓN: Pyhton, JavaScript, Java, C# Y ENTRE OTROS.
 
 :: --- CONFIGURACION DE MENSAJES DE COMMIT ---
-:: Define tus mensajes de commit predefinidos aqui
-SET "msg1=SIGO MEJORANDO MI CALCULADORA."
-SET "msg2=ME ENCANTA MI CALCULADORA."
-SET "msg3=ESTE ARCHIVO PARECE UNA CALCULADORA CIENTÍFICA."
-SET "msg4=FUNCIONES IMPLEMENTADAS."
-SET "msg5=EN PROCESO DE REFACTORIZACIÓN DE CÓDIGO."
-SET "msg6=DOCUMENTACIÓN ACTUALIZADA."
-SET "msg7=EN MEJORA CONTINUA, PERO YA PARECE UNA APP DE CALCULADORA."
-SET "msg8=YA ES APTO PARA JUGAR UN POCO CON LA CALCULADORA."
-SET "msg9=NO ES NECESARIO DEPENDER 100%% DEL MOUSE."
+:: Define tus mensajes de commit predefinidos aquí
+
+SET "msg1=Actualización general del proyecto."
+SET "msg2=Cambios realizados en los archivos de trabajo."
+SET "msg3=Mejoras y ajustes pequeños."
+SET "msg4=Progreso en desarrollo."
+SET "msg5=Correcciones y optimización del código."
+SET "msg6=Archivos actualizados para la entrega."
+SET "msg7=Subida del contenido actualizado."
+SET "msg8=Se implementó muchos detalles y ajustes."
+SET "msg9=Es súper útil esta herramienta de automatización, no es necesario escribir código uno por uno."
 
 :: --- SELECCION DE MENSAJE DE COMMIT ---
 echo.
@@ -28,11 +30,12 @@ echo 6. %msg6%
 echo 7. %msg7%
 echo 8. %msg8%
 echo 9. %msg9%
-echo 10. Ingresar un mensaje personalizado
+echo 10. Ingresa un mensaje a tu gusto
 echo.
 
 :SELECT_COMMIT_MSG
 SET /P "opcion=Ingresa el número del mensaje o '10' para uno personalizado u otros números deseados: "
+
 
 :: Usamos IF/ELSE IF para manejar las opciones numéricas y el salto a personalizado
 IF "%opcion%"=="1" (
@@ -74,10 +77,29 @@ echo.
 echo Usando el mensaje: "%COMMIT_MESSAGE%"
 echo.
 
+
+:: **** VERIFICACIÓN DE INTERNET ****
+CALL :CHECK_INTERNET
+echo DEBUG: Despues de CALL :CHECK_INTERNET. INTERNET_STATUS es: %INTERNET_STATUS%
+pause
+IF %INTERNET_STATUS% NEQ 0 (
+    echo.
+    echo ERROR: No se detectó la conexión a Internet.
+    echo No se puede gitear sin conexión.
+    echo.
+    pause
+    GOTO END_SCRIPT
+)
+echo.
+echo Conexión a Internet detectada. Continuado con el "giteo"...
+echo.
+:: **********************************
+
 git init
 git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
+
 
 echo esta sección es para dar control al pull
 git pull origin main
@@ -92,10 +114,8 @@ IF %ERRORLEVEL% NEQ 0 (
     GOTO END_SCRIPT
 )
 
-
 echo Intentando subir cambios a GitHub...
 
-rem git remote add origin https://github.com/matvera0608/CalculadoraSimple
 git push -u origin main
 
 IF %ERRORLEVEL% NEQ 0 (
@@ -106,9 +126,21 @@ IF %ERRORLEVEL% NEQ 0 (
     pause
     GOTO END_SCRIPT
 )
-
 echo.
 echo ¡Giteo completado exitosamente!
-:END_SCRIPT
 
+:: --- FUNCION DE VERIFICACIÓN DE INTERNET ---
+:: **** AQUI ES DONDE DEBE IR LA FUNCIÓN CHECK_INTERNET ****
+:CHECK_INTERNET
+    ping -n 1 8.8.8.8 -w 1000 >NUL
+    :: El ERRORLEVEL de ping es 0 si fue exitoso, 1 si falló
+    IF %ERRORLEVEL% EQU 0 (
+        SET "INTERNET_STATUS=0" :: 0 significa conectado
+    ) ELSE (
+        SET "INTERNET_STATUS=1" :: 1 significa desconectado
+    )
+    GOTO :EOF
+:: --- FIN FUNCION DE VERIFICACION DE INTERNET ---
+
+:END_SCRIPT
 pause

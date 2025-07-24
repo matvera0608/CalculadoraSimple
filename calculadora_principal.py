@@ -1,3 +1,4 @@
+import os
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
 # from calc_divisas import calculadora_de_divisas
@@ -19,6 +20,7 @@ color = {
 "negro": "#000000",
 "negro_resaltado": "#242424",
 "gris": "#AAAAAA",
+"rojo_anaranjado": "#FF2A00",
 "rojo_oscuro": "#B10000",
 "rojo_resaltado": "#B66666",
 "amarillo_oscuro": "#BBB800",
@@ -33,22 +35,32 @@ color = {
 "violeta_resaltado": "#A36BC5"
 }
 
+directorio_imágen = os.path.dirname(__file__)
+ícono = os.path.join(directorio_imágen, "imagenes","ícono.ico")
+
 # -*- coding: utf-8 -*-
 #defino la función con valor de devolución o de retorno llamada calculadora()
 #que va todos los botones necesarios para los cálculos necesarios
+
+#ACTUALMENTE LA CALCULADORA ESTÁ DESORDENADA, PORQUE HE PUESTO FRAMES.
+#ME GUSTARÍA QUE SE REORDENE COMO ESTÁ EN LA FOTO DEL LADO DERECHO.
 def pantallaCalculadora(ventanaPrincipal):
     global PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
 
-    for i in range(8):
-        ventanaPrincipal.columnconfigure(i, weight=0)
+    for i in range(5):
+        ventanaPrincipal.columnconfigure(i, weight=1)
+        
+    TamañoFijoEntrada = tk.Frame(ventanaPrincipal, width=330, height=60)
+    TamañoFijoEntrada.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
+    TamañoFijoEntrada.grid_propagate(False)
 
-    PantallaParaEscribirNúmeros = Entry(ventanaPrincipal, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
+    PantallaParaEscribirNúmeros = Entry(TamañoFijoEntrada, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
     PantallaParaEscribirNúmeros.config(state="normal")
-    PantallaParaEscribirNúmeros.grid(row=0, column=0, columnspan=15, padx=10, pady=10, sticky="we")
-    ventanaPrincipal.columnconfigure(0, weight=1)
-    ventanaPrincipal.columnconfigure(1, weight=2)
+    PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
+    
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
+    PantallaParaEscribirNúmeros.propagate(False)
     #Sección de eventos
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
@@ -56,20 +68,30 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros("000"))
 
-    PantallaParaResultadoEjercicio = Entry(ventanaPrincipal, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaParaResultadoEjercicio.grid(row=50, column=0, columnspan=15, padx=10, pady=50, sticky="we")
+    TamañoFijoResultado = tk.Frame(ventanaPrincipal, width=330, height=60)
+    TamañoFijoResultado.grid(row=1, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
+    TamañoFijoResultado.grid_propagate(False)
+
+    TamañoFijoResto = tk.Frame(ventanaPrincipal, width=330, height=40)
+    TamañoFijoResto.grid(row=2, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
+    TamañoFijoResto.grid_propagate(False)
+
+
+    PantallaParaResultadoEjercicio = Entry(TamañoFijoResto, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaParaResultadoEjercicio.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
+    PantallaParaResultadoEjercicio.propagate(False)
     
     #Sección de eventos
     PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
     
     # Suponiendo que las otras dos Entry usan columnspan=15,
     # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
-    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=10, column=2, columnspan=2, padx=5, sticky="nsew")
+    PantallaRestoDivisión = Entry(TamañoFijoResto, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
     # En Tkinter, no se puede hacer un fondo completamente transparente en widgets estándar.
     # Pero puedes simularlo usando el color del fondo de la ventana principal.
     módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=ventanaPrincipal["bg"], fg=color["negro"])
-    módulo.grid(row=10, column=0, columnspan=3,padx=5, sticky="w")
+    módulo.grid(row=3,padx=10,pady=0, sticky="w")
     
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -156,11 +178,14 @@ def calculadora():
     ventanaPrincipal.title("RamiroCalc")
     ventanaPrincipal.geometry("350x800")
     ventanaPrincipal.config(bg="white")
+    ventanaPrincipal.iconbitmap(ícono)
+    ventanaPrincipal.columnconfigure(0, weight=1)
+    ventanaPrincipal.columnconfigure(1, weight=2)
 
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
     
-    ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
+    # ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
     
     return ventanaPrincipal
 
@@ -479,12 +504,13 @@ def dividir():
         for n in números[1:]:
             divisiónEntre0 = n == 0
             if divisiónEntre0:
-                PantallaParaResultadoEjercicio.config(state="normal")
+                PantallaParaResultadoEjercicio.config(state="normal", font=("Century", 10), fg=color["rojo_anaranjado"])
                 PantallaParaResultadoEjercicio.delete(0, tk.END)
-                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡", )
+                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
             resultado //= n
+            PantallaParaResultadoEjercicio.config(state="normal", font=("Century", 30))
             
         mostrarResultado(resultado)
         
@@ -618,8 +644,8 @@ def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
         btn.config(bg=colorOrginal, fg=letraOriginal)
     return resaltar, restaurar
 
-def abrir__calculadora__de__divisas(event=None):
-    calculadora_de_divisas()
+# def abrir__calculadora__de__divisas(event=None):
+#     calculadora_de_divisas()
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()
