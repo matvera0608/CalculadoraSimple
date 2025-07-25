@@ -42,57 +42,40 @@ directorio_imágen = os.path.dirname(__file__)
 #defino la función con valor de devolución o de retorno llamada calculadora()
 #que va todos los botones necesarios para los cálculos necesarios
 
-#ACTUALMENTE LA CALCULADORA ESTÁ DESORDENADA, PORQUE HE PUESTO FRAMES.
-#ME GUSTARÍA QUE SE REORDENE COMO ESTÁ EN LA FOTO DEL LADO DERECHO.
 def pantallaCalculadora(ventanaPrincipal):
     global PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
 
-    for i in range(5):
+    # Configurar la grilla principal para permitir redimensionamiento si se desea
+    for i in range(8):
         ventanaPrincipal.columnconfigure(i, weight=1)
-        
-    TamañoFijoEntrada = tk.Frame(ventanaPrincipal, width=330, height=60)
-    TamañoFijoEntrada.grid(row=0, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
-    TamañoFijoEntrada.grid_propagate(False)
+    for i in range(20):
+        ventanaPrincipal.rowconfigure(i, weight=1)
 
-    PantallaParaEscribirNúmeros = Entry(TamañoFijoEntrada, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
-    PantallaParaEscribirNúmeros.config(state="normal")
-    PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=10)
-    
+    TamañoFijo = tk.Frame(ventanaPrincipal, width=330, height=120)
+    TamañoFijo.grid(row=0, column=0, columnspan=8, padx=4, pady=(8, 4), sticky="nsew")
+    TamañoFijo.grid_propagate(False)  # Impide que el tamaño del Frame se ajuste al contenido
+
+
+    PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
+    PantallaParaEscribirNúmeros.grid(row=0, column=0, columnspan=8, padx=10, pady=(4, 2), sticky="nsew")
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
-    PantallaParaEscribirNúmeros.propagate(False)
-    #Sección de eventos
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros("000"))
 
-    TamañoFijoResultado = tk.Frame(ventanaPrincipal, width=330, height=60)
-    TamañoFijoResultado.grid(row=1, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
-    TamañoFijoResultado.grid_propagate(False)
 
-    TamañoFijoResto = tk.Frame(ventanaPrincipal, width=330, height=40)
-    TamañoFijoResto.grid(row=2, column=0, columnspan=5, sticky="nsew", padx=4, pady=5)
-    TamañoFijoResto.grid_propagate(False)
-
-
-    PantallaParaResultadoEjercicio = Entry(TamañoFijoResto, font=("Century" , 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaParaResultadoEjercicio.grid(row=0, column=0, sticky="nsew", padx=10, pady=5)
-    PantallaParaResultadoEjercicio.propagate(False)
-    
-    #Sección de eventos
+    PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Century", 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaParaResultadoEjercicio.grid(row=1, column=0, columnspan=8, padx=10, pady=(2, 6), sticky="nsew")
     PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
-    
-    # Suponiendo que las otras dos Entry usan columnspan=15,
-    # podemos usar columnspan=8 (aproximadamente la mitad de 15) para esta Entry.
-    PantallaRestoDivisión = Entry(TamañoFijoResto, font=("Century",15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=1, column=0, sticky="nsew", padx=5, pady=5)
-    # En Tkinter, no se puede hacer un fondo completamente transparente en widgets estándar.
-    # Pero puedes simularlo usando el color del fondo de la ventana principal.
-    módulo = Label(ventanaPrincipal, text="Resto de la división:", font=("Century", 10), bg=ventanaPrincipal["bg"], fg=color["negro"])
-    módulo.grid(row=3,padx=10,pady=0, sticky="w")
-    
+
+    módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Century", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
+    módulo.grid(row=2, column=0, columnspan=3, padx=6, pady = (0, 2), sticky="w")
+
+    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 15),bg=color["gris"],fg=color["negro"],bd=4,justify="right",state="readonly")
+    PantallaRestoDivisión.grid(row=1, column=3, columnspan=2, padx=6, pady=(0, 2), sticky="nsew")
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
@@ -168,8 +151,6 @@ def Botón(ventanaPrincipal):
         ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
         
     ventanaPrincipal.grid_columnconfigure(3, minsize=100)
-
-    # BotónBorrarTODO.config(wraplength=60)
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():

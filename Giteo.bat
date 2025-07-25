@@ -80,8 +80,6 @@ echo.
 
 :: **** VERIFICACIÓN DE INTERNET ****
 CALL :CHECK_INTERNET
-echo DEBUG: Despues de CALL :CHECK_INTERNET. INTERNET_STATUS es: %INTERNET_STATUS%
-pause
 IF %INTERNET_STATUS% NEQ 0 (
     echo.
     echo ERROR: No se detectó la conexión a Internet.
@@ -91,7 +89,7 @@ IF %INTERNET_STATUS% NEQ 0 (
     GOTO END_SCRIPT
 )
 echo.
-echo Conexión a Internet detectada. Continuado con el "giteo"...
+echo Conexión a Internet detectada. Continuado con el giteo...
 echo.
 :: **********************************
 
@@ -129,8 +127,6 @@ IF %ERRORLEVEL% NEQ 0 (
 echo.
 echo ¡Giteo completado exitosamente!
 
-:: --- FUNCION DE VERIFICACIÓN DE INTERNET ---
-:: **** AQUI ES DONDE DEBE IR LA FUNCIÓN CHECK_INTERNET ****
 :CHECK_INTERNET
     ping -n 1 8.8.8.8 -w 1000 >NUL
     :: El ERRORLEVEL de ping es 0 si fue exitoso, 1 si falló
