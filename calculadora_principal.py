@@ -79,78 +79,7 @@ def pantallaCalculadora(ventanaPrincipal):
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
-def Botón(ventanaPrincipal):
-    
-    #Acá creo una lista con todos los botones correspondientes de la calculadora
-    botones = [
-    ("00", 1, 0, 1, 2), ("000", 1, 2, 1, 2),
-    ("%", 2, 0, 1, 1), ("ⁿ√", 2, 1, 1, 1), ("^", 2, 2, 1, 1), ("÷", 2, 3, 1, 1),
-    ("7", 3, 0, 1, 1), ("8", 3, 1, 1, 1), ("9", 3, 2, 1, 1), ("×", 3, 3, 1, 1),
-    ("4", 4, 0, 1, 1), ("5", 4, 1, 1, 1), ("6", 4, 2, 1, 1), ("-", 4, 3, 1, 1),
-    ("1", 5, 0, 1, 1), ("2", 5, 1, 1, 1), ("3", 5, 2, 1, 1), ("+", 5, 3, 2, 1),
-    ("0", 6, 0, 1, 2), (",", 6, 2, 1, 1)
-    ]
-    
-    # Voy a crear un for para armar una matriz de botones
-    # de la calculadora personalizada, aplicando colores según el diccionario.
-    for texto, fila, columna, tramoFila, tramoColumna in botones:
-        # Asigno colores diferentes para operadores y para números.
-        if texto in ("+"):
-            btn_fondo = color["rojo_oscuro"]
-            btn_fondoResaltado = color["rojo_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("-"):
-            btn_fondo = color["amarillo_oscuro"]
-            btn_fondoResaltado = color["amarillo_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("×"):
-            btn_fondo = color["azul_oscuro"]
-            btn_fondoResaltado = color["azul_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("÷"):
-            btn_fondo = color["verde_oscuro"]
-            btn_fondoResaltado = color["verde_resaltado"]
-            btn_letra = color["blanco"]  
-        elif texto in ("^"):
-            btn_fondo = color["naranja_oscuro"]
-            btn_fondoResaltado = color["naranja_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("ⁿ√"):
-            btn_fondo = color["violeta_oscuro"]
-            btn_fondoResaltado = color["violeta_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("%"):
-            btn_fondo = color["negro"]
-            btn_fondoResaltado = color["negro_resaltado"]
-            btn_letra = color["blanco"]
-        elif texto in ("00", "000", "0", ",", "1", "2", "3", "4", "5", "6", "7", "8", "9"):
-            # Para los números, uso un color claro y un texto oscuro.
-            btn_fondo = color["beige"]
-            btn_fondoResaltado = color["beige_resaltado"]
-            btn_letra = color["negro"]
-        else:
-            btn_fondo = color["celeste_claro"]
-            btn_letra = color["celeste_oscuro"]
-            
-        # La variable btn corresponde al botón
-        btn = Button(ventanaPrincipal, text=texto, width=1, height=1, font=("Century", 20, "bold"),
-        bg=btn_fondo, fg=btn_letra, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value),formatearEntrada()],relief="flat",highlightthickness=0, activebackground=btn_fondoResaltado, activeforeground=btn_letra)
-        btn.grid(row=fila, column=columna, rowspan=tramoFila, columnspan=tramoColumna, sticky="nsew", padx=1, pady=1)
-        btn.config(cursor="hand2")
-        
-        resaltar, restaurar = clickearBotón(btn, btn_fondoResaltado, btn_fondo, btn_letra)
-        # Aquí se aplica la función clickearBotón para resaltar y restaurar el color del botón al hacer clic.
-        btn.bind("<Button-1>", resaltar)
-        btn.bind("<ButtonRelease-1>", restaurar)
-        
-    #Este for ayuda a ajustar todas las filas y columnas lo más proporcionalmente
-    #posible para que la calculadora se vea bien
-    for i in range(9):
-        ventanaPrincipal.grid_rowconfigure(i, weight=1, minsize=60)
-    for j in range(4):
-        ventanaPrincipal.grid_columnconfigure(j, weight=1, minsize=80)
-        
-    ventanaPrincipal.grid_columnconfigure(3, minsize=100)
+
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
 def calculadora():

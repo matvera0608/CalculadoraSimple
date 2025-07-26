@@ -127,6 +127,8 @@ IF %ERRORLEVEL% NEQ 0 (
 echo.
 echo ¡Giteo completado exitosamente!
 
+pause
+
 :CHECK_INTERNET
     ping -n 1 8.8.8.8 -w 1000 >NUL
     :: El ERRORLEVEL de ping es 0 si fue exitoso, 1 si falló
@@ -139,4 +141,3 @@ echo ¡Giteo completado exitosamente!
 :: --- FIN FUNCION DE VERIFICACION DE INTERNET ---
 
 :END_SCRIPT
-pause
