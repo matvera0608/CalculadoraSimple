@@ -1,7 +1,7 @@
 import os
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
-# from calc_divisas import calculadora_de_divisas
+from calc_divisas import calculadora_de_divisas
 
 
 """
@@ -158,7 +158,7 @@ def calculadora():
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
     
-    # ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
+    ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
     
     return ventanaPrincipal
 
@@ -617,8 +617,8 @@ def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
         btn.config(bg=colorOrginal, fg=letraOriginal)
     return resaltar, restaurar
 
-# def abrir__calculadora__de__divisas(event=None):
-#     calculadora_de_divisas()
+def abrir__calculadora__de__divisas(event=None):
+    calculadora_de_divisas()
 
 calculadora_principal = calculadora()
 calculadora_principal.mainloop()
