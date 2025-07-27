@@ -20,18 +20,18 @@ color = {
 "negro": "#000000",
 "negro_resaltado": "#242424",
 "gris": "#AAAAAA",
-"rojo_anaranjado": "#FF2A00",
-"rojo_oscuro": "#B10000",
+"rojo_anaranjado": "#FF3C00",
+"rojo_oscuro": "#E40000",
 "rojo_resaltado": "#B66666",
-"amarillo_oscuro": "#BBB800",
+"amarillo_oscuro": "#C8C500",
 "amarillo_resaltado": "#BEBD61",
-"verde_oscuro": "#009D00",
+"verde_oscuro": "#00CF00",
 "verde_resaltado":"#67B167",
-"azul_oscuro": "#000AC0",
+"azul_oscuro": "#000AD0",
 "azul_resaltado": "#4F54B9",
-"naranja_oscuro": "#CA7600",
+"naranja_oscuro": "#D57D00",
 "naranja_resaltado": "#C79653",
-"violeta_oscuro": "#7F00CE",
+"violeta_oscuro": "#8400D6",
 "violeta_resaltado": "#A36BC5"
 }
 
@@ -46,18 +46,21 @@ def pantallaCalculadora(ventanaPrincipal):
     global PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
 
     # Configurar la grilla principal para permitir redimensionamiento si se desea
-    for i in range(8):
+    for i in range(6):
         ventanaPrincipal.columnconfigure(i, weight=1)
     for i in range(20):
         ventanaPrincipal.rowconfigure(i, weight=1)
 
+
     TamañoFijo = tk.Frame(ventanaPrincipal, width=330, height=120)
     TamañoFijo.grid(row=0, column=0, columnspan=8, padx=4, pady=(8, 4), sticky="nsew")
     TamañoFijo.grid_propagate(False)  # Impide que el tamaño del Frame se ajuste al contenido
-
+    TamañoFijo.columnconfigure(0, weight=1)
+    TamañoFijo.rowconfigure(0, weight=1)
+    TamañoFijo.rowconfigure(1, weight=1)
 
     PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
-    PantallaParaEscribirNúmeros.grid(row=0, column=0, columnspan=8, padx=10, pady=(4, 2), sticky="nsew")
+    PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
@@ -67,18 +70,72 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros("000"))
 
 
+     # Resultado del ejercicio
     PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Century", 30), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaParaResultadoEjercicio.grid(row=1, column=0, columnspan=8, padx=10, pady=(2, 6), sticky="nsew")
+    PantallaParaResultadoEjercicio.grid(row=1, column=0, sticky="nsew", padx=10, pady=(2, 6))
     PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
+
+    # Proporcionalidad del módulo
+    ventanaPrincipal.columnconfigure(0, weight=1)
+    ventanaPrincipal.columnconfigure(1, weight=1)
+    ventanaPrincipal.columnconfigure(2, weight=1)
+    ventanaPrincipal.columnconfigure(3, weight=1)
+    ventanaPrincipal.columnconfigure(4, weight=1)
+    ventanaPrincipal.columnconfigure(5, weight=1)
+
 
     módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Century", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
     módulo.grid(row=2, column=0, columnspan=3, padx=6, pady = (0, 2), sticky="w")
 
-    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 15),bg=color["gris"],fg=color["negro"],bd=4,justify="right",state="readonly")
-    PantallaRestoDivisión.grid(row=1, column=3, columnspan=2, padx=6, pady=(0, 2), sticky="nsew")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=2, column=3, columnspan=5, padx=6, pady=(0, 2), sticky="nsew")
+
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
 #la función ventana principal contiene TODOS LOS BOTONES DE LA CALCULADORA
+def Botón(ventanaPrincipal):
+    botones = [
+        ("00", 0, 0, 1, 2), ("000", 0, 2, 1, 2),
+        ("%", 1, 0, 1, 1), ("ⁿ√", 1, 1, 1, 1), ("^", 1, 2, 1, 1), ("÷", 1, 3, 1, 1),
+        ("7", 2, 0, 1, 1), ("8", 2, 1, 1, 1), ("9", 2, 2, 1, 1), ("×", 2, 3, 1, 1),
+        ("4", 3, 0, 1, 1), ("5", 3, 1, 1, 1), ("6", 3, 2, 1, 1), ("-", 3, 3, 1, 1),
+        ("1", 4, 0, 1, 1), ("2", 4, 1, 1, 1), ("3", 4, 2, 1, 1), ("+", 4, 3, 2, 1),
+        ("0", 5, 0, 1, 1), (",", 5, 1, 1, 1), ("=", 5, 2, 1, 1)
+    ]
+
+    def obtener_color_botón(texto):
+        if texto in ("00", "000", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "="):
+            return color["beige"]
+        elif texto == "+":
+            return color["rojo_oscuro"]
+        elif texto == "-":
+            return color["amarillo_oscuro"]
+        elif texto == "×":
+            return color["azul_oscuro"]
+        elif texto == "÷":
+            return color["verde_oscuro"]
+        elif texto == "%":
+            return color["negro"]
+        elif texto == "^":
+            return color["naranja_oscuro"]
+        elif texto == "ⁿ√":
+            return color["violeta_oscuro"]
+        else:
+            return color["gris"]
+
+    for texto, fila, columna, rowspan, columnspan in botones:
+        colorFondo = obtener_color_botón(texto)
+        boton = tk.Button(ventanaPrincipal, text=texto, font=("Century", 20, "bold"), bg=colorFondo, fg=color["blanco"], 
+                width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()])
+        boton.grid(row=fila + 4, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
+        
+        
+    for i in range(10):
+        ventanaPrincipal.grid_rowconfigure(i, weight=1)
+    for j in range(5):
+        ventanaPrincipal.grid_columnconfigure(j, weight=1)
+        
+    ventanaPrincipal.grid_columnconfigure(3, minsize=100)
 
 
 #Esta función muestra la interfaz de la calculadora principal para la ventana
@@ -86,11 +143,10 @@ def calculadora():
     global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
     ventanaPrincipal.title("RamiroCalc")
-    ventanaPrincipal.geometry("350x800")
+    ventanaPrincipal.geometry("450x900")
     ventanaPrincipal.config(bg="white")
     ventanaPrincipal.iconbitmap(ícono)
     ventanaPrincipal.columnconfigure(0, weight=1)
-    ventanaPrincipal.columnconfigure(1, weight=2)
 
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
