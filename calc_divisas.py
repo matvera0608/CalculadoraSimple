@@ -1,5 +1,6 @@
 import os
-from tkinter import tk
+import tkinter as tk
+from tkinter import ttk
 
 #Creo un diccionario de divisas
 directorio_imágen = os.path.dirname(__file__)
@@ -34,19 +35,16 @@ def cajas_de_texto(ventana):
      #Monto a ingresar
      entry_monto = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
      entry_monto.config(state="normal")
-     entry_monto.grid(row=0, column=1, padx=10, pady=10)
-     tk.Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").grid(row=0, column=0, padx=0, pady=10, sticky="w")
+     entry_monto.pack(pady=5)
+     tk.Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").pack()
      
+     tk.Label(ventana, text="Convertir de:", font=("Century", 12)).pack()
      origen = tk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10))
      origen.set("ARS")
      origen.pack()
 
      #Tasa a ingresar
-     entry_tasa = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
-     entry_tasa.config(state="normal")
-     entry_tasa.grid(row=1, column=1, padx=10, pady=60, sticky="we")
-     tk.Label(ventana, text="Tasa a ingresar", font=("Century", 10), bg="white").grid(row=1, column=0, padx=0, pady=10, sticky="w")
-     
+     tk.Label(ventana, text="A:", font=("Century", 12)).pack()
      destino = tk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10))
      destino.set("ARS")
      destino.pack()
@@ -54,16 +52,15 @@ def cajas_de_texto(ventana):
      
      #Resultado esperado
      conversión_variable = tk.StringVar()
-     tk.Label(ventana, text="Resultado", font=("Century", 20), bg="white", fg="green").grid(row=2, column=0, padx=10, pady=70, sticky="w")
-     tk.Label(ventana, textvariable=conversión_variable, font=("Century", 20), bg="white", fg="green").grid(row=3, column=1)
+     tk.Label(ventana, textvariable=conversión_variable, font=("Century", 20), bg="white", fg="green").pack()
      
 divisa = calculadora_de_divisas()
 
 #Este calcula las divisas según lo planeado
 def convertir_divisas():
      try:
-          monto_valor = float(entry_monto.get())
-          tasa_valor = float(entry_tasa.get())
+          monto_valor = float()
+          tasa_valor = float()
           conversión = monto_valor/tasa_valor
           conversión_variable.set(f"{conversión:.2f}")
      except ValueError:
