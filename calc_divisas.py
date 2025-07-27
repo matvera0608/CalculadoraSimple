@@ -1,15 +1,23 @@
 import os
-from tkinter import *
+from tkinter import tk
 
 #Creo un diccionario de divisas
 directorio_imágen = os.path.dirname(__file__)
 ícono = os.path.join(directorio_imágen, "imagenes","ícono conversión.ico")
 
+##Este es un diccionario de divisas
+divisas = {
+     "ARS":"1",
+     "BRL":"230",
+     "USD":"1320",
+     "PYG":"0.11",
+     "EUR":"1500",
+}
 
 #Esta es la función principal
 def calculadora_de_divisas():
      global ventana
-     ventana = Tk()
+     ventana = tk.Tk()
      ventana.title("Conversor de divisas")
      ventana.geometry("600x300")
      ventana.config(bg="white")
@@ -24,21 +32,30 @@ def calculadora_de_divisas():
 def cajas_de_texto(ventana):
      global entry_monto, entry_tasa, conversión_variable
      #Monto a ingresar
-     entry_monto = Entry(ventana, font=("Century", 10), bd=4, justify="left")
+     entry_monto = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.grid(row=0, column=1, padx=10, pady=10)
-     Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").grid(row=0, column=0, padx=10, pady=10, sticky="w")
+     tk.Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").grid(row=0, column=0, padx=0, pady=10, sticky="w")
+     
+     origen = tk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10))
+     origen.set("ARS")
+     origen.pack()
 
      #Tasa a ingresar
-     entry_tasa = Entry(ventana, font=("Century", 10), bd=4, justify="left")
+     entry_tasa = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
      entry_tasa.config(state="normal")
      entry_tasa.grid(row=1, column=1, padx=10, pady=60, sticky="we")
-     Label(ventana, text="Tasa a ingresar", font=("Century", 10), bg="white").grid(row=1, column=0, padx=10, pady=10, sticky="w")
+     tk.Label(ventana, text="Tasa a ingresar", font=("Century", 10), bg="white").grid(row=1, column=0, padx=0, pady=10, sticky="w")
+     
+     destino = tk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10))
+     destino.set("ARS")
+     destino.pack()
+     
      
      #Resultado esperado
-     conversión_variable = StringVar()
-     Label(ventana, text="Resultado", font=("Century", 20), bg="white", fg="green").grid(row=2, column=0, padx=10, pady=70, sticky="w")
-     Label(ventana, textvariable=conversión_variable, font=("Century", 20), bg="white", fg="green").grid(row=3, column=1)
+     conversión_variable = tk.StringVar()
+     tk.Label(ventana, text="Resultado", font=("Century", 20), bg="white", fg="green").grid(row=2, column=0, padx=10, pady=70, sticky="w")
+     tk.Label(ventana, textvariable=conversión_variable, font=("Century", 20), bg="white", fg="green").grid(row=3, column=1)
      
 divisa = calculadora_de_divisas()
 
