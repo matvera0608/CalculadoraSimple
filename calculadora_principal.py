@@ -3,7 +3,6 @@ from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
 from calc_divisas import calculadora_de_divisas
 
-
 """
 EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA.
@@ -330,6 +329,9 @@ def formatearEntrada(*args):
 
 #Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
 def Calcular():
+    # import tkinter as tk
+    # if len(tk._default_root.children) > 1:
+    #     return
     entrada = PantallaParaEscribirNúmeros.get()
     #Esta función calcula la expresión completa como una operación combinada
     def calcularExpresiónCompleta():
@@ -623,4 +625,6 @@ def abrir__calculadora__de__divisas(event=None):
     calculadora_de_divisas()
 
 calculadora_principal = calculadora()
-calculadora_principal.mainloop()
+
+if __name__ == "__main__":
+    calculadora_principal.mainloop()

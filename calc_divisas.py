@@ -12,16 +12,18 @@ divisas = {
      "BRL":"230",
      "USD":"1320",
      "EUR":"1500",
-     "PYG":"0.11"
+     "PYG":"0.17"
 }
 
 #Esta es la función principal
 def calculadora_de_divisas():
      global ventana
-     
-     if "ventana" in globals() and ventana.winfo_exists():
-          ventana.lift()
-          return
+     try:
+          if "ventana" in globals() and ventana.winfo_exists():
+               ventana.lift()
+               return
+     except:
+          pass  # por si ventana ya fue destruida
      
      ventana = tk.Toplevel()
      ventana.title("Conversor de divisas")
@@ -31,6 +33,8 @@ def calculadora_de_divisas():
      ventana.iconbitmap(ícono)
      ventana.columnconfigure(0, weight=1)
      cajas_de_texto(ventana)
+     if entry_monto.winfo_exists():
+          entry_monto.bind("<Return>", lambda e: convertir_divisas())
      return ventana
 
 #Esta función guarda las cajas de texto para convertir el valor de divisas
@@ -40,7 +44,6 @@ def cajas_de_texto(ventana):
      entry_monto = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.pack(pady=5)
-     entry_monto.bind("<Return>", lambda e: convertir_divisas())
      tk.Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").pack()
      
      tk.Label(ventana, text="Convertir de:", font=("Century", 12)).pack()
