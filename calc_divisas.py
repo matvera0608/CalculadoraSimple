@@ -57,21 +57,25 @@ def cajas_de_texto(ventana):
 #Este calcula las divisas según lo planeado
 def convertir_divisas():
      try:
-          from calculadora_principal import formatearEntrada, formatearNúmero
+          from calculadora_principal import formatearNúmeroResultado
           # Verifica si el widget sigue existiendo antes de acceder
-          if entry_monto.winfo_exists():
-               monto_str = formatearEntrada(entry_monto.get())
-               de = origen.get()
-               a = destino.get()
-               
-               monto_valor = float(monto_str)
-               monto_origen = monto_valor * float(divisas[de])
-               conversión = monto_origen/float(divisas[a])
-               conversión_variable.set(formatearNúmero(conversión))
+          if not entry_monto.winfo_exists():
+               conversión_variable.set("⚠️ La ventana fue cerrada.")
+               return
+          monto_str = entry_monto.get().strip().replace(",", ".")
+          if monto_str == "":
+               conversión_variable.set("⚠️ Ingresá un número.")
+               return
+          de = origen.get()
+          a = destino.get()
+          
+          monto_valor = str(monto_str)
+          monto_origen = float(monto_valor) * float(divisas[de])
+          conversión = monto_origen/float(divisas[a])
+          conversión_variable.set(formatearNúmeroResultado(conversión))
+          
      except ValueError:
           conversión_variable.set("⚠️ INGRESÁ UN NÚMERO VÁLIDO.")
-     except tk.TclError:
-          conversión_variable.set("⚠️ La ventana fue cerrada.")
 
 
 # 📜 Lista de valores de sticky:

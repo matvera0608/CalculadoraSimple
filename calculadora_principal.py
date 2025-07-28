@@ -216,7 +216,7 @@ def formatearNúmeroResultado(valor):
             parteEntera, parteDecimal = f"{valor:.10f}".rstrip("0").rstrip(".").split(".")
             return f"{parteEntera},{parteDecimal}"
     except:
-        return str(valor)
+        return str(valor).strip()
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
@@ -323,6 +323,8 @@ def formatearEntrada(*args):
     # Mostrar en pantalla
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
+    
+    return nuevaEntrada.strip().replace(",", ".")
     
 # --- EVENTOS PARA USAR TECLADO ---
 
