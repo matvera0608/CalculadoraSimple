@@ -323,21 +323,15 @@ def formatearEntrada(*args):
     PantallaParaEscribirNúmeros.delete(0, tk.END)
     PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
     
-    return nuevaEntrada.strip().replace(",", ".")
-    
 # --- EVENTOS PARA USAR TECLADO ---
 
 #Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
 def Calcular():
-    # import tkinter as tk
-    # if len(tk._default_root.children) > 1:
-    #     return
     entrada = PantallaParaEscribirNúmeros.get()
     #Esta función calcula la expresión completa como una operación combinada
     def calcularExpresiónCompleta():
         try:
-            expresión = entrada.replace(".", "")
-            expresión = expresión.replace(",", ".")  # convertir coma a punto decimal
+            expresión = entrada.replace(".", "").replace(",", ".")  # convertir coma a punto decimal
             expresión = expresión.replace("×", "*").replace("÷", "/")
             expresión = expresión.replace("%", "/100")  # manejar porcentaje
             resultado = eval(expresión)
@@ -404,18 +398,14 @@ def sumar():
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
 def restar():
-    #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("-")
-    #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
-        partes = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
-        falta_de_operandos = len(partes) < 2
-        if falta_de_operandos:
+        partes = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
+        if len(partes) < 2:
             mensajeDeTexto.showerror("Error", "Faltan operandos para restar.")
             return
         resultado = partes[0]
-        #Acá itero para ir restando los números hasta llegar a negativo
         for n in partes[1:]:
             resultado -= n
         mostrarResultado(resultado)
@@ -623,8 +613,7 @@ def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
 
 def abrir__calculadora__de__divisas(event=None):
     calculadora_de_divisas()
-
-calculadora_principal = calculadora()
-
+    
 if __name__ == "__main__":
+    calculadora_principal = calculadora()
     calculadora_principal.mainloop()

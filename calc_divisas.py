@@ -23,8 +23,7 @@ def calculadora_de_divisas():
                ventana.lift()
                return
      except:
-          pass  # por si ventana ya fue destruida
-     
+          pass
      ventana = tk.Toplevel()
      ventana.title("Conversor de divisas")
      ventana.geometry("600x300")
@@ -33,8 +32,7 @@ def calculadora_de_divisas():
      ventana.iconbitmap(ícono)
      ventana.columnconfigure(0, weight=1)
      cajas_de_texto(ventana)
-     if entry_monto.winfo_exists():
-          entry_monto.bind("<Return>", lambda e: convertir_divisas())
+     ventana.bind("<Return>", lambda e: convertir_divisas())
      return ventana
 
 #Esta función guarda las cajas de texto para convertir el valor de divisas
@@ -80,8 +78,7 @@ def convertir_divisas():
           monto_valor = str(monto_str)
           monto_origen = float(monto_valor) * float(divisas[de])
           conversión = monto_origen/float(divisas[a])
-          conversión_variable.set(formatearNúmeroResultado(conversión))
-          
+          conversión_variable.set(f"{formatearNúmeroResultado(conversión)} {divisas['BRL']}")
      except ValueError:
           conversión_variable.set("⚠️ INGRESÁ UN NÚMERO VÁLIDO.")
 
