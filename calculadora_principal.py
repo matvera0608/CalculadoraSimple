@@ -63,7 +63,7 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
-    PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda event: formatearEntrada())
+    PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada())
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
@@ -216,7 +216,7 @@ def formatearNúmeroResultado(valor):
             parteEntera, parteDecimal = f"{valor:.10f}".rstrip("0").rstrip(".").split(".")
             return f"{parteEntera},{parteDecimal}"
     except:
-        return str(valor).strip()
+        return str(valor)
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
