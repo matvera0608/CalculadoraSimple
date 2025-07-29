@@ -189,11 +189,8 @@ Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 def formatearNúmero(númeroComoTexto):
     #Controlo que no me permita cualquier signo que no sea punto
     try:
-        #Voy a crear una variable llamada NúmeroLimpio para
-        #formatear esctrictamente el número a escribir
         númeroLimpio = númeroComoTexto.replace(".", "").replace(",", ".")
         valor = float(númeroLimpio)
-        #Acá formatea si y solo si es entero
         if valor.is_integer():
             return f"{int(valor):,}".replace(",", ".")
         else:
@@ -211,11 +208,13 @@ def formatearNúmeroResultado(valor):
         if valor.is_integer():
             return f"{int(valor):,}".replace(",", ".")
         else:
-            parteEntera, parteDecimal = str(valor).split(".")
-            parteEntera, parteDecimal = f"{valor:.10f}".rstrip("0").rstrip(".").split(".")
-            return f"{parteEntera},{parteDecimal}"
+            valor_formateado = f"{valor:,.2f}"
+            parte_entera, parte_decimal = valor_formateado.split(".")
+            parte_entera = parte_entera.replace(",", ".")
+            return f"{parte_entera},{parte_decimal}"
     except:
         return str(valor)
+
 
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática

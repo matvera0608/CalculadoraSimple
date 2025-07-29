@@ -42,16 +42,16 @@ def cajas_de_texto(ventana):
      entry_monto = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.pack(pady=5)
-     tk.Label(ventana, text="Monto a ingresar", font=("Century", 10), bg="white").pack()
+     tk.Label(ventana, text="Monto a ingresar", font=("Century", 20), bg="white").pack()
      
-     tk.Label(ventana, text="Convertir de:", font=("Century", 12)).pack()
-     origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10), state="readonly")
+     tk.Label(ventana, text="Convertir de:", font=("Century", 20)).pack()
+     origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
      origen.set("ARS")
      origen.pack()
 
      #Tasa a ingresar
-     tk.Label(ventana, text="A:", font=("Century", 12)).pack()
-     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 10), state="readonly")
+     tk.Label(ventana, text="a:", font=("Century", 20)).pack()
+     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
      destino.set("")
      destino.pack()
      
@@ -78,7 +78,7 @@ def convertir_divisas():
           monto_valor = str(monto_str)
           monto_origen = float(monto_valor) * float(divisas[de])
           conversión = monto_origen/float(divisas[a])
-          conversión_variable.set(f"{formatearNúmeroResultado(conversión)} {divisas['BRL']}")
+          conversión_variable.set(f"{formatearNúmeroResultado(conversión)} {a}")
      except ValueError:
           conversión_variable.set("⚠️ INGRESÁ UN NÚMERO VÁLIDO.")
 
