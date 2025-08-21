@@ -2,6 +2,7 @@ import os
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
+
 #Creo un diccionario de divisas
 directorio_imágen = os.path.dirname(__file__)
 ícono = os.path.join(directorio_imágen, "imagenes","ícono conversión.ico")
@@ -26,7 +27,7 @@ def calculadora_de_divisas():
           pass
      ventana = tk.Toplevel()
      ventana.title("Conversor de divisas")
-     ventana.geometry("600x300")
+     ventana.geometry("700x500")
      ventana.config(bg="white")
      ventana.resizable(False, False)
      ventana.iconbitmap(ícono)
@@ -38,16 +39,18 @@ def calculadora_de_divisas():
 #Esta función guarda las cajas de texto para convertir el valor de divisas
 def cajas_de_texto(ventana):
      global entry_monto, origen, destino, conversión_variable
+     from calculadora_principal import formatearEntrada
      #Monto a ingresar
-     entry_monto = tk.Entry(ventana, font=("Century", 10), bd=4, justify="left")
+     entry_monto = tk.Entry(ventana, font=("Century", 20), bd=4, justify="left")
      entry_monto.config(state="normal")
-     entry_monto.pack(pady=5)
+     entry_monto.pack(pady=10)
+     entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
      tk.Label(ventana, text="Monto a ingresar", font=("Century", 20), bg="white").pack()
      
      tk.Label(ventana, text="Convertir de:", font=("Century", 20)).pack()
      origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
      origen.set("ARS")
-     origen.pack()
+     origen.pack(pady=20)
 
      #Tasa a ingresar
      tk.Label(ventana, text="a:", font=("Century", 20)).pack()

@@ -62,7 +62,7 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
-    PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada())
+    PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada(PantallaParaEscribirNúmeros))
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
@@ -204,15 +204,24 @@ def formatearNúmero(númeroComoTexto):
 # Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
 def formatearNúmeroResultado(valor):
     try:
-        valor = float(valor)
+        valor_str = str(valor)
+
+        valor_limpio = valor_str.replace(".", "")
+
+        if "," in valor_limpio:
+            valor_limpio = valor_limpio.replace(",", ".")
+        valor = float(valor_limpio)
         if valor.is_integer():
+            # Formatea con punto de millar y coma decimal
             return f"{int(valor):,}".replace(",", ".")
         else:
+            # Para números con decimales, usa el formato apropiado
             valor_formateado = f"{valor:,.2f}"
             parte_entera, parte_decimal = valor_formateado.split(".")
             parte_entera = parte_entera.replace(",", ".")
             return f"{parte_entera},{parte_decimal}"
-    except:
+    except (ValueError, AttributeError):
+        # Maneja posibles errores si el valor no es un número válido
         return str(valor)
 
 
@@ -232,8 +241,8 @@ def convertirATipoFloat(texto):
 
 #En esta función solamente se formatea la entrada para la introducción de millares
 #cuando presiono los 000 después de presionar un número diferente a 0 me pone automáticamente los puntos
-def formatearEntrada(*args):
-    entrada = PantallaParaEscribirNúmeros.get()
+def formatearEntrada(entrada_widget):
+    entrada = entrada_widget.get()
     if not entrada or entrada[-1] == ",":
         return
     
@@ -319,9 +328,9 @@ def formatearEntrada(*args):
         nuevaEntrada += númeroFormateado
 
     # Mostrar en pantalla
-    PantallaParaEscribirNúmeros.delete(0, tk.END)
-    PantallaParaEscribirNúmeros.insert(0, nuevaEntrada)
-    
+    entrada_widget.delete(0, tk.END)
+    entrada_widget.insert(0, nuevaEntrada)
+
 # --- EVENTOS PARA USAR TECLADO ---
 
 #Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
@@ -341,10 +350,8 @@ def Calcular():
     
     operadores = "+-*/÷×"
     
-    cantidad_de_signos = sum(entrada.count(op) for op in operadores)
-    
-    siHaySignos_o_Paréntesis = cantidad_de_signos > 1 or ("(" in entrada or ")" in entrada)
-    
+    siHaySignos_o_Paréntesis = any(op in entrada for op in operadores) or "(" in entrada or ")" in entrada
+
     if siHaySignos_o_Paréntesis:
         calcularExpresiónCompleta()
         return
@@ -475,7 +482,7 @@ def dividir():
                 PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
-            resultado //= n
+            resultado /= n
             PantallaParaResultadoEjercicio.config(state="normal", font=("Century", 30))
             
         mostrarResultado(resultado)
