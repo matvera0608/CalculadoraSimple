@@ -200,26 +200,23 @@ def formatearNúmero(númeroComoTexto):
     except ValueError:
         return "Error"
 
-#Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
-# Creé otra función para hacer el mismo formato deseado para el resultado del ejercicio
+#Esta función es similar a la anterior pero formatea el resultado final
 def formatearNúmeroResultado(valor):
     try:
-        valor_str = str(valor)
-
-        valor_limpio = valor_str.replace(".", "")
-
-        if "," in valor_limpio:
-            valor_limpio = valor_limpio.replace(",", ".")
-        valor = float(valor_limpio)
-        if valor.is_integer():
-            # Formatea con punto de millar y coma decimal
-            return f"{int(valor):,}".replace(",", ".")
+        if isinstance(valor, str):
+            valor = float(valor.replace(".", "").replace(",", "."))
+             
+        if isinstance(valor, (int, float)):
+            if float(valor).is_integer():
+                return f"{int(valor):,}".replace(",", ".")
+            else:
+                # Para números con decimales, usa el formato apropiado
+                valor_formateado = f"{valor:,.2f}"
+                parte_entera, parte_decimal = valor_formateado.split(".")
+                parte_entera = parte_entera.replace(",", ".")
+                return f"{parte_entera},{parte_decimal}"
         else:
-            # Para números con decimales, usa el formato apropiado
-            valor_formateado = f"{valor:,.2f}"
-            parte_entera, parte_decimal = valor_formateado.split(".")
-            parte_entera = parte_entera.replace(",", ".")
-            return f"{parte_entera},{parte_decimal}"
+            return str(valor)
     except (ValueError, AttributeError):
         # Maneja posibles errores si el valor no es un número válido
         return str(valor)

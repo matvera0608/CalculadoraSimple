@@ -9,11 +9,11 @@ directorio_imágen = os.path.dirname(__file__)
 
 ##Este es un diccionario de divisas
 divisas = {
-     "ARS":"1",
-     "BRL":"230",
-     "USD":"1320",
-     "EUR":"1500",
-     "PYG":"0.17"
+     "Peso argentino":"1",
+     "Real brasileño":"230",
+     "Dólar estadounidense":"1320",
+     "Euro":"1500",
+     "Guaraní paraguayo":"0.17"
 }
 
 #Esta es la función principal
@@ -49,7 +49,7 @@ def cajas_de_texto(ventana):
      
      tk.Label(ventana, text="Convertir de:", font=("Century", 20)).pack()
      origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
-     origen.set("ARS")
+     origen.set("")
      origen.pack(pady=20)
 
      #Tasa a ingresar
@@ -71,7 +71,16 @@ def convertir_divisas():
           if not entry_monto.winfo_exists():
                conversión_variable.set("⚠️ La ventana fue cerrada.")
                return
-          monto_str = entry_monto.get().strip().replace(",", ".")
+          
+          símbolo = {
+               "Peso argentino": "$",
+               "Real brasileño": "R$",
+               "Dólar estadounidense": "USD$",
+               "Euro": "€",
+               "Guaraní paraguayo": "₲"
+          }
+          
+          monto_str = entry_monto.get().strip().replace(".", "").replace(",", ".")
           if monto_str == "":
                conversión_variable.set("⚠️ Ingresá un número.")
                return
@@ -81,21 +90,6 @@ def convertir_divisas():
           monto_valor = str(monto_str)
           monto_origen = float(monto_valor) * float(divisas[de])
           conversión = monto_origen/float(divisas[a])
-          conversión_variable.set(f"{formatearNúmeroResultado(conversión)} {a}")
+          conversión_variable.set(f"{símbolo[a]} {formatearNúmeroResultado(conversión)}")
      except ValueError:
           conversión_variable.set("⚠️ INGRESÁ UN NÚMERO VÁLIDO.")
-
-
-# 📜 Lista de valores de sticky:
-# Valor   Significado
-# "n"     Norte → arriba
-# "s"     Sur → abajo
-# "e"     Este → derecha
-# "w"     Oeste → izquierda
-# "ne"    Arriba a la derecha
-# "nw"    Arriba a la izquierda
-# "se"    Abajo a la derecha
-# "sw"    Abajo a la izquierda
-# "ns"    Se estira verticalmente
-# "ew"    Se estira horizontalmente
-# "nsew"  Se estira completamente (ocupa todo)** ⬅️ más usado
