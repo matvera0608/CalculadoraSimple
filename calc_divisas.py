@@ -11,7 +11,7 @@ directorio_imágen = os.path.dirname(__file__)
 divisas = {
      "Peso argentino":"1",
      "Real brasileño":"230",
-     "Dólar estadounidense":"1320",
+     "Dólar estadounidense":"1400",
      "Euro":"1500",
      "Guaraní paraguayo":"0.17"
 }
@@ -41,27 +41,27 @@ def cajas_de_texto(ventana):
      global entry_monto, origen, destino, conversión_variable
      from calculadora_principal import formatearEntrada
      #Monto a ingresar
-     entry_monto = tk.Entry(ventana, font=("Century", 20), bd=4, justify="left")
+     entry_monto = tk.Entry(ventana, font=("Courier New", 20), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.pack(pady=10)
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
-     tk.Label(ventana, text="Monto a ingresar", font=("Century", 20), bg="white").pack()
+     tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg="white").pack()
      
-     tk.Label(ventana, text="Convertir de:", font=("Century", 20)).pack()
-     origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
+     tk.Label(ventana, text="Convertir de:", font=("Courier New", 20)).pack()
+     origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      origen.set("")
      origen.pack(pady=20)
 
      #Tasa a ingresar
-     tk.Label(ventana, text="a:", font=("Century", 20)).pack()
-     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Century", 20), state="readonly")
+     tk.Label(ventana, text="a:", font=("Courier New", 20)).pack()
+     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      destino.set("")
      destino.pack()
      
      
      #Resultado esperado
      conversión_variable = tk.StringVar()
-     tk.Label(ventana, textvariable=conversión_variable, font=("Century", 20), bg="white", fg="green").pack()
+     tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20), bg="white", fg="green").pack()
      
 #Este calcula las divisas según lo planeado
 def convertir_divisas():
