@@ -24,14 +24,15 @@ color = {
     "rojo_resaltado": "#FF5A5A",
     "amarillo": "#FFFB00",
     "amarillo_resaltado": "#FFFC4C",
-    "verde": "#0DFF00",
+    "verde": "#00FF00",
     "verde_resaltado":"#8AFF7B",
     "azul": "#000DFF",
     "azul_resaltado": "#6C73FF",
     "naranja": "#FF7300",
     "naranja_resaltado": "#FFC16A",
     "violeta": "#9D00FF",
-    "violeta_resaltado": "#CD7BFF"
+    "violeta_resaltado": "#CD7BFF",
+    "verde_oscuro": "#004500"
 }
 
 directorio_imágen = os.path.dirname(__file__)
@@ -240,7 +241,7 @@ def convertirATipoFloat(texto):
 #cuando presiono los 000 después de presionar un número diferente a 0 me pone automáticamente los puntos
 def formatearEntrada(entrada_widget):
     entrada = entrada_widget.get()
-    if not entrada or entrada[-1] == ",":
+    if not entrada:
         return
     
     entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
@@ -268,7 +269,7 @@ def formatearEntrada(entrada_widget):
         
         #Controlo que el caracter esté en signo para formatear mejor y controlado.
         if caracter in signos:
-            es_paréntesis_apertura = caracter == "(" #Así quedó, me costó un montón identar. Existe en vscode una manera de identar sin tener que ser manualmente?
+            es_paréntesis_apertura = caracter == "(" #Así quedó, me costó un montón identar
             es_paréntesis_cierre = caracter == ")"
             if es_paréntesis_apertura:
                 if númeroActual.strip():
@@ -316,9 +317,12 @@ def formatearEntrada(entrada_widget):
         else:
             númeroActual += caracter
         i += 1
+        
+    TieneComa = "," in númeroActual and númeroActual.rstrip("0").endswith(",")
 
-    # Añadir el último número si quedó algo
-    if númeroActual.strip():
+    if TieneComa:
+        nuevaEntrada += númeroActual
+    else:
         númeroFormateado = formatearNúmero(númeroActual.strip())
         if númeroFormateado == "Error":
             return

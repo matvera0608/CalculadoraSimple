@@ -10,7 +10,7 @@ directorio_imágen = os.path.dirname(__file__)
 ##Este es un diccionario de divisas
 divisas = {
      "Peso argentino":"1",
-     "Real brasileño":"230",
+     "Real brasileño":"250",
      "Dólar estadounidense":"1400",
      "Euro":"1500",
      "Guaraní paraguayo":"0.17"
@@ -39,29 +39,29 @@ def calculadora_de_divisas():
 #Esta función guarda las cajas de texto para convertir el valor de divisas
 def cajas_de_texto(ventana):
      global entry_monto, origen, destino, conversión_variable
-     from calculadora_principal import formatearEntrada
-     #Monto a ingresar
+     from calculadora_principal import formatearEntrada, color
+     color_padre = ventana.cget('bg')
      entry_monto = tk.Entry(ventana, font=("Courier New", 20), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.pack(pady=10)
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
-     tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg="white").pack()
+     tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg=color_padre).pack()
      
-     tk.Label(ventana, text="Convertir de:", font=("Courier New", 20)).pack()
+     tk.Label(ventana, text="Convertir de:", font=("Courier New", 20), bg=color_padre).pack()
      origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
-     origen.set("")
+     origen.set(list(divisas.keys())[0])
      origen.pack(pady=20)
 
      #Tasa a ingresar
-     tk.Label(ventana, text="a:", font=("Courier New", 20)).pack()
+     tk.Label(ventana, text="a:", font=("Courier New", 20), bg=color_padre).pack()
      destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
-     destino.set("")
+     destino.set(list(divisas.keys())[1])
      destino.pack()
      
      
      #Resultado esperado
      conversión_variable = tk.StringVar()
-     tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20), bg="white", fg="green").pack()
+     tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20, "bold"), bg=color_padre, fg=color["verde_oscuro"]).pack()
      
 #Este calcula las divisas según lo planeado
 def convertir_divisas():
@@ -82,6 +82,7 @@ def convertir_divisas():
           
           monto_str = entry_monto.get().strip().replace(".", "").replace(",", ".")
           if monto_str == "":
+               
                conversión_variable.set("⚠️ Ingresá un número.")
                return
           de = origen.get()
