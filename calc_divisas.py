@@ -58,6 +58,7 @@ def cajas_de_texto(ventana):
      destino.set(list(divisas.keys())[1])
      destino.pack()
      
+     tk.Button(ventana, text="Invertir", font=("Courier New", 20), command=convertir_divisas, bg=color["verde_oscuro"], fg="white").pack(pady=20)
      
      #Resultado esperado
      conversión_variable = tk.StringVar()
