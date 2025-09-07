@@ -128,7 +128,7 @@ def Botón(ventanaPrincipal):
     for texto, fila, columna, rowspan, columnspan in botones:
         btn_fondo, btn_fondoResaltado, btn_letra = obtener_color_botón(texto)
         boton = tk.Button(ventanaPrincipal, text=texto, font=("Century", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
-                          width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada()], relief="flat", highlightthickness=0,
+                          width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=0,
                           bd=0)
         boton.grid(row=fila + 3, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
         
