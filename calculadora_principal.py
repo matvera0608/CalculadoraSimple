@@ -3,10 +3,8 @@ from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
 from calc_divisas import calculadora_de_divisas
 
-"""
-EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
-Y BOTONES DE LA CALCULADORA PERSONALIZADA.
-"""
+""" EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
+Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
 
 # Diccionario de colores
 color = {
@@ -32,7 +30,7 @@ color = {
     "naranja_resaltado": "#FFC16A",
     "violeta": "#9D00FF",
     "violeta_resaltado": "#CD7BFF",
-    "verde_oscuro": "#004500"
+    "verde_oscuro": "#005500"
 }
 
 directorio_imágen = os.path.dirname(__file__)
