@@ -76,7 +76,7 @@ def calculadora_de_divisas():
 def cajas_de_texto(ventana):
      from calculadora_principal import color
      from calculadora_principal import formatearEntrada
-     global entry_monto, origen, destino, conversión_variable, etiquetaDestino, etiquetaOrigen
+     global entry_monto, origen, destino, conversión_variable, etiquetaDestino, etiquetaOrigen, color_padre
      color_padre = ventana.cget('bg')
     
      etiquetaOrigen = tk.Label(ventana, bg=color_padre)
@@ -89,17 +89,9 @@ def cajas_de_texto(ventana):
      entry_monto.pack(pady=10)
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
 
-     
-     # from calculadora_principal import formatearEntrada
-     color_padre = ventana.cget('bg')
-     entry_monto = tk.Entry(ventana, font=("Courier New", 20), bd=4, justify="left")
-     entry_monto.config(state="normal")
-     entry_monto.pack(pady=10)
-     entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
-
      tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg=color_padre).pack()
      
-     tk.Label(ventana, text="Convertir de:", font=("Courier New", 20), bg=color_padre).pack()
+     tk.Label(ventana, text="Convertir de", font=("Courier New", 20), bg=color_padre).pack()
      origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      origen.set(list(divisas.keys())[0])
      origen.pack(pady=20)
@@ -117,23 +109,6 @@ def cajas_de_texto(ventana):
      frmInvertir = tk.Frame(ventana, bg=color_padre)
      frmInvertir.place(relx=1.0, rely=1.0, x=-50, y=-225, anchor="se")
 
-     tk.Button(frmInvertir, image=ventana.invertir, command=invertir_divisas, bg=color_padre).pack()
-     #Resultado esperado
-     conversión_variable = tk.StringVar()
-     tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20, "bold"), bg=color_padre, fg=color["verde_oscuro"]).pack()
- 
-#Este calcula las divisas según lo planeado
-def convertir_divisas():
-     try:
-          from calculadora_principal import formatearNúmeroResultado
-     #Tasa a ingresar
-     tk.Label(ventana, text="a:", font=("Courier New", 20), bg=color_padre).pack()
-     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
-     destino.set(list(divisas.keys())[1])
-     destino.pack()
-     
-     tk.Button(ventana, text="Invertir", font=("Courier New", 20), command=convertir_divisas, bg=color["verde_oscuro"], fg="white").pack(pady=20)
-     
      tk.Button(ventana, image=ventana.invertir, bg=color_padre).pack(padx=60)
      #Resultado esperado
      conversión_variable = tk.StringVar()
