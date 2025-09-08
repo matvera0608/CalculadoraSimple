@@ -166,4 +166,3 @@ def actualizar_imagen(evento, comboboxWidget, etiquetaImagen):
      else:
           etiquetaImagen.config(image='')
           etiquetaImagen.image = None
-
