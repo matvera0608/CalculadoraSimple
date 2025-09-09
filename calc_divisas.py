@@ -109,7 +109,7 @@ def cajas_de_texto(ventana):
      frmInvertir = tk.Frame(ventana, bg=color_padre)
      frmInvertir.place(relx=1.0, rely=1.0, x=-50, y=-225, anchor="se")
 
-     tk.Button(ventana, image=ventana.invertir, bg=color_padre).pack(padx=60)
+     tk.Button(ventana, image=ventana.invertir, bg=color_padre, commmand=invertir_divisas).pack(padx=60)
      #Resultado esperado
      conversión_variable = tk.StringVar()
      tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20, "bold"), bg=color_padre, fg=color["verde_oscuro"]).pack()
