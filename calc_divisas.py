@@ -79,11 +79,6 @@ def cajas_de_texto(ventana):
      global entry_monto, origen, destino, conversión_variable, etiquetaDestino, etiquetaOrigen, color_padre
      color_padre = ventana.cget('bg')
      
-    
-     etiquetaOrigen = tk.Label(ventana, bg=color_padre)
-     etiquetaOrigen.place(relx=0.1, rely=1.0, x=50, y=-200, anchor="se")
-     etiquetaDestino = tk.Label(ventana, bg=color_padre)
-     etiquetaDestino.place(relx=0.1, rely=1.0, x=50, y=-225, anchor="se")
 
      entry_monto = tk.Entry(ventana, font=("Courier New", 20), bd=4, justify="left")
      entry_monto.config(state="normal")
@@ -93,23 +88,31 @@ def cajas_de_texto(ventana):
      tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg=color_padre).pack()
      
      tk.Label(ventana, text="Convertir de", font=("Courier New", 20), bg=color_padre).pack()
+     
      frm_Origen = tk.Frame(ventana, bg=color_padre)
      frm_Origen.pack(pady=10)
      
-     origen = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
+     etiquetaOrigen = tk.Label(frm_Origen, bg=color_padre)
+     etiquetaOrigen.pack(side="left", padx=5)
+     
+     origen = ttk.Combobox(frm_Origen, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      origen.set(list(divisas.keys())[0])
-     origen.pack(pady=20)
+     origen.pack(side="left")
 
      origen.bind("<<ComboboxSelected>>", lambda e: actualizar_imagen(e, origen, etiquetaOrigen))
 
      #Tasa a ingresar
      tk.Label(ventana, text="a", font=("Courier New", 20), bg=color_padre).pack()
+     
      frm_Destino = tk.Frame(ventana, bg=color_padre)
      frm_Destino.pack(pady=10)
      
-     destino = ttk.Combobox(ventana, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
+     etiquetaDestino = tk.Label(frm_Destino, bg=color_padre)
+     etiquetaDestino.pack(side="left", padx=5)
+     
+     destino = ttk.Combobox(frm_Destino, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      destino.set(list(divisas.keys())[1])
-     destino.pack()
+     destino.pack(side="left")
      destino.bind("<<ComboboxSelected>>", lambda e: actualizar_imagen(e, destino, etiquetaDestino))
 
      # Crear un frame para ubicar el botón a la derecha
