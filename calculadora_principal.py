@@ -563,7 +563,7 @@ def sacarPorcentaje():
             mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE PORCENTAJE AL ESPECIFICAR")
             return
         else:
-            parte = entrada.replace("%", "").strip()
+            parte = entrada.replace("%", "").replace(".", "").replace(",", ".")
             número = float(parte)
             resultado = número/100
             mostrarResultado(resultado)
