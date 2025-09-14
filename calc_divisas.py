@@ -164,7 +164,7 @@ def invertir_divisas():
      origen.set(val_destino)
      destino.set(val_origen)
      
-     convertir_divisas()
+     # convertir_divisas()
 
 
 def actualizar_imagen(evento, comboboxWidget, etiquetaImagen):

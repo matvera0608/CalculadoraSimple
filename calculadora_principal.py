@@ -57,7 +57,7 @@ def pantallaCalculadora(ventanaPrincipal):
     TamañoFijo.rowconfigure(0, weight=1)
     TamañoFijo.rowconfigure(1, weight=1)
 
-    PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Century", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
+    PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Courier New", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
     PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
@@ -69,7 +69,7 @@ def pantallaCalculadora(ventanaPrincipal):
 
 
      # Resultado del ejercicio
-    PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Century", 30), bg=color["rojo_claro"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Courier New", 30), bg=color["rojo_claro"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=1, column=0, sticky="nsew", padx=10, pady=(2, 6))
     PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
     PantallaParaResultadoEjercicio.propagate(False)
@@ -83,10 +83,10 @@ def pantallaCalculadora(ventanaPrincipal):
     ventanaPrincipal.columnconfigure(5, weight=1)
 
 
-    módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Century", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
+    módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
     módulo.grid(row=2, column=0, columnspan=3, padx=6, pady = (0, 2), sticky="w")
 
-    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Century", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaRestoDivisión.grid(row=2, column=3, columnspan=5, padx=6, pady=(0, 2), sticky="nsew")
 
 
@@ -125,7 +125,7 @@ def Botón(ventanaPrincipal):
 
     for texto, fila, columna, rowspan, columnspan in botones:
         btn_fondo, btn_fondoResaltado, btn_letra = obtener_color_botón(texto)
-        boton = tk.Button(ventanaPrincipal, text=texto, font=("Century", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
+        boton = tk.Button(ventanaPrincipal, text=texto, font=("Courier New", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
                           width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=0,
                           bd=0)
         boton.grid(row=fila + 3, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
@@ -133,8 +133,11 @@ def Botón(ventanaPrincipal):
         resaltar, restaurar = clickearBotón(boton, btn_fondoResaltado, btn_fondo, btn_letra)
         boton.bind("<ButtonPress-1>", resaltar)
         boton.bind("<ButtonRelease-1>", restaurar)
+        boton.bind("<Enter>", lambda e, btn=boton: btn.config(relief="sunken"))
+        boton.bind("<Leave>", lambda e, btn=boton: btn.config(relief="flat"))
+        if boton["text"] == "=":
+            boton.config(command=Calcular)
 
-        
     for i in range(10):
         ventanaPrincipal.grid_rowconfigure(i, weight=1)
     for j in range(5):
@@ -476,13 +479,13 @@ def dividir():
         for n in números[1:]:
             divisiónEntre0 = n == 0
             if divisiónEntre0:
-                PantallaParaResultadoEjercicio.config(state="normal", font=("Century", 10), fg=color["rojo_anaranjado"])
+                PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
                 PantallaParaResultadoEjercicio.delete(0, tk.END)
                 PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
             resultado /= n
-            PantallaParaResultadoEjercicio.config(state="normal", font=("Century", 30))
+            PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
             
         mostrarResultado(resultado)
         
@@ -605,7 +608,7 @@ def borrarTODO():
 #Esta función escribe ceros en la pantalla de números, formateando la entrada
 def escribirCeros(núm):
     PantallaParaEscribirNúmeros.insert(tk.END, núm)
-    formatearEntrada()
+    formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)
 
 # Esta función resalta el botón al hacer clic y lo restaura al soltarlo usando bind para que se resalte y restaure el color del botón a nivel interno y visual.
 # En comparación con el anterior, 
