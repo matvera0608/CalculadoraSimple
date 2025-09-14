@@ -30,7 +30,7 @@ color = {
     "naranja_resaltado": "#FFC16A",
     "violeta": "#9D00FF",
     "violeta_resaltado": "#CD7BFF",
-    "verde_oscuro": "#005500"
+    "verde_oscuro": "#005500",
 }
 
 directorio_imágen = os.path.dirname(__file__)
@@ -608,7 +608,7 @@ def borrarTODO():
 #Esta función escribe ceros en la pantalla de números, formateando la entrada
 def escribirCeros(núm):
     PantallaParaEscribirNúmeros.insert(tk.END, núm)
-    formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)
+    formatearEntrada(PantallaParaEscribirNúmeros)
 
 # Esta función resalta el botón al hacer clic y lo restaura al soltarlo usando bind para que se resalte y restaure el color del botón a nivel interno y visual.
 # En comparación con el anterior, 

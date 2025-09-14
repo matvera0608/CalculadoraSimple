@@ -17,7 +17,7 @@ divisas = {
         "valor": 260.0,
         "imagen": "real.png"
     },
-    "dólar estadounidense": {
+    "dólar": {
         "valor": 1420.0,
         "imagen": "dólar.png"
     },
@@ -25,7 +25,7 @@ divisas = {
         "valor": 1500.0,
         "imagen": "euro.png"
     },
-    "guaraní paraguayo": {
+    "guaraní": {
         "valor": 0.17,
         "imagen": "guaraní.png"
     }
@@ -75,7 +75,7 @@ def calculadora_de_divisas():
 #Esta función guarda las cajas de texto para convertir el valor de divisas
 def cajas_de_texto(ventana):
      from calculadora_principal import color
-     from calculadora_principal import formatearEntrada
+     from calculadora_principal import formatearEntrada, escribirCeros
      global entry_monto, origen, destino, conversión_variable, etiquetaDestino, etiquetaOrigen, color_padre
      color_padre = ventana.cget('bg')
      
@@ -84,6 +84,8 @@ def cajas_de_texto(ventana):
      entry_monto.config(state="normal")
      entry_monto.pack(pady=10)
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
+     entry_monto.bind("<Alt-0>", lambda e: escribirCeros("00"))
+     entry_monto.bind("<Control-0>", lambda e: escribirCeros("000"))
 
      tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg=color_padre).pack()
      
@@ -97,10 +99,9 @@ def cajas_de_texto(ventana):
      
      origen = ttk.Combobox(frm_Origen, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      origen.set(list(divisas.keys())[0])
-     origen.pack(side="left")
-
+     origen.pack(side="left", configure=actualizar_imagen("<Configure>", origen, etiquetaOrigen))
      origen.bind("<<ComboboxSelected>>", lambda e: actualizar_imagen(e, origen, etiquetaOrigen))
-
+     
      #Tasa a ingresar
      tk.Label(ventana, text="a", font=("Courier New", 20), bg=color_padre).pack()
      
@@ -112,7 +113,7 @@ def cajas_de_texto(ventana):
      
      destino = ttk.Combobox(frm_Destino, values = list(divisas.keys()), font=("Courier New", 20), state="readonly")
      destino.set(list(divisas.keys())[1])
-     destino.pack(side="left")
+     destino.pack(side="left", configure=actualizar_imagen("<Configure>", destino, etiquetaDestino))
      destino.bind("<<ComboboxSelected>>", lambda e: actualizar_imagen(e, destino, etiquetaDestino))
 
      # Crear un frame para ubicar el botón a la derecha
@@ -164,7 +165,6 @@ def invertir_divisas():
      origen.set(val_destino)
      destino.set(val_origen)
      
-     # convertir_divisas()
 
 
 def actualizar_imagen(evento, comboboxWidget, etiquetaImagen):
