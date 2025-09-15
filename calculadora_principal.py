@@ -64,8 +64,8 @@ def pantallaCalculadora(ventanaPrincipal):
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada(PantallaParaEscribirNúmeros))
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
-    PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros("00"))
-    PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros("000"))
+    PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"00"))
+    PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"000"))
 
 
      # Resultado del ejercicio
@@ -606,9 +606,9 @@ def borrarTODO():
 
 #Este espacio es para eventos como escribir ceros, resaltar botones, etc.
 #Esta función escribe ceros en la pantalla de números, formateando la entrada
-def escribirCeros(núm):
-    PantallaParaEscribirNúmeros.insert(tk.END, núm)
-    formatearEntrada(PantallaParaEscribirNúmeros)
+def escribirCeros(entrada_widget, núm):
+    entrada_widget.insert(tk.END, núm)
+    formatearEntrada(entrada_widget)
 
 # Esta función resalta el botón al hacer clic y lo restaura al soltarlo usando bind para que se resalte y restaure el color del botón a nivel interno y visual.
 # En comparación con el anterior, 

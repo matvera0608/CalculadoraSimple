@@ -100,7 +100,7 @@ git add .
 git commit -m "%COMMIT_MESSAGE%"
 git branch -M main
 
-echo esta sección es para dar control al pull
+rem esta sección es para dar control al pull
 git pull --rebase
 
 IF %ERRORLEVEL% NEQ 0 (

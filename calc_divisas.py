@@ -84,8 +84,8 @@ def cajas_de_texto(ventana):
      entry_monto.config(state="normal")
      entry_monto.pack(pady=10)
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
-     entry_monto.bind("<Alt-0>", lambda e: escribirCeros("00"))
-     entry_monto.bind("<Control-0>", lambda e: escribirCeros("000"))
+     entry_monto.bind("<Alt-0>", lambda e: escribirCeros(entry_monto, "00"))
+     entry_monto.bind("<Control-0>", lambda e: escribirCeros(entry_monto, "000"))
 
      tk.Label(ventana, text="Monto a ingresar", font=("Courier New", 20), bg=color_padre).pack()
      
