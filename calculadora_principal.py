@@ -56,14 +56,15 @@ def pantallaCalculadora(ventanaPrincipal):
     TamañoFijo.columnconfigure(0, weight=1)
     TamañoFijo.rowconfigure(0, weight=1)
     TamañoFijo.rowconfigure(1, weight=1)
-
+    
+    # Pantalla para escribir el número
     PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Courier New", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
     PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada(PantallaParaEscribirNúmeros))
     PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
-    PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO())
+    PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO(PantallaParaEscribirNúmeros))
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"00"))
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"000"))
 
@@ -592,9 +593,9 @@ def borrarÚltimo():
     
 #Esta función borra de a 1 número. No borra completamente al presionarlo
 #el botón Borrar
-def borrarTODO():
-    PantallaParaEscribirNúmeros.config(state="normal")
-    PantallaParaEscribirNúmeros.delete(0, tk.END)
+def borrarTODO(entrada_widget):
+    entrada_widget.config(state="normal")
+    entrada_widget.delete(0, tk.END)
     
     PantallaParaResultadoEjercicio.config(state="normal")
     PantallaParaResultadoEjercicio.delete(0, tk.END)
@@ -602,7 +603,7 @@ def borrarTODO():
     PantallaRestoDivisión.config(state="normal")
     PantallaRestoDivisión.delete(0, tk.END)
     PantallaRestoDivisión.config(state="readonly")
-    PantallaParaEscribirNúmeros.focus_set()
+    entrada_widget.focus_set()
 
 #Este espacio es para eventos como escribir ceros, resaltar botones, etc.
 #Esta función escribe ceros en la pantalla de números, formateando la entrada

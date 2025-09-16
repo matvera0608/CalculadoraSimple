@@ -75,7 +75,7 @@ def calculadora_de_divisas():
 #Esta función guarda las cajas de texto para convertir el valor de divisas
 def cajas_de_texto(ventana):
      from calculadora_principal import color
-     from calculadora_principal import formatearEntrada, escribirCeros
+     from calculadora_principal import formatearEntrada, escribirCeros, borrarTODO
      global entry_monto, origen, destino, conversión_variable, etiquetaDestino, etiquetaOrigen, color_padre
      color_padre = ventana.cget('bg')
      
@@ -83,6 +83,7 @@ def cajas_de_texto(ventana):
      entry_monto = tk.Entry(ventana, font=("Courier New", 20), bd=4, justify="left")
      entry_monto.config(state="normal")
      entry_monto.pack(pady=10)
+     entry_monto.bind("<Control-BackSpace>", lambda e: borrarTODO(entry_monto))
      entry_monto.bind("<KeyRelease>", lambda e: formatearEntrada(entry_monto))
      entry_monto.bind("<Alt-0>", lambda e: escribirCeros(entry_monto, "00"))
      entry_monto.bind("<Control-0>", lambda e: escribirCeros(entry_monto, "000"))
