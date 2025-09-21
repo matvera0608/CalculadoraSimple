@@ -35,7 +35,7 @@ color = {
 }
 
 directorio_imágen = os.path.dirname(__file__)
-ícono = os.path.join(directorio_imágen, "imagenes","ícono.ico")
+ícono = os.path.join(directorio_imágen, "imagenes", "íconos","ícono.ico")
 
 # -*- coding: utf-8 -*-
 #defino la función con valor de devolución o de retorno llamada calculadora()

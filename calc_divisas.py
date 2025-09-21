@@ -5,7 +5,7 @@ from PIL import Image, ImageTk
 
 #Creo un diccionario de divisas
 directorio_imágen = os.path.dirname(__file__)
-ícono = os.path.join(directorio_imágen, "imagenes","ícono conversión.ico")
+ícono = os.path.join(directorio_imágen, "imagenes", "íconos", "ícono conversión.ico")
 
 ##Este es un diccionario de divisas
 divisas = {
