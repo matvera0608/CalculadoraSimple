@@ -30,7 +30,8 @@ color = {
     "naranja_resaltado": "#FFC16A",
     "violeta": "#9D00FF",
     "violeta_resaltado": "#CD7BFF",
-    "verde_oscuro": "#005500",
+    "verde_oscuro": "#007800",
+    "verde_claro": "#A7FFA7",
 }
 
 directorio_imágen = os.path.dirname(__file__)

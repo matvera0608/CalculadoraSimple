@@ -117,11 +117,14 @@ def cajas_de_texto(ventana):
      destino.pack(side="left", configure=actualizar_imagen("<Configure>", destino, etiquetaDestino))
      destino.bind("<<ComboboxSelected>>", lambda e: actualizar_imagen(e, destino, etiquetaDestino))
 
-     # Crear un frame para ubicar el botón a la derecha
-     frmInvertir = tk.Frame(ventana, bg=color_padre)
-     frmInvertir.place(relx=1.0, rely=1.0, x=-50, y=-225, anchor="se")
+     frmConvertir = tk.Frame(ventana, bg=color_padre)
+     frmConvertir.pack(fill="x", pady=5)
 
-     tk.Button(ventana, image=ventana.invertir, bg=color_padre, command=invertir_divisas).pack(padx=60)
+
+     tk.Button(frm_Destino, image=ventana.invertir, bg=color_padre, command=invertir_divisas).pack(side="left", padx=10)
+     
+     tk.Button(frmConvertir, text="Convertir",font=("Arial", 20, "bold"), bg=color["verde_claro"], command=convertir_divisas).pack(anchor="center")
+     
      #Resultado esperado
      conversión_variable = tk.StringVar()
      tk.Label(ventana, textvariable=conversión_variable, font=("Courier New", 20, "bold"), bg=color_padre, fg=color["verde_oscuro"]).pack()
@@ -139,9 +142,9 @@ def convertir_divisas():
           símbolo = {
                "peso argentino": "$",
                "real brasileño": "R$",
-               "dólar estadounidense": "USD$",
+               "dólar": "USD$",
                "euro": "€",
-               "guaraní paraguayo": "₲"
+               "guaraní": "₲"
           }
           
           monto_str = entry_monto.get().strip().replace(".", "").replace(",", ".")
@@ -166,9 +169,11 @@ def invertir_divisas():
      origen.set(val_destino)
      destino.set(val_origen)
      
+     actualizar_imagen(None, origen, etiquetaOrigen)
+     actualizar_imagen(None, destino, etiquetaDestino)
+     
 
-
-def actualizar_imagen(evento, comboboxWidget, etiquetaImagen):
+def actualizar_imagen(evento=None, comboboxWidget=None, etiquetaImagen=None):
      divisaSeleccionada = comboboxWidget.get()
      imagen = ventana.imagenes.get(divisaSeleccionada)
      if imagen:
