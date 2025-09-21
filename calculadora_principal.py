@@ -129,7 +129,7 @@ def Botón(ventanaPrincipal):
         btn_fondo, btn_fondoResaltado, btn_letra = obtener_color_botón(texto)
         boton = tk.Button(ventanaPrincipal, text=texto, font=("Courier New", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
                           width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=0,
-                          bd=0)
+                          bd=0, cursor="hand2")
         boton.grid(row=fila + 3, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
         
         resaltar, restaurar = clickearBotón(boton, btn_fondoResaltado, btn_fondo, btn_letra)

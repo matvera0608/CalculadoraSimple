@@ -121,9 +121,15 @@ def cajas_de_texto(ventana):
      frmConvertir.pack(fill="x", pady=5)
 
 
-     tk.Button(frm_Destino, image=ventana.invertir, bg=color_padre, command=invertir_divisas).pack(side="left", padx=10)
-     
-     tk.Button(frmConvertir, text="Convertir",font=("Arial", 20, "bold"), bg=color["verde_claro"], command=convertir_divisas).pack(anchor="center")
+     btnInvertir = tk.Button(frm_Destino, image=ventana.invertir, bg=color_padre, command=invertir_divisas, cursor="hand2")
+     btnInvertir.pack(side="left", padx=10)
+     btnInvertir.bind("<Enter>", lambda e: btnInvertir.config(bg=color_padre))
+     btnInvertir.bind("<Leave>", lambda e: btnInvertir.config(bg=color_padre))
+
+     btnConvertir = tk.Button(frmConvertir, text="Convertir",font=("Courier New", 20, "bold"), bg=color["verde_claro"], command=convertir_divisas, relief="flat", highlightthickness=0, bd=2, cursor="hand2")
+     btnConvertir.pack(anchor="center")
+     btnConvertir.bind("<Enter>", lambda e: btnConvertir.config(bg=color["verde_oscuro"]))
+     btnConvertir.bind("<Leave>", lambda e: btnConvertir.config(bg=color["verde_claro"]))
      
      #Resultado esperado
      conversión_variable = tk.StringVar()
