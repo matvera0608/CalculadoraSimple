@@ -18,10 +18,14 @@ def es_primo(número):
 def detectar_primo():
     try:
         valor = int(entryNúmero.get().strip().replace(".", "").replace(",", "."))
-        if es_primo(valor):
-            lbResultado.config(text=f"{valor} es un número primo", fg="red")
+        if valor >= 2:
+            if es_primo(valor):
+                lbResultado.config(text=f"{valor} es un número primo", fg="red")
+            else:
+                lbResultado.config(text=f"{valor} es un número compuesto", fg="green")
         else:
-            lbResultado.config(text=f"{valor} es un número compuesto", fg="green")
+            mensajeDeTexto.showwarning("ADVERTENCIA", "El valor no debe ser 0 ni 1 si querés saber que números es primo y compuesto")
+        
     except ValueError:
         mensajeDeTexto.showerror("Error", "Por favor ingrese un número válido")
 
