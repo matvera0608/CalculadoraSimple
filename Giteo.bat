@@ -8,7 +8,7 @@ echo ESTA HERRAMIENTA ES COMPATIBLE CON TODOS LOS LENGUAJES DE PROGRAMACIÓN: Py
 :: --- CONFIGURACION DE MENSAJES DE COMMIT ---
 :: Define tus mensajes de commit predefinidos aquí
 
-SET "msg1=Actualización general del proyecto."
+SET "msg1=El primer programa hecho por mi."
 SET "msg2=Cambios realizados en los archivos de trabajo."
 SET "msg3=Mejoras y ajustes pequeños."
 SET "msg4=Progreso en desarrollo."
@@ -17,6 +17,7 @@ SET "msg6=Archivos actualizados para la entrega."
 SET "msg7=Subida del contenido actualizado."
 SET "msg8=Se implementó muchos detalles y ajustes."
 SET "msg9=Es súper útil esta herramienta de automatización, no es necesario escribir código uno por uno."
+
 
 :: --- SELECCION DE MENSAJE DE COMMIT ---
 echo.
@@ -93,16 +94,27 @@ echo Conexión a Internet detectada. Continuado con el giteo...
 echo.
 :: **********************************
 
-echo esta sección es para agregar en el repositorio correspondiente
+:: --- SECCIÓN PARA INICIAR REPOSITORIO ---
+:: Esta parte solo se ejecuta si la carpeta .git no existe
+IF NOT EXIST ".git" (
+    echo Inicializando nuevo repositorio...
+    git init
+    git add .
+    git commit -m "%COMMIT_MESSAGE%"
+    git branch -M main
+    :: AGREGA ESTA LÍNEA SOLO LA PRIMERA VEZ
+    SET /P "URL=Ingresa la URL del repositorio de GitHub: "
+    git remote add origin %URL%
+) ELSE (
+    echo Repositorio ya inicializado.
+    echo esta sección es para agregar en el repositorio correspondiente
+    git add .
+    git commit -m "%COMMIT_MESSAGE%"
+	rem esta sección es para dar control al pull
+    git pull --rebase
+)
 
-git init
-git add .
-git commit -m "%COMMIT_MESSAGE%"
-git branch -M main
-
-rem esta sección es para dar control al pull
-git pull --rebase
-
+    git push -u origin main
 IF %ERRORLEVEL% NEQ 0 (
     echo.
     echo ERROR: Hubo un CONFLICTO DE FUSION.

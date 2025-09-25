@@ -29,9 +29,18 @@ def detectar_primo():
     except ValueError:
         mensajeDeTexto.showerror("Error", "Por favor ingrese un número válido")
 
+def mostrar_todos_los_divisores_compuestos():
+    valor = int(entryNúmero.get().strip().replace(".", "").replace(",", "."))
+    if valor >= 2 and not es_primo(valor):
+        lbDivisores.config(text=f"Los divisores de {valor} son:")
+    else:
+        mensajeDeTexto.showwarning("ADVERTENCIA", "El valor no debe ser 0 ni 1 si querés saber que números es primo y compuesto")
+    
+
+
 interfaz = tk.Tk()
 interfaz.title("Número primo o compuesto")
-interfaz.geometry("450x200")
+interfaz.geometry("800x800")
 interfaz.config(bg="white")
 interfaz.iconbitmap(icono)
 interfaz.resizable(False, False)
@@ -45,8 +54,11 @@ btnDetectar.pack(side="bottom", pady=10)
 btnDetectar.bind("<Enter>", lambda e: btnDetectar.config(bg="red"))
 btnDetectar.bind("<Leave>", lambda e: btnDetectar.config(bg="blue"))
 
+lista_DivisoresCompuestos = tk.Listbox(interfaz, font=("Courier New", tamañoLetra, "bold"), bd=4).pack(side="right", padx=15)
 
 lbResultado = tk.Label(interfaz, font=("Courier New", tamañoLetra, "bold"), bg="white")
 lbResultado.pack(pady=5)
+lbDivisores = tk.Label(interfaz, font=("Courier New", tamañoLetra, "bold"), bg="white")
+lbDivisores.pack(pady=7)
 
 interfaz.mainloop()
