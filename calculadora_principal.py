@@ -247,8 +247,8 @@ def formatearEntrada(entrada_widget):
     if not entrada:
         return
     
-    entradaProcesada = entrada.replace("÷", "/").replace("×", "*")
-    signos = ["+", "-", "*", "/", "%", "^", "ⁿ√"]
+    entradaProcesada = entrada.replace("/", "÷").replace("*", "×")
+    signos = ["+", "-", "*", "/","÷", "×" , "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
