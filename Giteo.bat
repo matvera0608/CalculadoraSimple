@@ -4,6 +4,8 @@ echo Giteo.bat
 echo Iniciando subida a GitHub...
 echo ESTA HERRAMIENTA ES COMPATIBLE CON TODOS LOS LENGUAJES DE PROGRAMACIÓN: Pyhton, JavaScript, Java, C# Y ENTRE OTROS.
 
+rem ".\Giteo.bat"
+
 :: --- VARIABLES DE MENSAJES DE COMMIT ---
 
 SET "msg1=El primer programa hecho por mi."
@@ -164,7 +166,6 @@ IF NOT EXIST ".git" (
     echo esta sección es para agregar en el repositorio correspondiente
     git add .
     git commit -m "%COMMIT_MESSAGE%"
-	rem esta sección es para dar control al pull
     git pull --rebase
 )
 

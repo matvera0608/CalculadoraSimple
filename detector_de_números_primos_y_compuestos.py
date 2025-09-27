@@ -1,6 +1,5 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from tkinter import ttk
 import os
 """
 watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_números_primos_y_compuestos.py #Este es para vigilar mi programa cada vez que reinicio la ejecución
@@ -8,60 +7,58 @@ watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_númer
 dir_imagen = os.path.dirname(__file__)
 icono = os.path.join(dir_imagen, "imagenes", "íconos", "ícono detector.ico")
 
-tamañoLetra = 15
-
-def es_primo(número):
+def detectar_divisores(número):
     if número < 2:
         return False
-    for i in range(2, int(número**0.5) + 1):
-        if número % i == 0:
-            return False
-    return True
+    divisores = []
+    for índice in range(1, número + 1):
+        if número % índice == 0:
+            divisores.append(índice)
+    return (len(divisores) == 2, divisores)
+    
 
-def detectar_primo():
+def mostrar():
     try:
-        valor = int(entryNúmero.get().strip().replace(".", "").replace(",", "."))
+        valor = int(entryNúmero.get().strip())
+        primo, divisores = detectar_divisores(valor)
+        
+        texto.config(state="normal")
+        texto.delete("1.0", tk.END)
+        
         if valor >= 2:
-            if es_primo(valor):
-                texto.config(text=f"{valor} es un número primo", fg="red")
+            if primo:
+                texto.config()
             else:
-                texto.config(text=f"{valor} es un número compuesto", fg="green")
+                texto.config()
         else:
             mensajeDeTexto.showwarning("ADVERTENCIA", "El valor no debe ser 0 ni 1 si querés saber que números es primo y compuesto")
         
+        texto.insert(tk.END, f"Divisores: {', '.join(map(str, divisores))}")
+        texto.config(state="normal")
+        
     except ValueError:
         mensajeDeTexto.showerror("Error", "Por favor ingrese un número válido")
-
-def mostrar_todos_los_divisores_compuestos():
-    valor = int(entryNúmero.get().strip().replace(".", "").replace(",", "."))
-    if valor >= 2 and not es_primo(valor):
-        texto.config(text=f"Los divisores de {valor} son:")
-    else:
-        mensajeDeTexto.showwarning("ADVERTENCIA", "El valor no debe ser 0 ni 1 si querés saber que números es primo y compuesto")
+        
     
-
-
 interfaz = tk.Tk()
 interfaz.title("Número primo o compuesto")
-interfaz.geometry("600x200")
+interfaz.geometry("600x350")
 interfaz.config(bg="white")
 interfaz.iconbitmap(icono)
 interfaz.resizable(False, False)
 
-marco = tk.Frame(interfaz)
-marco.pack(padx=10, pady=10, fill="both", expand=True)
+entryNúmero = tk.Entry(interfaz, font=("Courier New", 15, "bold"), bd=4)
+entryNúmero.grid(row=0, column=0, padx=0, pady=10, sticky="wn")
 
-entryNúmero = tk.Entry(marco, font=("Courier New", tamañoLetra, "bold"), bd=4)
+marco = tk.LabelFrame(interfaz, text="Resultado", font=("Courier New", 10, "bold"), bg="white",fg="blue", bd=2, relief="groove")
+marco.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
 
-entryNúmero.grid(row=0, column=0, padx=10, pady=10, sticky="w")
-
-
-texto = tk.Text(marco, width=30, height=10, font=("Courier New", tamañoLetra, "bold"), wrap="word")
-texto.grid(row=0, column=1, rowspan=2, padx=10, pady=10)
+texto = tk.Text(marco, width=40, height=15, font=("Courier New", 10, "bold"), wrap="word")
+texto.pack(fill="both", expand=True)
 texto.config(state="disabled")
 
-btnDetectar = tk.Button(marco, text="Detectar", font=("Courier New", tamañoLetra, "bold"), bg="blue", fg="white", bd=1, cursor="hand2", command=detectar_primo)
-btnDetectar.grid(row=1, column=0, columnspan=2,padx=0, pady=20, sticky="w")
+btnDetectar = tk.Button(interfaz, text="Detectar", font=("Courier New", 15, "bold"), bg="blue", fg="white", bd=1, cursor="hand2", command=mostrar)
+btnDetectar.grid(row=1, column=0, columnspan=1, padx=5, pady=0, sticky="ws")
 btnDetectar.bind("<Enter>", lambda e: btnDetectar.config(bg="red"))
 btnDetectar.bind("<Leave>", lambda e: btnDetectar.config(bg="blue"))
 
