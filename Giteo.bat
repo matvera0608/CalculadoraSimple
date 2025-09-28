@@ -166,9 +166,7 @@ IF NOT EXIST ".git" (
     echo esta sección es para agregar en el repositorio correspondiente
     git add .
     git commit -m "%COMMIT_MESSAGE%"
-    git pull --rebase
 )
-
 echo Intentando subir cambios a GitHub...
 git push -u origin main
 
