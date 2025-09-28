@@ -1,6 +1,6 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from calculadora_principal import color, borrarTODO, escribirCeros, formatearNúmero
+from calculadora_principal import color, borrarTODO, escribirCeros, formatearNúmeroResultado, formatearEntrada, parsear
 import os
 """
 watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_números_primos_y_compuestos.py #Este es para vigilar mi programa cada vez que reinicio la ejecución
@@ -8,25 +8,28 @@ watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_númer
 dir_imagen = os.path.dirname(__file__)
 icono = os.path.join(dir_imagen, "imagenes", "íconos", "ícono detector.ico")
 
-
 def detectar_divisores(número):
     if número < 2:
         return False, []
-    divisores = []
-    for índice in range(1, número + 1):
-        if número % índice == 0:
-            divisores.append(índice)
+    divisores = [índice for índice in range(1, número + 1) if número % índice == 0]
     return (len(divisores) == 2, divisores)
     
 
 def mostrar():
     try:
-        valor = int(entryNúmero.get().strip())
-        valor = formatearNúmero
+        valor = parsear(entryNúmero.get().strip())
+        
+        if valor is None:
+            mensajeDeTexto.showerror("Error", "El número ingresado no es válido. Por favor, ingrese un número entero positivo mayor que 1.")
+            return
+        
+        núm_format = formatearNúmeroResultado(valor)
         primo, divisores = detectar_divisores(valor)
+        divisores = [formatearNúmeroResultado(d) for d in divisores]
+        
         
         if valor < 2:
-            mensajeDeTexto.showinfo("Resultado", f"El número {valor} no es ni primo ni compuesto. Además no puede ser 0, 1 ni negativo.")
+            mensajeDeTexto.showinfo("Resultado", f"El número {núm_format} no es ni primo ni compuesto. Además no puede ser 0, 1 ni negativo.")
         else: 
             texto.config(state="normal")
             texto.delete("1.0", tk.END)
@@ -34,11 +37,11 @@ def mostrar():
             texto.insert(tk.END, "Resultado\n", "centrado")
             if primo:
                 lbResultado.config(text="PRIMO", fg=color["rojo"])
-                texto.insert(tk.END, "\n".join(map(str, divisores)))
+                texto.insert(tk.END, "\n".join(divisores))
                 texto.config(state="disabled", fg=color["rojo"])
             else:
                 lbResultado.config(text="COMPUESTO", fg=color["verde"])
-                texto.insert(tk.END, "\n".join(map(str, divisores)))
+                texto.insert(tk.END, "\n".join(divisores))
                 texto.config(state="disabled", fg=color["verde"])
     except ValueError:
         mensajeDeTexto.showerror("Error", "Por favor ingrese un número válido")
@@ -59,6 +62,7 @@ entryNúmero.bind("<Control-BackSpace>", lambda e: borrarTODO(entryNúmero))
 entryNúmero.bind("<Alt-0>", lambda e: escribirCeros(entryNúmero,"00"))
 entryNúmero.bind("<Control-0>", lambda e: escribirCeros(entryNúmero,"000"))
 entryNúmero.bind("<Return>", lambda e: mostrar())
+entryNúmero.bind("<KeyRelease>", lambda e: formatearEntrada(entryNúmero))
 
 
 marco = tk.Frame(interfaz, bg=color_fondo, bd=2, relief="groove")

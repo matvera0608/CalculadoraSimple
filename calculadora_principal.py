@@ -190,6 +190,17 @@ Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 
 #Crearé una función que formatea los números con . (punto) y , (coma)
 #donde los puntos van en los millares y la coma en la milésima
+def parsear(texto):
+    try:
+        númLimpio = texto.replace(".", "").replace(",", ".")
+        valor = float(númLimpio)
+        if valor.is_integer():
+            valor = int(valor)
+        return valor
+    except ValueError:
+        return None
+
+
 def formatearNúmero(númeroComoTexto):
     #Controlo que no me permita cualquier signo que no sea punto
     try:
@@ -208,22 +219,18 @@ def formatearNúmero(númeroComoTexto):
 def formatearNúmeroResultado(valor):
     try:
         if isinstance(valor, str):
-            valor = float(valor.replace(".", "").replace(",", "."))
-             
-        if isinstance(valor, (int, float)):
-            if float(valor).is_integer():
-                return f"{int(valor):,}".replace(",", ".")
-            else:
-                # Para números con decimales, usa el formato apropiado
-                valor_formateado = f"{valor:,.2f}"
-                parte_entera, parte_decimal = valor_formateado.split(".")
-                parte_entera = parte_entera.replace(",", ".")
-                return f"{parte_entera},{parte_decimal}"
+            valor = parsear(valor)
+        if valor is None:
+            return "Error"
+
+        if isinstance(valor, float) and not valor.is_integer():
+            parteEntera, parteDecimal = str(valor).split(".")
+            parteEntera = f"{int(parteEntera):,}".replace(",", ".")
+            return f"{parteEntera},{parteDecimal}"
         else:
-            return str(valor)
-    except (ValueError, AttributeError):
-        # Maneja posibles errores si el valor no es un número válido
-        return str(valor)
+            return f"{int(valor):,}".replace(",", ".")
+    except Exception:
+        return "Error"
 
 
 #voy a crear una función que convierta a tipo float para que ambos
@@ -595,15 +602,20 @@ def borrarÚltimo():
 #Esta función borra de a 1 número. No borra completamente al presionarlo
 #el botón Borrar
 def borrarTODO(entrada_widget):
+    global PantallaParaResultadoEjercicio, PantallaRestoDivisión
+    
     entrada_widget.config(state="normal")
     entrada_widget.delete(0, tk.END)
     
-    PantallaParaResultadoEjercicio.config(state="normal")
-    PantallaParaResultadoEjercicio.delete(0, tk.END)
-    PantallaParaResultadoEjercicio.config(state="readonly")
-    PantallaRestoDivisión.config(state="normal")
-    PantallaRestoDivisión.delete(0, tk.END)
-    PantallaRestoDivisión.config(state="readonly")
+    if 'PantallaParaResultadoEjercicio' in globals():
+        PantallaParaResultadoEjercicio.config(state="normal")
+        PantallaParaResultadoEjercicio.delete(0, tk.END)
+        PantallaParaResultadoEjercicio.config(state="readonly")
+    if 'PantallaRestoDivisión' in globals():
+        PantallaRestoDivisión.config(state="normal")
+        PantallaRestoDivisión.delete(0, tk.END)
+        PantallaRestoDivisión.config(state="readonly")
+    
     entrada_widget.focus_set()
 
 #Este espacio es para eventos como escribir ceros, resaltar botones, etc.
