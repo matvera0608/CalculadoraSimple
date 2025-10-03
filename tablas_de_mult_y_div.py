@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
 import os
+from tkinter import ttk
 from calculadora_principal import color
 
 dir_imagen = os.path.dirname(__file__)
@@ -16,7 +17,8 @@ def calcular():
           
           tx_Resultado.insert(tk.END, "TABLA DE MULTIPLICAR\n", "titulo")
           for index in range(1, lím+1):
-               tx_Resultado.insert(tk.END, f"{núm} × {index} = {núm * index}\n", "titulo")
+               tx_Resultado.insert(tk.END, f"{núm} × {index} = {núm * index}\n")
+          tx_Resultado.config(state="disabled")
           
      except ValueError:
           mensajeDeTexto.showerror("Error", "Algo no está bien")
@@ -30,6 +32,10 @@ interfaz.resizable(False, False)
 
 color_fondo = interfaz.cget('bg')
 
+operación = ttk.Combobox(interfaz, values=["Multiplicar", "Dividir"], state="readonly")
+operación.grid(row=3, column=0, columnspan=2, pady=5)
+operación.current(0)
+
 tk.Label(interfaz, text="Número a multi o dividir: ", bg=color_fondo).grid(row=0, column=0, padx=5, pady=5, sticky="w")
 entryNúmero = tk.Entry(interfaz, font=("Courier New", 15, "bold"), bd=4, width=5)
 entryNúmero.grid(row=0, column=1, padx=5, pady=5)
@@ -42,11 +48,10 @@ entryLímite.grid(row=1, column=1, padx=5, pady=5)
 # marco.grid(row=0, column=2, padx=10, pady=10, sticky="nsew", rowspan=2)
 
 tx_Resultado = tk.Text(interfaz, width=30, height=15, font=("Courier New", 15, "bold"), state="disabled")
-
 # desplazador = tk.Scrollbar(marco, command=texto.yview)
 # desplazador.pack(side="right", fill="y")
-tx_Resultado.tag_configure("titulo", foreground=color["azul"], font=("Courier New", 15, "bold"))
-tx_Resultado.grid(row=0, column=2, rowspan=3, padx=10, pady=5)
+tx_Resultado.tag_configure("titulo", foreground=color["azul"], font=("Courier New", 15, "bold"), justify="center")
+tx_Resultado.grid(row=0, column=2, rowspan=4, padx=10, pady=5)
 tx_Resultado.config(state="disabled")
 
 
