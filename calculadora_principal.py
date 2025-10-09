@@ -6,6 +6,8 @@ from calc_divisas import calculadora_de_divisas
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
 
+os.system(".\Giteo.bat")
+
 # Diccionario de colores
 color = {
     "celeste_claro": "#B4E0FF",
@@ -24,6 +26,8 @@ color = {
     "amarillo_resaltado": "#FFFC4C",
     "verde": "#00FF00",
     "verde_resaltado":"#8AFF7B",
+    "azul_violáceo": "#3D00CA",
+    "azul_violáceo_resaltado": "#5F30CB",
     "azul": "#000DFF",
     "azul_resaltado": "#6C73FF",
     "naranja": "#FF7300",
@@ -86,10 +90,10 @@ def pantallaCalculadora(ventanaPrincipal):
 
 
     módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
-    módulo.grid(row=2, column=0, columnspan=3, padx=6, pady = (0, 2), sticky="w")
+    módulo.grid(row=2, column=0, columnspan=3, pady=(0, 2), sticky="w")
 
-    PantallaRestoDivisión = Entry(ventanaPrincipal, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=2, column=3, columnspan=5, padx=6, pady=(0, 2), sticky="nsew")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="normal")
+    PantallaRestoDivisión.grid(row=2, column=4, columnspan=5, pady=(0, 2), sticky="nsew")
 
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -98,10 +102,10 @@ def Botón(ventanaPrincipal):
     botones = [
         ("00", 0, 0, 1, 2), ("000", 0, 2, 1, 2),
         ("%", 1, 0, 1, 1), ("ⁿ√", 1, 1, 1, 1), ("^", 1, 2, 1, 1), ("÷", 1, 3, 1, 1),
-        ("7", 2, 0, 1, 1), ("8", 2, 1, 1, 1), ("9", 2, 2, 1, 1), ("×", 2, 3, 1, 1),
-        ("4", 3, 0, 1, 1), ("5", 3, 1, 1, 1), ("6", 3, 2, 1, 1), ("-", 3, 3, 1, 1),
-        ("1", 4, 0, 1, 1), ("2", 4, 1, 1, 1), ("3", 4, 2, 1, 1), ("+", 4, 3, 2, 1),
-        ("0", 5, 0, 1, 1), (",", 5, 1, 1, 1), ("=", 5, 2, 1, 1)
+        ("7", 2, 0, 1, 1), ("8", 2, 1, 1, 1), ("9", 2, 2, 1, 1), ("÷÷", 2, 3, 1, 1),
+        ("4", 3, 0, 1, 1), ("5", 3, 1, 1, 1), ("6", 3, 2, 1, 1), ("×", 3, 3, 1, 1),
+        ("1", 4, 0, 1, 1), ("2", 4, 1, 1, 1), ("3", 4, 2, 1, 1), ("-", 4, 3, 1, 1),
+        ("0", 5, 0, 1, 1), (",", 5, 1, 1, 1), ("=", 5, 2, 1, 1), ("+", 5, 3, 1, 1)
     ]
     
     
@@ -114,6 +118,8 @@ def Botón(ventanaPrincipal):
             return color["azul"], color["azul_resaltado"], color["blanco"]
         elif texto == "÷":
             return color["verde"], color["verde_resaltado"], color["blanco"]
+        elif texto == "÷÷":
+            return color["azul_violáceo"], color["azul_violáceo_resaltado"], color["blanco"]
         elif texto == "^":
             return color["naranja"], color["naranja_resaltado"], color["blanco"]
         elif texto == "ⁿ√":
@@ -153,10 +159,9 @@ def calculadora():
     global ventanaPrincipal
     ventanaPrincipal = tk.Tk()
     ventanaPrincipal.title("RamiroCalc")
-    ventanaPrincipal.geometry("450x900")
     ventanaPrincipal.config(bg="white")
     ventanaPrincipal.iconbitmap(ícono)
-    ventanaPrincipal.columnconfigure(0, weight=1)
+    ventanaPrincipal.columnconfigure(0, weight=2)
 
     pantallaCalculadora(ventanaPrincipal)
     Botón(ventanaPrincipal)
@@ -255,7 +260,7 @@ def formatearEntrada(entrada_widget):
         return
     
     entradaProcesada = entrada.replace("/", "÷").replace("*", "×")
-    signos = ["+", "-", "*", "/","÷", "×" , "%", "^", "ⁿ√"]
+    signos = ["+", "-", "*", "/", "÷", "÷÷", "×" , "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
@@ -352,6 +357,7 @@ def Calcular():
         try:
             expresión = entrada.replace(".", "").replace(",", ".")  # convertir coma a punto decimal
             expresión = expresión.replace("×", "*").replace("÷", "/")
+            expresión = expresión.replace("÷÷", "//")
             expresión = expresión.replace("%", "/100")  # manejar porcentaje
             resultado = eval(expresión)
             mostrarResultado(resultado)
@@ -371,6 +377,7 @@ def Calcular():
     resta = "-" in entrada
     multiplicación = ("×" in entrada) or ("*" in entrada)
     división = ("/" in entrada) or ("÷" in entrada)
+    divisiónEntera = ("÷÷" in entrada)
     potencia = "^" in entrada
     raiz = "ⁿ√" in entrada
     porcentaje = "%" in entrada
@@ -384,6 +391,8 @@ def Calcular():
         multiplicar()
     elif división:
         dividir()
+    elif divisiónEntera:
+        dividirEntero()
     elif potencia and not raiz:
         sacarNPotencia()
     elif raiz:
@@ -514,10 +523,47 @@ def dividir():
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
+def dividirEntero():
+    #las variables necesarias
+    entrada = PantallaParaEscribirNúmeros.get()
+    parte = entrada.replace("÷", "/").split("/")
+    #Controlo con try-except para evitar cualquier fallo o excepción de signos 
+    try:
+        #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
+        números = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
+        
+        falta_de_operandos = len(números) < 2
+        
+        if falta_de_operandos:
+            mensajeDeTexto.showerror("Error", "Faltan operandos para dividir.")
+            return
+        
+        resultado = números[0]
+        #Acá itero para ir restando los números hasta llegar a negativo
+        for n in números[1:]:
+            divisiónEntre0 = n == 0
+            if divisiónEntre0:
+                PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
+                PantallaParaResultadoEjercicio.delete(0, tk.END)
+                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
+                PantallaParaResultadoEjercicio.config(state="readonly")
+                return
+            resultado //= n
+            PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
+            
+        mostrarResultado(resultado)
+        
+        resultado_módulo = int(números[0]) % int(números[1])
+        PantallaRestoDivisión.config(state="normal", font=("Courier New", 4))
+        PantallaRestoDivisión.delete(0, tk.END)
+        PantallaRestoDivisión.insert(0, str(resultado_módulo))
+        PantallaRestoDivisión.config(state="normal")   
+    except ValueError as errorDeValidación:
+        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
+
 def sacarNPotencia():
     entrada = PantallaParaEscribirNúmeros.get()
     parte = entrada.split("^")
-    
     #el try es para controlar cualquier excepción de código
     try:
         números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
