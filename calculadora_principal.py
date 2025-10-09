@@ -205,7 +205,6 @@ def parsear(texto):
     except ValueError:
         return None
 
-
 def formatearNúmero(númeroComoTexto):
     #Controlo que no me permita cualquier signo que no sea punto
     try:
@@ -237,7 +236,6 @@ def formatearNúmeroResultado(valor):
     except Exception:
         return "Error"
 
-
 #voy a crear una función que convierta a tipo float para que ambos
 #números lean. Por ejemplo al escribir 1000 me ponga el punto de forma automática
 def convertirATipoFloat(texto):
@@ -258,9 +256,9 @@ def formatearEntrada(entrada_widget):
     entrada = entrada_widget.get()
     if not entrada:
         return
-    
-    entradaProcesada = entrada.replace("/", "÷").replace("*", "×")
-    signos = ["+", "-", "*", "/", "÷", "÷÷", "×" , "%", "^", "ⁿ√"]
+    # entradaProcesada = entrada.replace("/", "÷").replace("*", "×")
+    entradaProcesada = entrada.replace("÷÷", "//").replace("*", "×").replace("÷", "/")
+    signos = ["+", "-", "*", "/", "÷", "÷÷","//", "×" , "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
     i = 0
@@ -355,16 +353,55 @@ def Calcular():
     #Esta función calcula la expresión completa como una operación combinada
     def calcularExpresiónCompleta():
         try:
-            expresión = entrada.replace(".", "").replace(",", ".")  # convertir coma a punto decimal
-            expresión = expresión.replace("×", "*").replace("÷", "/")
-            expresión = expresión.replace("÷÷", "//")
-            expresión = expresión.replace("%", "/100")  # manejar porcentaje
             resultado = eval(expresión)
             mostrarResultado(resultado)
         except Exception:
             mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
             return
+        
+    def normalizarExpresión(expresión):
+        mapa = {
+            "÷÷": "//",   # división entera
+            "÷": "/",     # división normal
+            "×": "*",     # multiplicación
+            "^": "**",    # potencia
+            "ⁿ√": "root", # raíz enésima (podés manejarla aparte)
+            ",": ".",     # coma decimal → punto
+            }
+        
+        for exp, equi in mapa.items():
+            expresión = expresión.replace(exp, equi)
+        return expresión
     
+    expresión = normalizarExpresión(entrada)
+    #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
+    if "//" in expresión:   # división entera
+        dividirEntero()
+        return
+    elif "/" in expresión:  # división normal
+        dividir()
+        return
+    elif "*" in expresión and not "**" in expresión:
+        multiplicar()
+        return
+    elif "**" in expresión:
+        sacarNPotencia()
+        return
+    elif "ⁿ√" in expresión:
+        sacarNRaíz()
+        return
+    elif "+" in expresión:
+        sumar()
+        return
+    elif "-" in expresión:
+        restar()
+        return
+    elif "%" in expresión:
+        sacarPorcentaje()
+        return
+    else:
+        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha detectado ninguna operación")
+      
     operadores = "+-*/÷×"
     
     siHaySignos_o_Paréntesis = any(op in entrada for op in operadores) or "(" in entrada or ")" in entrada
@@ -372,35 +409,6 @@ def Calcular():
     if siHaySignos_o_Paréntesis:
         calcularExpresiónCompleta()
         return
-    
-    suma = "+" in entrada
-    resta = "-" in entrada
-    multiplicación = ("×" in entrada) or ("*" in entrada)
-    división = ("/" in entrada) or ("÷" in entrada)
-    divisiónEntera = ("÷÷" in entrada)
-    potencia = "^" in entrada
-    raiz = "ⁿ√" in entrada
-    porcentaje = "%" in entrada
-    
-    #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
-    if suma:
-        sumar()
-    elif resta:
-        restar()
-    elif multiplicación:
-        multiplicar()
-    elif división:
-        dividir()
-    elif divisiónEntera:
-        dividirEntero()
-    elif potencia and not raiz:
-        sacarNPotencia()
-    elif raiz:
-        sacarNRaíz()
-    elif porcentaje:
-        sacarPorcentaje()
-    else:
-        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha detectado ninguna operación")
     
 #Esta sección tendrán funciones para los cálculos
 def sumar():
@@ -480,7 +488,7 @@ def multiplicar():
 def dividir():
      #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.replace("÷", "/").split("/")
+    parte = entrada.replace("÷","/").split("/")
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
         #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
@@ -493,6 +501,7 @@ def dividir():
             return
         
         resultado = números[0]
+        print(f"{entrada}, {parte}")
         #Acá itero para ir restando los números hasta llegar a negativo
         for n in números[1:]:
             divisiónEntre0 = n == 0
@@ -526,7 +535,7 @@ def dividir():
 def dividirEntero():
     #las variables necesarias
     entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.replace("÷", "/").split("/")
+    parte = entrada.replace("÷÷", "//").split("//")
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
     try:
         #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
@@ -539,6 +548,7 @@ def dividirEntero():
             return
         
         resultado = números[0]
+        resto = None
         #Acá itero para ir restando los números hasta llegar a negativo
         for n in números[1:]:
             divisiónEntre0 = n == 0
@@ -548,15 +558,15 @@ def dividirEntero():
                 PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
-            resultado //= n
+            resultado, resto = divmod(int(resultado), int(n))
+           
             PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
             
         mostrarResultado(resultado)
-        
-        resultado_módulo = int(números[0]) % int(números[1])
+
         PantallaRestoDivisión.config(state="normal", font=("Courier New", 4))
         PantallaRestoDivisión.delete(0, tk.END)
-        PantallaRestoDivisión.insert(0, str(resultado_módulo))
+        PantallaRestoDivisión.insert(0, str(resto))
         PantallaRestoDivisión.config(state="normal")   
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
