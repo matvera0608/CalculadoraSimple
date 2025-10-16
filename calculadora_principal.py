@@ -1,12 +1,11 @@
 import os
 from tkinter import *
-import tkinter as tk, tkinter.messagebox as mensajeDeTexto, tkinter.font as fuenteDeLetra, tkinter.simpledialog as diálogo
+import tkinter as tk, tkinter.messagebox as mensajeDeTexto
 from calc_divisas import calculadora_de_divisas
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
 
-os.system(".\Giteo.bat")
 
 # Diccionario de colores
 color = {
@@ -365,7 +364,6 @@ def Calcular():
             "÷": "/",     # división normal
             "×": "*",     # multiplicación
             "^": "**",    # potencia
-            "ⁿ√": "root", # raíz enésima (podés manejarla aparte)
             ",": ".",     # coma decimal → punto
             }
         
@@ -516,19 +514,7 @@ def dividir():
             
         mostrarResultado(resultado)
         
-        son_dos_o_más_enteros = len(números) >= 2 and all(n.is_integer() for n in números)
         # Mostrar el módulo (resto) de la división cuando sea posible y son 2 números enteros
-        if son_dos_o_más_enteros:
-            resultado_módulo = int(números[0]) % int(números[1])
-            PantallaRestoDivisión.config(state="normal")
-            PantallaRestoDivisión.delete(0, tk.END)
-            PantallaRestoDivisión.insert(0, str(resultado_módulo))
-            PantallaRestoDivisión.config(state="readonly")   
-        else:
-            PantallaRestoDivisión.config(state="normal")
-            PantallaRestoDivisión.delete(0, tk.END)
-            PantallaRestoDivisión.insert(0, "-")
-            PantallaRestoDivisión.config(state="readonly")   
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
@@ -548,7 +534,6 @@ def dividirEntero():
             return
         
         resultado = números[0]
-        resto = None
         #Acá itero para ir restando los números hasta llegar a negativo
         for n in números[1:]:
             divisiónEntre0 = n == 0
@@ -558,16 +543,25 @@ def dividirEntero():
                 PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
                 PantallaParaResultadoEjercicio.config(state="readonly")
                 return
-            resultado, resto = divmod(int(resultado), int(n))
+            resultado //= n
            
             PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
             
         mostrarResultado(resultado)
 
-        PantallaRestoDivisión.config(state="normal", font=("Courier New", 4))
-        PantallaRestoDivisión.delete(0, tk.END)
-        PantallaRestoDivisión.insert(0, str(resto))
-        PantallaRestoDivisión.config(state="normal")   
+        son_dos_o_más_enteros = len(números) >= 2 and all(n.is_integer() for n in números)
+
+        if son_dos_o_más_enteros:
+            resultado_módulo = int(números[0]) % int(números[1])
+            PantallaRestoDivisión.config(state="normal")
+            PantallaRestoDivisión.delete(0, tk.END)
+            PantallaRestoDivisión.insert(0, str(resultado_módulo))
+            PantallaRestoDivisión.config(state="readonly")   
+        else:
+            PantallaRestoDivisión.config(state="normal")
+            PantallaRestoDivisión.delete(0, tk.END)
+            PantallaRestoDivisión.insert(0, "-")
+            PantallaRestoDivisión.config(state="readonly")     
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
