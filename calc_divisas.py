@@ -14,15 +14,15 @@ divisas = {
         "imagen": "peso argentino.png"
     },
     "real brasileño": {
-        "valor": 290.0,
+        "valor": 260.0,
         "imagen": "real.png"
     },
     "dólar": {
-        "valor": 1500.0,
+        "valor": 1425.0,
         "imagen": "dólar.png"
     },
     "euro": {
-        "valor": 1500.0,
+        "valor": 1750.0,
         "imagen": "euro.png"
     },
     "guaraní": {
@@ -138,7 +138,7 @@ def cajas_de_texto(ventana):
 #Este calcula las divisas según lo planeado
 def convertir_divisas():
      try:
-          from calculadora_principal import formatearNúmeroResultado
+          from operaciones import formatearNúmeroResultado
 
           # Verifica si el widget sigue existiendo antes de acceder
           if not entry_monto.winfo_exists():

@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from calculadora_principal import color, borrarTODO, escribirCeros, formatearNúmeroResultado, formatearEntrada, parsear
+from calculadora_principal import color, borrarTODO, escribirCeros, formatearEntrada
+from operaciones import formatearNúmeroResultado, parsear
 import os
 """
 watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_números_primos_y_compuestos.py #Este es para vigilar mi programa cada vez que reinicio la ejecución
@@ -50,7 +51,7 @@ def mostrar():
 def interfaz_detector():
     
     global interfaz, entryNúmero, texto, lbResultado, color_fondo
-    interfaz = tk.Tk()
+    interfaz = tk.Toplevel()
     interfaz.title("Número primo o compuesto")
     interfaz.geometry("650x300")
     interfaz.config(bg="white")
@@ -87,6 +88,3 @@ def interfaz_detector():
     btnDetectar.grid(row=1, column=0, columnspan=2, pady=20, sticky="n")
     btnDetectar.bind("<Enter>", lambda e: btnDetectar.config(bg="red"))
     btnDetectar.bind("<Leave>", lambda e: btnDetectar.config(bg="blue"))
-
-interfaz_detector()
-interfaz.mainloop()

@@ -1,7 +1,8 @@
 import os
 from tkinter import *
-import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from calc_divisas import calculadora_de_divisas
+import tkinter as tk
+from operaciones import Calcular, borrarTODO
+from eventos import clickearBotón, abrir__calculadora__de__divisas, abrir__calculadora__de__primos, escribirCeros
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
@@ -46,7 +47,7 @@ directorio_imágen = os.path.dirname(__file__)
 
 def pantallaCalculadora(ventanaPrincipal):
     global PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión
-
+    
     # Configurar la grilla principal para permitir redimensionamiento si se desea
     for i in range(6):
         ventanaPrincipal.columnconfigure(i, weight=1)
@@ -61,22 +62,20 @@ def pantallaCalculadora(ventanaPrincipal):
     TamañoFijo.rowconfigure(0, weight=1)
     TamañoFijo.rowconfigure(1, weight=1)
     
-    # Pantalla para escribir el número
+    # Pantalla para escribir el número y el resultado
     PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Courier New", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
     PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
+    PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio))
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada(PantallaParaEscribirNúmeros))
-    PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular())
-    PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO(PantallaParaEscribirNúmeros))
+    PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión))
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"00"))
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"000"))
-
-
-     # Resultado del ejercicio
+    
+    
     PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Courier New", 30), bg=color["rojo_claro"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaParaResultadoEjercicio.grid(row=1, column=0, sticky="nsew", padx=10, pady=(2, 6))
-    PantallaParaResultadoEjercicio.bind("<Control-C>", lambda e: mostrarResultado())
     PantallaParaResultadoEjercicio.propagate(False)
 
     # Proporcionalidad del módulo
@@ -91,7 +90,7 @@ def pantallaCalculadora(ventanaPrincipal):
     módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
     módulo.grid(row=2, column=0, columnspan=3, pady=(0, 2), sticky="w")
 
-    PantallaRestoDivisión = Entry(ventanaPrincipal, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="normal")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
     PantallaRestoDivisión.grid(row=2, column=4, columnspan=5, pady=(0, 2), sticky="nsew")
 
 
@@ -143,7 +142,7 @@ def Botón(ventanaPrincipal):
         boton.bind("<Enter>", lambda e, btn=boton: btn.config(relief="sunken"))
         boton.bind("<Leave>", lambda e, btn=boton: btn.config(relief="flat"))
         if boton["text"] == "=":
-            boton.config(command=Calcular)
+            boton.config(command= lambda: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio))
 
     for i in range(10):
         ventanaPrincipal.grid_rowconfigure(i, weight=1)
@@ -166,6 +165,7 @@ def calculadora():
     Botón(ventanaPrincipal)
     
     ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
+    ventanaPrincipal.bind("<Alt-p>", abrir__calculadora__de__primos)
     
     return ventanaPrincipal
 
@@ -192,18 +192,6 @@ EN ESTA SECCIÓN DEFINO LAS FUNCIONES QUE REALIZAN LOS CÁLCULOS
 Y MANEJAN LA LÓGICA DE LA CALCULADORA.
 """
 
-#Crearé una función que formatea los números con . (punto) y , (coma)
-#donde los puntos van en los millares y la coma en la milésima
-def parsear(texto):
-    try:
-        númLimpio = texto.replace(".", "").replace(",", ".")
-        valor = float(númLimpio)
-        if valor.is_integer():
-            valor = int(valor)
-        return valor
-    except ValueError:
-        return None
-
 def formatearNúmero(númeroComoTexto):
     #Controlo que no me permita cualquier signo que no sea punto
     try:
@@ -216,23 +204,6 @@ def formatearNúmero(númeroComoTexto):
             parteEntera = f"{int(parteEntera):,}".replace(",", ".")
             return f"{parteEntera},{parteDecimal}"
     except ValueError:
-        return "Error"
-
-#Esta función es similar a la anterior pero formatea el resultado final
-def formatearNúmeroResultado(valor):
-    try:
-        if isinstance(valor, str):
-            valor = parsear(valor)
-        if valor is None:
-            return "Error"
-
-        if isinstance(valor, float) and not valor.is_integer():
-            parteEntera, parteDecimal = str(valor).split(".")
-            parteEntera = f"{int(parteEntera):,}".replace(",", ".")
-            return f"{parteEntera},{parteDecimal}"
-        else:
-            return f"{int(valor):,}".replace(",", ".")
-    except Exception:
         return "Error"
 
 #voy a crear una función que convierta a tipo float para que ambos
@@ -255,8 +226,7 @@ def formatearEntrada(entrada_widget):
     entrada = entrada_widget.get()
     if not entrada:
         return
-    # entradaProcesada = entrada.replace("/", "÷").replace("*", "×")
-    entradaProcesada = entrada.replace("÷÷", "//").replace("*", "×").replace("÷", "/")
+    entradaProcesada = entrada.replace("÷÷", "//").replace("×", "*").replace("÷", "/")
     signos = ["+", "-", "*", "/", "÷", "÷÷","//", "×" , "%", "^", "ⁿ√"]
     nuevaEntrada = ""
     númeroActual = ""
@@ -343,348 +313,6 @@ def formatearEntrada(entrada_widget):
     # Mostrar en pantalla
     entrada_widget.delete(0, tk.END)
     entrada_widget.insert(0, nuevaEntrada)
-
-# --- EVENTOS PARA USAR TECLADO ---
-
-#Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
-def Calcular():
-    entrada = PantallaParaEscribirNúmeros.get()
-    #Esta función calcula la expresión completa como una operación combinada
-    def calcularExpresiónCompleta():
-        try:
-            resultado = eval(expresión)
-            mostrarResultado(resultado)
-        except Exception:
-            mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
-            return
-        
-    def normalizarExpresión(expresión):
-        mapa = {
-            "÷÷": "//",   # división entera
-            "÷": "/",     # división normal
-            "×": "*",     # multiplicación
-            "^": "**",    # potencia
-            ",": ".",     # coma decimal → punto
-            }
-        
-        for exp, equi in mapa.items():
-            expresión = expresión.replace(exp, equi)
-        return expresión
-    
-    expresión = normalizarExpresión(entrada)
-    #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
-    if "//" in expresión:   # división entera
-        dividirEntero()
-        return
-    elif "/" in expresión:  # división normal
-        dividir()
-        return
-    elif "*" in expresión and not "**" in expresión:
-        multiplicar()
-        return
-    elif "**" in expresión:
-        sacarNPotencia()
-        return
-    elif "ⁿ√" in expresión:
-        sacarNRaíz()
-        return
-    elif "+" in expresión:
-        sumar()
-        return
-    elif "-" in expresión:
-        restar()
-        return
-    elif "%" in expresión:
-        sacarPorcentaje()
-        return
-    else:
-        mensajeDeTexto.showinfo("ADVERTENCIA", "No se ha detectado ninguna operación")
-      
-    operadores = "+-*/÷×"
-    
-    siHaySignos_o_Paréntesis = any(op in entrada for op in operadores) or "(" in entrada or ")" in entrada
-
-    if siHaySignos_o_Paréntesis:
-        calcularExpresiónCompleta()
-        return
-    
-#Esta sección tendrán funciones para los cálculos
-def sumar():
-    #las variables necesarias
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("+")
-        #creo un try-except para manejar mejor las excepciones o errores de validación
-    try:
-        #este resultado ya hace suma dinámica con n cantidad de números
-        partes = [float(p.strip().replace(".", "").replace(",", ".")) 
-                        for p in parte if p.strip() != ""]
-       
-        #Creo una condición para que me obligue a poner mínimo 2 números para hacer la operación.
-        falta_de_operandos = len(partes) < 2
-        if falta_de_operandos:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para sumar.")
-            return
-        resultado = sum(partes)
-        mostrarResultado(resultado)
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-
-def restar():
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("-")
-    try:
-        partes = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
-        if len(partes) < 2:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para restar.")
-            return
-        resultado = partes[0]
-        for n in partes[1:]:
-            resultado -= n
-        mostrarResultado(resultado)
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-
-def multiplicar():
-    #las variables necesarias
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("*")
-    
-    #Controlo con try-except para evitar cualquier fallo o excepción de signos 
-    try:
-        #Acá hago la multiplicación de cantidad enésima de números, es decir, más de 2 en adelante.
-        números = []
-        
-        # Este bucle recorre cada parte separada por el operador '*'.
-        # Si la parte contiene un porcentaje ('%'), lo convierte al valor decimal correspondiente.
-        # Por ejemplo, para calcular 60 * 80%, convierte '80%' en 0.8 y realiza la multiplicación: 60 * 0.8 = 48.
-        for p in parte:
-            if p.strip() == "":
-                continue
-            if "%" in p:
-            # Elimina el símbolo '%' y convierte el número a decimal dividiéndolo por 100
-                p = p.replace("%", "")
-                n = float(p.strip().replace(".", "").replace(",", "."))/100
-            else:
-                n = float(p.strip().replace(".", "").replace(",", "."))
-            números.append(n)
-        
-        falta_de_operandos = len(números) < 2
-        
-        if falta_de_operandos:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para multiplicar.")
-            return
-            
-        resultado = 1
-        #Acá itero para ir restando los números hasta llegar a negativo
-        for n in números:
-            resultado *= n
-        mostrarResultado(resultado)
-        
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-
-def dividir():
-     #las variables necesarias
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.replace("÷","/").split("/")
-    #Controlo con try-except para evitar cualquier fallo o excepción de signos 
-    try:
-        #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
-        números = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
-        
-        falta_de_operandos = len(números) < 2
-        
-        if falta_de_operandos:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para multiplicar.")
-            return
-        
-        resultado = números[0]
-        print(f"{entrada}, {parte}")
-        #Acá itero para ir restando los números hasta llegar a negativo
-        for n in números[1:]:
-            divisiónEntre0 = n == 0
-            if divisiónEntre0:
-                PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
-                PantallaParaResultadoEjercicio.delete(0, tk.END)
-                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
-                PantallaParaResultadoEjercicio.config(state="readonly")
-                return
-            resultado /= n
-            PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
-            
-        mostrarResultado(resultado)
-        
-        # Mostrar el módulo (resto) de la división cuando sea posible y son 2 números enteros
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-
-def dividirEntero():
-    #las variables necesarias
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.replace("÷÷", "//").split("//")
-    #Controlo con try-except para evitar cualquier fallo o excepción de signos 
-    try:
-        #Acá hago la división de cantidad enésima de números, es decir, más de 2 en adelante.
-        números = [float(p.strip().replace(".", "").replace(",", ".")) for p in parte if p.strip() != ""]
-        
-        falta_de_operandos = len(números) < 2
-        
-        if falta_de_operandos:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para dividir.")
-            return
-        
-        resultado = números[0]
-        #Acá itero para ir restando los números hasta llegar a negativo
-        for n in números[1:]:
-            divisiónEntre0 = n == 0
-            if divisiónEntre0:
-                PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
-                PantallaParaResultadoEjercicio.delete(0, tk.END)
-                PantallaParaResultadoEjercicio.insert(0, "NO SE DIVIDE POR CERO 😡")
-                PantallaParaResultadoEjercicio.config(state="readonly")
-                return
-            resultado //= n
-           
-            PantallaParaResultadoEjercicio.config(state="normal", font=("Courier New", 30))
-            
-        mostrarResultado(resultado)
-
-        son_dos_o_más_enteros = len(números) >= 2 and all(n.is_integer() for n in números)
-
-        if son_dos_o_más_enteros:
-            resultado_módulo = int(números[0]) % int(números[1])
-            PantallaRestoDivisión.config(state="normal")
-            PantallaRestoDivisión.delete(0, tk.END)
-            PantallaRestoDivisión.insert(0, str(resultado_módulo))
-            PantallaRestoDivisión.config(state="readonly")   
-        else:
-            PantallaRestoDivisión.config(state="normal")
-            PantallaRestoDivisión.delete(0, tk.END)
-            PantallaRestoDivisión.insert(0, "-")
-            PantallaRestoDivisión.config(state="readonly")     
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-
-def sacarNPotencia():
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("^")
-    #el try es para controlar cualquier excepción de código
-    try:
-        números = [float(p.strip().replace(",", ".")) for p in parte if p.strip() != ""]
-        
-        NotieneDosOperandos = len(números) < 2
-        
-        if NotieneDosOperandos:
-            mensajeDeTexto.showerror("Error", "Faltan operandos para calcular potencia.")
-            return
-        #Acá itero para calcular potencias múltiples siempre de derecha
-        #a izquierda
-        resultado = números[-1]
-        for base in reversed(números[:-1]):
-            resultado = base ** resultado
-            
-        mostrarResultado(resultado)
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-            
-def sacarNRaíz():
-    entrada = PantallaParaEscribirNúmeros.get()
-    parte = entrada.split("ⁿ√")
-    signoCorrecto = "ⁿ√" in entrada
-    noTieneDosOperandos = len(parte) != 2
-
-    if signoCorrecto:
-
-        #Acá compruebo que los datos permitan solamente 2 números nada más.
-        if noTieneDosOperandos:
-            mensajeDeTexto.showerror("FORMATO NO VÁLIDO", f"Sólo están permitidos 2 números separados en ⁿ√")
-            return
-
-        try:
-            númeroA = float(parte[1].strip().replace(".", "").replace(",", "."))
-            númeroB = float(parte[0].strip().replace(".", "").replace(",", "."))
-            if númeroB == 0 or númeroA == 0:
-                mensajeDeTexto.showerror("ERROR", "El índice de la raíz no puede ser cero ni tampoco el radicando")
-                return
-            resultado = (númeroA ** (1/númeroB))
-            mostrarResultado(resultado)
-        except ValueError as errorDeValidación:
-            mensajeDeTexto.showinfo("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
-    else:
-        mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE RAÍZ")
-
-#Saco el porcentaje de cada número puesto
-def sacarPorcentaje():
-    entrada = PantallaParaEscribirNúmeros.get()
-    
-    tienePorcentaje = "%" not in entrada
-    
-    #Me acostumbro a poner try-except para refozar cualquier control de datos
-    try:
-        if tienePorcentaje:
-            mensajeDeTexto.showinfo("FALTA DE SÍMBOLO", "ESCRIBIR EL SIGNO INDICADO DE PORCENTAJE AL ESPECIFICAR")
-            return
-        else:
-            parte = entrada.replace("%", "").replace(".", "").replace(",", ".")
-            número = float(parte)
-            resultado = número/100
-            mostrarResultado(resultado)
-    except ValueError as errorDeValidación:
-        mensajeDeTexto.showerror("ERROR", f"Algo no está bien: {errorDeValidación}")
-    
-#En esta función sólo muestro el resultado según la operación matemática donde se llame
-def mostrarResultado(res):
-    resultadoFormateado = formatearNúmeroResultado(res)
-    PantallaParaResultadoEjercicio.config(state="normal")
-    PantallaParaResultadoEjercicio.delete(0, tk.END)
-    PantallaParaResultadoEjercicio.insert(tk.END, resultadoFormateado)
-    PantallaParaResultadoEjercicio.config(state="readonly")
-
-#Esta función borra de a 1 número. No borra completamente al presionarlo
-#el botón Borrar
-def borrarÚltimo():
-    PantallaParaEscribirNúmeros.config(state="normal")
-    textoActual = PantallaParaEscribirNúmeros.get()
-    nuevoTexto = textoActual[:-1]
-    PantallaParaEscribirNúmeros.delete(0, tk.END)
-    PantallaParaEscribirNúmeros.insert(0, nuevoTexto)
-    
-#Esta función borra de a 1 número. No borra completamente al presionarlo
-#el botón Borrar
-def borrarTODO(entrada_widget):
-    global PantallaParaResultadoEjercicio, PantallaRestoDivisión
-    
-    entrada_widget.config(state="normal")
-    entrada_widget.delete(0, tk.END)
-    
-    if 'PantallaParaResultadoEjercicio' in globals():
-        PantallaParaResultadoEjercicio.config(state="normal")
-        PantallaParaResultadoEjercicio.delete(0, tk.END)
-        PantallaParaResultadoEjercicio.config(state="readonly")
-    if 'PantallaRestoDivisión' in globals():
-        PantallaRestoDivisión.config(state="normal")
-        PantallaRestoDivisión.delete(0, tk.END)
-        PantallaRestoDivisión.config(state="readonly")
-    
-    entrada_widget.focus_set()
-
-#Este espacio es para eventos como escribir ceros, resaltar botones, etc.
-#Esta función escribe ceros en la pantalla de números, formateando la entrada
-def escribirCeros(entrada_widget, núm):
-    entrada_widget.insert(tk.END, núm)
-    formatearEntrada(entrada_widget)
-
-# Esta función resalta el botón al hacer clic y lo restaura al soltarlo usando bind para que se resalte y restaure el color del botón a nivel interno y visual.
-# En comparación con el anterior, 
-def clickearBotón(btn, colorResaltado, colorOrginal, letraOriginal):
-    def resaltar(event):
-        btn.config(bg=colorResaltado, fg=letraOriginal)
-    def restaurar(event):
-        btn.config(bg=colorOrginal, fg=letraOriginal)
-    return resaltar, restaurar
-
-def abrir__calculadora__de__divisas(event=None):
-    calculadora_de_divisas()
     
 if __name__ == "__main__":
     calculadora_principal = calculadora()
