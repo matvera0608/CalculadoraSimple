@@ -214,7 +214,6 @@ IF NOT EXIST ".git" (
     echo esta sección es para agregar en el repositorio correspondiente
     git add .
     git commit -m "%COMMIT_MESSAGE%"
-    git push -u origin main
 )
 echo Intentando subir cambios a GitHub
 :: --- MANEJO DE ERROR REJECTED (La clave para la automatización) ---
