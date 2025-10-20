@@ -219,7 +219,8 @@ echo Intentando subir cambios a GitHub
 
 pause
 :: --- MANEJO DE ERROR REJECTED (La clave para la automatización) ---
-IF %ERRORLEVEL% NEQ 0 (
+IF %ERRORLEVEL% NEQ 0 ((
+    echo.
     echo ERROR: Falló la subida (Rejected). Tu rama no está actualizada.
     echo Intentando sincronizar y subir de nuevo...
     :: AUTOMATIZACIÓN: Usar git pull --rebase para sincronizar
@@ -231,8 +232,7 @@ IF %ERRORLEVEL% NEQ 0 (
     echo ERROR: No se pudo hacer el pull/rebase. Hubo un conflicto de fusion.
     echo.
     GOTO END_SCRIPT
-)
-
+))
 git push -u origin main
 color 0A
 echo ¡Giteo completado exitosamente!
