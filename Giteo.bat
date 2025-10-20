@@ -216,8 +216,10 @@ IF NOT EXIST ".git" (
     git commit -m "%COMMIT_MESSAGE%"
 )
 echo Intentando subir cambios a GitHub
+
+pause
 :: --- MANEJO DE ERROR REJECTED (La clave para la automatización) ---
-IF %ERRORLEVEL% NEQ 0 (
+IF ERRORLEVEL NEQ 0 (
     echo.
     echo ERROR: Falló la subida (Rejected). Tu rama no está actualizada.
     echo Intentando sincronizar y subir de nuevo...
