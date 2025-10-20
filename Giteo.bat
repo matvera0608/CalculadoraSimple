@@ -225,7 +225,7 @@ IF ERRORLEVEL NEQ 0 (
     echo Intentando sincronizar y subir de nuevo...
     :: AUTOMATIZACIÓN: Usar git pull --rebase para sincronizar
     git pull --rebase 
-    color 0C REM Cambiar color a rojo para indicar error
+    color 0C
     echo.
     :: CONFLICTO REAL (Detener y mostrar pasos manuales)
     echo.
