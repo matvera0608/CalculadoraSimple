@@ -229,16 +229,6 @@ IF %ERRORLEVEL% NEQ 0 (
     echo.
     echo ERROR: No se pudo hacer el pull/rebase. Hubo un conflicto de fusion.
     echo.
-    echo Por favor, sigue estos pasos para resolverlo:
-    echo 1. Abre el editor de codigo y resuelve los conflictos.
-    echo 2. Una vez resueltos, usa la terminal para ejecutar:
-    echo    git add .
-    echo    git rebase --continue
-    echo.
-    echo Si quieres cancelar el rebase, usa:
-    echo git rebase --abort
-    echo.
-    pause
     GOTO END_SCRIPT
 )
 
