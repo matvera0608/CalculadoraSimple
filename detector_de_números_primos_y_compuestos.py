@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from calculadora_principal import color, borrarTODO, escribirCeros, formatearEntrada
-from operaciones import formatearNúmeroResultado, parsear
+from calculadora_principal import *
+from operaciones import *
 import os
 """
 watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_números_primos_y_compuestos.py #Este es para vigilar mi programa cada vez que reinicio la ejecución
@@ -16,7 +16,7 @@ def detectar_divisores(número):
         divisores = [índice for índice in range(1, número + 1) if número % índice == 0]
         return (len(divisores) == 2, divisores)
     except TypeError:
-        mensajeDeTexto.showerror("Error de tipo", f"Se esperaba un número entero > 1, pero se recibió: {type(número).__name__}.")
+        print(f"Se esperaba un número entero > 1, pero se recibió: {type(número).__name__}.")
         texto.config(state="disabled", fg=color["negro"])
         return False, []
     

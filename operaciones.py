@@ -1,5 +1,6 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
+from diseño import color
 
 def parsear(texto):
     try:
@@ -30,17 +31,9 @@ def formatearNúmeroResultado(valor):
         return "Error"
 
 #Crearé una función que llame a las funciones aritméticas según los signos para el botón de Calcular
-def Calcular(PantallaEntrada, PantallaSalida):
+def Calcular(PantallaEntrada, PantallaSalida, PantallaRestoDivisión=None):
     entrada = PantallaEntrada.get()
-    #Esta función calcula la expresión completa como una operación combinada
-    def calcularExpresiónCompleta():
-        try:
-            resultado = eval(expresión)
-            mostrarResultado(resultado, PantallaSalida)
-        except Exception:
-            mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
-            return
-        
+    
     def normalizarExpresión(expresión):
         mapa = {
             "÷÷": "//",
@@ -50,53 +43,64 @@ def Calcular(PantallaEntrada, PantallaSalida):
             ",": ".",
             }
         
+        import re
+        expresión = re.sub(r'(?<=\d)\.(?=\d{3}(\D|$))', '', expresión)
+
         for exp, equi in mapa.items():
             expresión = expresión.replace(exp, equi)
         return expresión
+    
+    #Esta función calcula la expresión completa como una operación combinada
+    def calcularExpresiónCompleta(expresión):
+        try:
+            resultado = eval(expresión)
+            mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
+        except Exception:
+            mensajeDeTexto.showerror("ERROR", "La expresión es inválida")
+            return
     expresión = normalizarExpresión(entrada)
     #Esta condición es para especificar que operación debe realizar sin depender de llamar funciones matemáticas de forma particular
-    if "÷÷" in expresión or "//" in expresión:   # división entera
-        resultado = dividirEntero(entrada)
-        mostrarResultado(resultado, PantallaSalida)
+    if "÷÷" in expresión or "//" in expresión:
+        resultado, resto = dividirEntero(entrada)
+        
+        if resultado is None:
+            PantallaSalida.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
+            PantallaSalida.delete(0, tk.END)
+            PantallaSalida.insert(0, "NO SE DIVIDE POR CERO 😡")
+            PantallaSalida.config(state="readonly")
+        else:
+            mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
+            if PantallaRestoDivisión:
+                PantallaRestoDivisión.config(state="normal")
+                PantallaRestoDivisión.delete(0, tk.END)
+                PantallaRestoDivisión.insert(0, str(resto) if resto is not None else "")
+                PantallaRestoDivisión.config(state="readonly")  
         return
     elif "÷" in expresión or "/" in expresión:  # división normal
         resultado = dividir(entrada)
-        mostrarResultado(resultado, PantallaSalida)
-        return
-    elif "*" in expresión or "×" in expresión:
-        resultado = multiplicar(entrada)
-        mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
-        return
-    elif "**" in expresión:
-        resultado = sacarNPotencia(entrada)
-        mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
+        if resultado is None:
+            PantallaSalida.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
+            PantallaSalida.delete(0, tk.END)
+            PantallaSalida.insert(0, "NO SE DIVIDE POR CERO 😡")
+            PantallaSalida.config(state="readonly")
+        else:
+            mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
         return
     elif "ⁿ√" in expresión:
         resultado = sacarNRaíz(entrada)
         mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
-        return
-    elif "+" in expresión:
-        resultado = sumar(entrada)
-        mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
-        return
-    elif "-" in expresión:
-        resultado = restar(entrada)
-        mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
-        return
+        
     elif "%" in expresión:
         resultado = sacarPorcentaje(entrada)
         mostrarResultado(formatearNúmeroResultado(resultado), PantallaSalida)
-        return
-    else:
-        pass
-      
-    operadores = "+-*/÷×"
+    operadores = "+-×*/÷"
     
     siHaySignos_o_Paréntesis = any(op in entrada for op in operadores) or "(" in entrada or ")" in entrada
-
+    
     if siHaySignos_o_Paréntesis:
-        calcularExpresiónCompleta()
+        calcularExpresiónCompleta(expresión)
         return
+
     
 #Esta sección tendrán funciones para los cálculos
 def sumar(entrada):
@@ -158,7 +162,7 @@ def multiplicar(entrada):
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
-def dividir(entrada, resultadoWidget=None):
+def dividir(entrada):
     from calculadora_principal import color
      #las variables necesarias
     parte = entrada.replace("÷","/").split("/")
@@ -179,21 +183,14 @@ def dividir(entrada, resultadoWidget=None):
         for n in números[1:]:
             divisiónEntre0 = n == 0
             if divisiónEntre0:
-                resultadoWidget.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
-                resultadoWidget.delete(0, tk.END)
-                resultadoWidget.insert(0, "NO SE DIVIDE POR CERO 😡")
-                resultadoWidget.config(state="readonly")
-                return
+               return None
             resultado /= n
-            resultadoWidget.config(state="normal", font=("Courier New", 30))
-            
-        mostrarResultado(resultado)
-        
+        return resultado
         # Mostrar el módulo (resto) de la división cuando sea posible y son 2 números enteros
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 
-def dividirEntero(entrada, resultadoWidget=None, resto=None, color=None):
+def dividirEntero(entrada):
     #las variables necesarias
     parte = entrada.replace("÷÷", "//").split("//")
     #Controlo con try-except para evitar cualquier fallo o excepción de signos 
@@ -212,30 +209,15 @@ def dividirEntero(entrada, resultadoWidget=None, resto=None, color=None):
         for n in números[1:]:
             divisiónEntre0 = n == 0
             if divisiónEntre0:
-                resultadoWidget.config(state="normal", font=("Courier New", 10), fg=color["rojo_anaranjado"])
-                resultadoWidget.delete(0, tk.END)
-                resultadoWidget.insert(0, "NO SE DIVIDE POR CERO 😡")
-                resultadoWidget.config(state="readonly")
-                return
+                return None, None
             resultado //= n
-           
-            resultadoWidget.config(state="normal", font=("Courier New", 30))
             
-        mostrarResultado(resultado)
-
         son_dos_o_más_enteros = len(números) >= 2 and all(n.is_integer() for n in números)
 
         if son_dos_o_más_enteros:
             resultado_módulo = int(números[0]) % int(números[1])
-            resto.config(state="normal")
-            resto.delete(0, tk.END)
-            resto.insert(0, str(resultado_módulo))
-            resto.config(state="readonly")   
-        else:
-            resto.config(state="normal")
-            resto.delete(0, tk.END)
-            resto.insert(0, "-")
-            resto.config(state="readonly")     
+             
+        return resultado, resultado_módulo
     except ValueError as errorDeValidación:
         mensajeDeTexto.showerror("ERROR", f"No sirve usar cualquier valor inválido: {errorDeValidación}")
 

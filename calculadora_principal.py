@@ -1,42 +1,12 @@
 import os
 from tkinter import *
 import tkinter as tk
-from operaciones import Calcular, borrarTODO
-from eventos import clickearBotón, abrir__calculadora__de__divisas, abrir__calculadora__de__primos, escribirCeros
+from operaciones import *
+from eventos import *
+from diseño import color
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
-
-
-# Diccionario de colores
-color = {
-    "celeste_claro": "#B4E0FF",
-    "rojo_claro": "#FFCBCB",
-    "celeste_oscuro": "#003E67",
-    "beige": "#A5A55F",
-    "beige_resaltado": "#B7B78A",
-    "blanco": "#FFFFFF",
-    "negro": "#000000",
-    "negro_resaltado": "#242424",
-    "gris": "#AAAAAA",
-    "rojo_anaranjado": "#FF3C00",
-    "rojo": "#FF0000",
-    "rojo_resaltado": "#FF5A5A",
-    "amarillo": "#FFFB00",
-    "amarillo_resaltado": "#FFFC4C",
-    "verde": "#00FF00",
-    "verde_resaltado":"#8AFF7B",
-    "azul_violáceo": "#3D00CA",
-    "azul_violáceo_resaltado": "#5F30CB",
-    "azul": "#000DFF",
-    "azul_resaltado": "#6C73FF",
-    "naranja": "#FF7300",
-    "naranja_resaltado": "#FFC16A",
-    "violeta": "#9D00FF",
-    "violeta_resaltado": "#CD7BFF",
-    "verde_oscuro": "#007800",
-    "verde_claro": "#A7FFA7",
-}
 
 directorio_imágen = os.path.dirname(__file__)
 ícono = os.path.join(directorio_imágen, "imagenes", "íconos","ícono.ico")
@@ -56,26 +26,26 @@ def pantallaCalculadora(ventanaPrincipal):
 
 
     TamañoFijo = tk.Frame(ventanaPrincipal, width=330, height=120)
-    TamañoFijo.grid(row=0, column=0, columnspan=8, padx=4, pady=(8, 4), sticky="nsew")
+    TamañoFijo.grid(row=0, column=0, columnspan=8, sticky="nsew")
     TamañoFijo.grid_propagate(False)  # Impide que el tamaño del Frame se ajuste al contenido
     TamañoFijo.columnconfigure(0, weight=1)
     TamañoFijo.rowconfigure(0, weight=1)
     TamañoFijo.rowconfigure(1, weight=1)
     
     # Pantalla para escribir el número y el resultado
-    PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Courier New", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="right")
-    PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew", padx=10, pady=(4, 2))
+    PantallaParaEscribirNúmeros = Entry(TamañoFijo, font=("Courier New", 30), bg=color["celeste_claro"], fg=color["celeste_oscuro"], bd=4, justify="left")
+    PantallaParaEscribirNúmeros.grid(row=0, column=0, sticky="nsew")
     PantallaParaEscribirNúmeros.insert(0, "")
     PantallaParaEscribirNúmeros.focus_set()
-    PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio))
+    PantallaParaEscribirNúmeros.bind("<Return>", lambda e: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión))
     PantallaParaEscribirNúmeros.bind("<KeyRelease>", lambda e: formatearEntrada(PantallaParaEscribirNúmeros))
     PantallaParaEscribirNúmeros.bind("<Control-BackSpace>", lambda e: borrarTODO(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión))
     PantallaParaEscribirNúmeros.bind("<Alt-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"00"))
     PantallaParaEscribirNúmeros.bind("<Control-0>", lambda e: escribirCeros(PantallaParaEscribirNúmeros,"000"))
     
     
-    PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Courier New", 30), bg=color["rojo_claro"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaParaResultadoEjercicio.grid(row=1, column=0, sticky="nsew", padx=10, pady=(2, 6))
+    PantallaParaResultadoEjercicio = Entry(TamañoFijo, font=("Courier New", 30), fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaParaResultadoEjercicio.grid(row=1, column=0, sticky="nsew")
     PantallaParaResultadoEjercicio.propagate(False)
 
     # Proporcionalidad del módulo
@@ -88,10 +58,10 @@ def pantallaCalculadora(ventanaPrincipal):
 
 
     módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
-    módulo.grid(row=2, column=0, columnspan=3, pady=(0, 2), sticky="w")
+    módulo.grid(row=2, column=0, columnspan=2, sticky="w")
 
-    PantallaRestoDivisión = Entry(ventanaPrincipal, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=2, column=4, columnspan=5, pady=(0, 2), sticky="nsew")
+    PantallaRestoDivisión = Entry(TamañoFijo, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=2, column=0,columnspan=1, pady=(0, 2), sticky="nsew")
 
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -125,16 +95,16 @@ def Botón(ventanaPrincipal):
         elif texto == "%":
             return color["negro"], color["negro_resaltado"], color["blanco"]
         elif texto in ("00", "000", "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", ",", "="):
-            return color["beige"], color["beige_resaltado"], color["negro"]
+            return color["beige"], color["beige_resaltado"], color["negro_resaltado"]
         else:
             return color["celeste_claro"], color["celeste_oscuro"], color["blanco"]
 
     for texto, fila, columna, rowspan, columnspan in botones:
         btn_fondo, btn_fondoResaltado, btn_letra = obtener_color_botón(texto)
         boton = tk.Button(ventanaPrincipal, text=texto, font=("Courier New", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
-                          width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=0,
+                          width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=5,
                           bd=0, cursor="hand2")
-        boton.grid(row=fila + 3, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
+        boton.grid(row=fila + 4, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=2, sticky="nsew")
         
         resaltar, restaurar = clickearBotón(boton, btn_fondoResaltado, btn_fondo, btn_letra)
         boton.bind("<ButtonPress-1>", resaltar)
@@ -142,7 +112,7 @@ def Botón(ventanaPrincipal):
         boton.bind("<Enter>", lambda e, btn=boton: btn.config(relief="sunken"))
         boton.bind("<Leave>", lambda e, btn=boton: btn.config(relief="flat"))
         if boton["text"] == "=":
-            boton.config(command= lambda: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio))
+            boton.config(command= lambda: Calcular(PantallaParaEscribirNúmeros, PantallaParaResultadoEjercicio, PantallaRestoDivisión))
 
     for i in range(10):
         ventanaPrincipal.grid_rowconfigure(i, weight=1)
@@ -250,65 +220,55 @@ def formatearEntrada(entrada_widget):
         caracter = entradaProcesada[i]
         
         #Controlo que el caracter esté en signo para formatear mejor y controlado.
-        if caracter in signos:
-            es_paréntesis_apertura = caracter == "(" #Así quedó, me costó un montón identar
+        if caracter in signos or caracter in "(" or caracter in ")":
+            
+            es_paréntesis_apertura = caracter == "("
             es_paréntesis_cierre = caracter == ")"
+            
+            if númeroActual.strip():
+                númeroFormateado = formatearNúmero(númeroActual.strip())
+                if númeroFormateado == "Error":
+                    return
+                nuevaEntrada += númeroFormateado
+                númeroActual = ""
+            
             if es_paréntesis_apertura:
+                
+                
+                if nuevaEntrada and (nuevaEntrada[-1].isdigit() or nuevaEntrada[-1] == ")"):
+                    nuevaEntrada += "*("
+                else:
+                    nuevaEntrada += "("
+                
+            elif es_paréntesis_cierre:
                 if númeroActual.strip():
                     númeroFormateado = formatearNúmero(númeroActual.strip())
                     if númeroFormateado == "Error":
                         return
                     nuevaEntrada += númeroFormateado
                     númeroActual = ""
-                if nuevaEntrada: #Acá puse dos lógicas a la vez para no tener poner tantos if, porque quedaría demasiado engorroso.
-                    último_número = nuevaEntrada[-1]
-                
-                    if último_número.isdigit():
-                        nuevaEntrada += "*("
-                
-                    elif último_número == "(" and len(nuevaEntrada) > 1 and nuevaEntrada[-2].isdigit():
-                        nuevaEntrada += "*("
-                
-                    elif último_número != "(":
-                        nuevaEntrada += "("
-                    else:
-                        i += 1
-                        continue
-                else:
-                    nuevaEntrada += "("
-            ##Este es otro bloque para el paréntesis de cierre. No sé si está bien así bien identado?.
-            ##Estoy enfrentando un problema, cuando escribo un número con unidad de mil me limpió el punto.
-            elif es_paréntesis_cierre:
-                if not nuevaEntrada or nuevaEntrada[-1] in signos:
-                    i += 1
-                    continue
                 
                 if nuevaEntrada.count("(") > nuevaEntrada.count(")"):
                     nuevaEntrada += ")"
-                else:
-                    i += 1
-                    continue
-            else:
-                if númeroActual.strip():
-                    númeroFormateado = formatearNúmero(númeroActual.strip())
-                    if númeroFormateado == "Error":
-                        return
-                    nuevaEntrada += númeroFormateado
-                    númeroActual = ""
+               
+            elif not es_paréntesis_apertura and not es_paréntesis_cierre:
                 nuevaEntrada += caracter
         else:
             númeroActual += caracter
         i += 1
-        
+    
     TieneComa = "," in númeroActual and númeroActual.rstrip("0").endswith(",")
 
     if TieneComa:
         nuevaEntrada += númeroActual
-    else:
+        
+    elif númeroActual.strip():
         númeroFormateado = formatearNúmero(númeroActual.strip())
         if númeroFormateado == "Error":
             return
         nuevaEntrada += númeroFormateado
+        
+    
 
     # Mostrar en pantalla
     entrada_widget.delete(0, tk.END)
