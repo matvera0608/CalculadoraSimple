@@ -25,3 +25,7 @@ def abrir__calculadora__de__divisas(event=None):
 def abrir__calculadora__de__primos(event=None):
     from detector_de_números_primos_y_compuestos import interfaz_detector
     interfaz_detector()
+    
+def abrir__tablas__de_mult_o_div(event=None):
+    from tablas_de_mult_y_div import interfaz
+    interfaz

@@ -37,7 +37,7 @@ def calcular():
           mensajeDeTexto.showerror("Error", "Algo no está bien")
     
 
-interfaz = tk.Tk()
+interfaz = tk.Toplevel()
 interfaz.title("Tabla de multiplicación o división")
 interfaz.config(bg="white")
 interfaz.iconbitmap(icono)
@@ -72,5 +72,3 @@ tx_Resultado.config(state="disabled")
 
 btnMostrar = tk.Button(interfaz, text="Mostrar", font=("Courier New", 15, "bold"), bg=color["azul"], fg="white", bd=1, cursor="hand2", command=calcular)
 btnMostrar.grid(row=2, column=0, columnspan=2, pady=10)
-
-interfaz.mainloop()

@@ -1,68 +1,92 @@
 @echo off
 chcp 65001
-setlocal enabledelayedexpansion
-echo Giteo.bat
+SETLOCAL ENABLEDELAYEDEXPANSION
+SET MAX_INTENTOS=5
+SET INTENTO=1
+SET INTENTO_DE_PUSHEO=1
+SET COMMIT_MESSAGE=Ejecutando mi editor de fotos en una venv e ignorando las carpetas pesadas de venv
+echo .........................................................................
+echo Giteo v2.3 pro
 echo Iniciando subida a GitHub...
-echo ESTA HERRAMIENTA ES COMPATIBLE CON TODOS LOS LENGUAJES DE PROGRAMACIÓN: Pyhton, JavaScript, Java, C# Y ENTRE OTROS.
+echo ESTA HERRAMIENTA ES COMPATIBLE CON TODOS LOS LENGUAJES DE PROGRAMACIÓN:
+echo Python, JavaScript, Java, C# Y ENTRE OTROS.
+REM color 0A es para texto verde
+REM color 0B es para texto azul claro
+REM color 0C es para texto rojo
+REM color 0E es para texto amarillo
 
-:: --- VARIABLES DE MENSAJES DE COMMIT ---
+REM 🚀 --- FLUJO PRINCIPAL --- BORRÉ PORQUE HABIA CIERTAS DUPLICACIONE
+CALL :SELECT_LANGUAGE
+IF NOT EXIST .gitignore CALL :CREATE_GITIGNORE
 
-SET "msg1=El primer programa hecho por mi."
-SET "msg2=Cambios realizados en los archivos de trabajo."
-SET "msg3=Mejoras y ajustes pequeños."
-SET "msg4=Progreso en desarrollo."
-SET "msg5=Correcciones y optimización del código."
-SET "msg6=Archivos actualizados para la entrega."
-SET "msg7=Subida del contenido actualizado."
-SET "msg8=Se implementó muchos detalles y ajustes."
-SET "msg9=Es súper útil esta herramienta de automatización, no es necesario escribir código uno por uno."
-SET "msg10=Este programa está de lujo."
-SET "msg11=En arreglos."
-SET "msg12=Arreglado problema de optimización"
-SET "msg13=Ajustes de formato y linting."
-SET "msg14=Realizando actualización de dependencias."
-SET "msg15=Actualización del README con pasos de instalación."
-SET "msg16=Primer commit con estructura base."
-SET "msg17=Respaldo completado exitosamente."
+GOTO REINTENTAR_CONEXION
 
+EXIT /B
 
-:: --- SELECCION DE LENGUAJE ---
-echo.
-echo --- Qué lenguajes de programación querés crear un .gitignore ---
-echo 1. Python
-echo 2. JavaScript (Node.js)
-echo 3. C# (Visual Studio)
-echo 4. Java
-echo 5. Otro / Ninguno
-echo.
+:REINTENTAR_CONEXION
+    CALL :CHECK_INTERNET
+    IF %INTERNET_STATUS% EQU 0 (
+        GOTO INICIAR_O_ACTUALIZAR
+    ) ELSE (
+            IF !INTENTO! LSS !MAX_INTENTOS! (
+                color 0E
+                SET /A INTENTO+=1
+                echo ERROR: No se detectó la conexión a Internet. Reintentando en 5 segundos... (Intento !INTENTO! de !MAX_INTENTOS!)
+                timeout /t 5 /nobreak > NUL
+                GOTO REINTENTAR_CONEXION
+            ) ELSE (
+                color 0C
+                echo.
+                echo No se puede gitear sin conexión. El proceso está abortado
+                echo.
+                GOTO END_SCRIPT
+            ) 
+    )
+
+CALL :INICIAR_O_ACTUALIZAR
+
+:: ................................
+:: FUNCIONES PRINCIPALES
+:: ................................
 
 :SELECT_LANGUAGE
-SET /P "leng_prog_opcion=Ingresa el numero del lenguaje que estas usando: "
+    echo.
+    echo --- Qué lenguajes de programación querés crear un .gitignore ---
+    echo 1. Python
+    echo 2. JavaScript (Node.js)
+    echo 3. C# (Visual Studio)
+    echo 4. Java
+    echo 5. Otro / Ninguno
+    echo.
 
-IF "%leng_prog_opcion%"=="1" (
-    CALL :CREATE_GITIGNORE "python"
-) ELSE IF "%leng_prog_opcion%"=="2" (
-    CALL :CREATE_GITIGNORE "javascript"
-) ELSE IF "%leng_prog_opcion%"=="3" (
-    CALL :CREATE_GITIGNORE "csharp"
-) ELSE IF "%leng_prog_opcion%"=="4" (
-    CALL :CREATE_GITIGNORE "java"
-) ELSE IF "%leng_prog_opcion%"=="5" (
-    echo No se creara un archivo .gitignore.
-) ELSE (
-    echo Opcion no valida. Por favor, intenta de nuevo.
-    GOTO SELECT_LANGUAGE
-)
 
-GOTO SELECT_COMMIT_MSG
+    SET /P "leng_prog_opcion=Ingresa el numero del lenguaje que estas usando: "
 
-:: --- FUNCION PARA CREAR .GITIGNORE ---
+    IF "%leng_prog_opcion%"=="1" (
+        CALL :CREATE_GITIGNORE "python"
+    ) ELSE IF "%leng_prog_opcion%"=="2" (
+        CALL :CREATE_GITIGNORE "javascript"
+    ) ELSE IF "%leng_prog_opcion%"=="3" (
+        CALL :CREATE_GITIGNORE "csharp"
+    ) ELSE IF "%leng_prog_opcion%"=="4" (
+        CALL :CREATE_GITIGNORE "java"
+    ) ELSE IF "%leng_prog_opcion%"=="5" (
+        echo No se creara un archivo .gitignore.
+    ) ELSE (
+        echo Opcion no valida. Por favor, intenta de nuevo.
+        GOTO SELECT_LANGUAGE
+    )
+    GOTO :EOF
+
+echo .........................................................................
+
 :CREATE_GITIGNORE
+    SET "LANG_TYPE=%~1"
     IF EXIST .gitignore (
         echo El archivo .gitignore ya existe. No se sobrescribira.
         GOTO :EOF
     )
-    SET "LANG_TYPE=%~1"
+    
     IF "%LANG_TYPE%"=="python" (
         echo # Python >> .gitignore
         echo __pycache__/ >> .gitignore
@@ -88,163 +112,96 @@ GOTO SELECT_COMMIT_MSG
     echo Archivo .gitignore creado exitosamente para el lenguaje %LANG_TYPE%.
     GOTO :EOF
 
-:SELECT_COMMIT_MSG
-echo.
-echo --- Selecciona un mensaje de commit ---
-echo 1. %msg1%
-echo 2. %msg2%
-echo 3. %msg3%
-echo 4. %msg4%
-echo 5. %msg5%
-echo 6. %msg6%
-echo 7. %msg7%
-echo 8. %msg8%
-echo 9. %msg9%
-echo 10. %msg10%
-echo 11. %msg11%
-echo 12. %msg12%
-echo 13. %msg13%
-echo 14. %msg14%
-echo 15. %msg15%
-echo 16. %msg16%
-echo 17. %msg17%
-echo 18. Ingresa un mensaje a tu gusto
-echo.
-SET /P "opcion=Ingresa el número del mensaje o '18' para uno personalizado u otros números deseados: "
-
-IF "%opcion%"=="1" (
-    SET "COMMIT_MESSAGE=%msg1%"
-) ELSE IF "%opcion%"=="2" (
-    SET "COMMIT_MESSAGE=%msg2%"
-) ELSE IF "%opcion%"=="3" (
-    SET "COMMIT_MESSAGE=%msg3%"
-) ELSE IF "%opcion%"=="4" (
-    SET "COMMIT_MESSAGE=%msg4%"
-) ELSE IF "%opcion%"=="5" (
-    SET "COMMIT_MESSAGE=%msg5%"
-) ELSE IF "%opcion%"=="6" (
-    SET "COMMIT_MESSAGE=%msg6%"
-) ELSE IF "%opcion%"=="7" (
-    SET "COMMIT_MESSAGE=%msg7%"
-) ELSE IF "%opcion%"=="8" (
-    SET "COMMIT_MESSAGE=%msg8%"
-) ELSE IF "%opcion%"=="9" (
-    SET "COMMIT_MESSAGE=%msg9%"
-) ELSE IF "%opcion%"=="10" (
-    SET "COMMIT_MESSAGE=%msg10%"
-) ELSE IF "%opcion%"=="11" (
-    SET "COMMIT_MESSAGE=%msg11%"
-) ELSE IF "%opcion%"=="12" (
-    SET "COMMIT_MESSAGE=%msg12%"
-) ELSE IF "%opcion%"=="13" (
-    SET "COMMIT_MESSAGE=%msg13%"
-) ELSE IF "%opcion%"=="14" (
-    SET "COMMIT_MESSAGE=%msg14%"
-) ELSE IF "%opcion%"=="15" (
-    SET "COMMIT_MESSAGE=%msg15%"
-) ELSE IF "%opcion%"=="16" (
-    SET "COMMIT_MESSAGE=%msg16%"
-) ELSE IF "%opcion%"=="17" (
-    SET "COMMIT_MESSAGE=%msg17%"
-) ELSE IF "%opcion%"=="18" (
-    GOTO CUSTOM_MESSAGE
-) ELSE (
-    color 0C
-    echo Opción no válida. Por favor, intenta de nuevo.
-    GOTO SELECT_COMMIT_MSG
-)
-
-GOTO CONTINUE_GIT_OPERATIONS
-
-:CUSTOM_MESSAGE
-SET /P "COMMIT_MESSAGE=Commitea tu mensaje: "
-
-IF "!COMMIT_MESSAGE!"=="" ( 
-    color 0C
-    echo El mensaje personalizado no puede estar vacío.
-    Volviendo al menú...
-    GOTO SELECT_COMMIT_MSG
-)
-
-:CONTINUE_GIT_OPERATIONS
-echo.
-echo Usando el mensaje: "%COMMIT_MESSAGE%"
-echo.
-
-:: **** VERIFICACIÓN DE INTERNET ****
-CALL :CHECK_INTERNET
-IF %INTERNET_STATUS% NEQ 0 (
-    echo.
-    color 0C
-    echo ERROR: No se detectó la conexión a Internet.
-    echo No se puede gitear sin conexión.
-    echo.
-    pause
-    GOTO END_SCRIPT
-)
-echo.
-echo Conexión a Internet detectada. Continuado con el giteo
-echo.
-
-@REM :FULL_BACKUP
-@REM echo.
-@REM echo --- Subida completa forzada ---
-@REM echo Agregando todos los archivos, incluso nuevos o ignorados...
-@REM git add .
-@REM git status
-@REM pause
-@REM git commit -m "%COMMIT_MESSAGE%"
-@REM git push -u origin main
-@REM echo.
-@REM echo ¡Respaldo completo realizado!
-@REM GOTO END_SCRIPT
-
-:: --- SECCIÓN PARA INICIAR O ACTUALIZAR REPOSITORIO ---
-IF NOT EXIST ".git" (
-    echo Inicializando nuevo repositorio...
-    git init
-    git add .
-    git commit -m "%COMMIT_MESSAGE%"
-    git branch -M main
-    :: AGREGA ESTA LÍNEA SOLO LA PRIMERA VEZ
-    SET /P "URL=Ingresa la URL del repositorio de GitHub: "
-    git remote add origin %URL%
-) ELSE (
-    echo Repositorio ya inicializado
-    echo esta sección es para agregar en el repositorio correspondiente
-    git add .
-    git commit -m "%COMMIT_MESSAGE%"
-)
-echo Intentando subir cambios a GitHub
-
-pause
-:: --- MANEJO DE ERROR REJECTED (La clave para la automatización) ---
-IF %ERRORLEVEL% NEQ 0 ((
-    echo.
-    echo ERROR: Falló la subida (Rejected). Tu rama no está actualizada.
-    echo Intentando sincronizar y subir de nuevo...
-    :: AUTOMATIZACIÓN: Usar git pull --rebase para sincronizar
-    git pull --rebase 
-    color 0C
-    echo.
-    :: CONFLICTO REAL (Detener y mostrar pasos manuales)
-    echo.
-    echo ERROR: No se pudo hacer el pull/rebase. Hubo un conflicto de fusion.
-    echo.
-    GOTO END_SCRIPT
-))
-git push -u origin main
-color 0A
-echo ¡Giteo completado exitosamente!
-pause
 
 :CHECK_INTERNET
     ping -n 1 8.8.8.8 -w 1000 >NUL
     IF %ERRORLEVEL% EQU 0 (
+        color 0A
         SET "INTERNET_STATUS=0"
+        echo Conexión a Internet detectada. Continuado con el giteo
     ) ELSE (
         SET "INTERNET_STATUS=1"
+        echo ERROR: No se detectó la conexión a Internet.
+    )
+    echo Intentando verificar conexión a Internet...
+
+echo .........................................................................
+
+:INICIAR_O_ACTUALIZAR
+    echo.
+    IF NOT EXIST ".git" (
+        color 0B
+        echo Inicializando nuevo repositorio...
+        git init
+        git add .
+        git commit -m "%COMMIT_MESSAGE%"
+        git branch -M main
+        SET /P "URL=Ingresa la URL del repositorio de GitHub: "
+        git remote add origin %URL%
+    ) ELSE (
+        echo 📁 Repositorio detectado. Preparando cambios...
+        git add .
+        git commit -m "%COMMIT_MESSAGE%"
+        git branch -M main
+        GOTO PUSHEO_INICIAL
     )
     GOTO :EOF
 
+
+:PUSHEO_INICIAL
+    echo.
+    echo Intentando subir cambios a GitHub...
+    echo.
+    git push -u origin main
+    IF %ERRORLEVEL% NEQ 0 GOTO FALLO_DE_PUSHEO
+    GOTO PUSHEO_EXITOSO
+
+
+:FALLO_DE_PUSHEO
+    color 0C
+    echo ⚠️  Error en la subida (Rejected o temporal).
+    IF !INTENTO_DE_PUSHEO! LEQ 5 (
+        echo Intentando sincronizar y reintentar... (Intento !INTENTO_DE_PUSHEO! de 5)
+        REM ----------------------------------------------------
+        REM PASO 1: INTENTAR CONFIGURAR TRACKING SI ES NECESARIO
+        REM Solo intentamos esto en el primer fallo (Intento 1)
+        IF !INTENTO_DE_PUSHEO! EQU 1 (
+            git branch --set-upstream-to=origin/main main
+        )
+        git pull --rebase
+        REM ----------------------------------------------------
+        IF %ERRORLEVEL% NEQ 0 GOTO CONFLICTO
+        echo Rebase exitoso. Reintentando subida...
+        git push -u origin main
+        IF %ERRORLEVEL% EQU 0 GOTO PUSHEO_EXITOSO
+        SET /A INTENTO_DE_PUSHEO+=1
+        timeout /t 2 /nobreak >NUL
+        GOTO PUSHEO_INICIAL
+    ) ELSE (
+        echo 🚫 Falló tras 5 intentos de sincronización.
+        GOTO CONFLICTO
+    )
+
+:CONFLICTO
+    color 0C
+    echo.
+    echo ❌ ERROR DE FUSIÓN DETECTADO
+    echo Para resolverlo:
+    echo 1️⃣ Abre tu editor y corrige
+    echo 2️⃣ Ejecutar git add.
+    echo 3️⃣ Luego git rebase --continue
+    echo Si deseas abortar ejecuta git rebase --abort
+    pause
+    GOTO END_SCRIPT
+
+:PUSHEO_EXITOSO
+    color 0A
+    echo .........................................................................
+    echo ¡Giteo completado exitosamente, cambios subidos a GitHub correctamente!
+    GOTO END_SCRIPT
+
 :END_SCRIPT
+    echo .........................................................................
+    echo Proceso Giteo finalizado.
+    timeout /t 1 >NUL
+    EXIT /B

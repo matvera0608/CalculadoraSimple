@@ -16,7 +16,7 @@ def detectar_divisores(número):
         divisores = [índice for índice in range(1, número + 1) if número % índice == 0]
         return (len(divisores) == 2, divisores)
     except TypeError:
-        mensajeDeTexto.showerror("Error de tipo", f"Se esperaba un número entero > 1, pero se recibió: {type(número).__name__}.")
+        print(f"Se esperaba un número entero > 1, pero se recibió: {type(número).__name__}.")
         texto.config(state="disabled", fg=color["negro"])
         return False, []
     
