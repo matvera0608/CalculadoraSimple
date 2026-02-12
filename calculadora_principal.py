@@ -2,7 +2,7 @@ import os
 from tkinter import *
 import tkinter as tk
 from operaciones import Calcular, borrarTODO
-from eventos import clickearBotón, abrir__calculadora__de__divisas, abrir__calculadora__de__primos, escribirCeros
+from eventos import *
 from diseño import color
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
@@ -136,6 +136,7 @@ def calculadora():
     
     ventanaPrincipal.bind("<Alt-l>", abrir__calculadora__de__divisas)
     ventanaPrincipal.bind("<Alt-p>", abrir__calculadora__de__primos)
+    ventanaPrincipal.bind("<Alt-t>", abrir__tablas__de_mult_o_div)
     
     return ventanaPrincipal
 
