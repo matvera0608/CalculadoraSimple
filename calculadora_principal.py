@@ -1,8 +1,10 @@
 import os
 from tkinter import *
 import tkinter as tk
-from operaciones import Calcular, borrarTODO
-from eventos import clickearBotón, abrir__calculadora__de__divisas, abrir__calculadora__de__primos, escribirCeros
+from operaciones import *
+from eventos import *
+from diseño import *
+
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
