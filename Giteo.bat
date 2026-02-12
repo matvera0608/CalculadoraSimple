@@ -168,7 +168,7 @@ echo .........................................................................
         IF !INTENTO_DE_PUSHEO! EQU 1 (
             git branch --set-upstream-to=origin/main main
         )
-        git pull --rebase
+        git pull origin main --no-rebase
         REM ----------------------------------------------------
         IF %ERRORLEVEL% NEQ 0 GOTO CONFLICTO
         echo Rebase exitoso. Reintentando subida...
@@ -185,12 +185,12 @@ echo .........................................................................
 :CONFLICTO
     color 0C
     echo.
-    echo ❌ ERROR DE FUSIÓN DETECTADO
+    echo ❌ ERROR DE MERGE DETECTADO
     echo Para resolverlo:
-    echo 1️⃣ Abre tu editor y corrige
-    echo 2️⃣ Ejecutar git add.
-    echo 3️⃣ Luego git rebase --continue
-    echo Si deseas abortar ejecuta git rebase --abort
+    echo 1️⃣ Abre tu editor y corrige los archivos.
+    echo 2️⃣ Ejecuta: git add .
+    echo 3️⃣ Ejecuta: git commit -m "Merge resuelto manualmente"
+    echo 4️⃣ Luego intenta el push o corre el script de nuevo.
     pause
     GOTO END_SCRIPT
 
