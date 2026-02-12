@@ -14,11 +14,11 @@ divisas = {
         "imagen": "peso argentino.png"
     },
     "real brasileño": {
-        "valor": 260.0,
+        "valor": 275.0,
         "imagen": "real.png"
     },
     "dólar": {
-        "valor": 1425.0,
+        "valor": 1435.0,
         "imagen": "dólar.png"
     },
     "euro": {

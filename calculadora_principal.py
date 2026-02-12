@@ -2,8 +2,7 @@ import os
 from tkinter import *
 import tkinter as tk
 from operaciones import Calcular, borrarTODO
-from eventos import *
-from diseño import color
+from eventos import clickearBotón, abrir__calculadora__de__divisas, abrir__calculadora__de__primos, escribirCeros
 
 """ EN ESTA SECCIÓN DEFINO LAS FUNCIONES DE PANTALLA 
 Y BOTONES DE LA CALCULADORA PERSONALIZADA. """
@@ -57,11 +56,11 @@ def pantallaCalculadora(ventanaPrincipal):
     ventanaPrincipal.columnconfigure(5, weight=1)
 
 
-    módulo = Label(TamañoFijo, text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
-    módulo.grid(row=2, column=0, columnspan=1, pady=(10, 0), sticky="w")
+    módulo = Label(ventanaPrincipal,text="Resto de la división:",font=("Courier New", 10),bg=ventanaPrincipal["bg"],fg=color["negro"])
+    módulo.grid(row=2, column=0, columnspan=3, pady=(0, 2), sticky="w")
 
-    PantallaRestoDivisión = Entry(TamañoFijo, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
-    PantallaRestoDivisión.grid(row=2, column=2,columnspan=5, pady=(0, 2), sticky="nsew")
+    PantallaRestoDivisión = Entry(ventanaPrincipal, width=10, font=("Courier New", 15), bg=color["gris"], fg=color["negro"], bd=4, justify="right", state="readonly")
+    PantallaRestoDivisión.grid(row=2, column=4, columnspan=5, pady=(0, 2), sticky="nsew")
 
 
 #esta función llamada Botón con el argumento puesto para obtener los datos de
@@ -102,9 +101,9 @@ def Botón(ventanaPrincipal):
     for texto, fila, columna, rowspan, columnspan in botones:
         btn_fondo, btn_fondoResaltado, btn_letra = obtener_color_botón(texto)
         boton = tk.Button(ventanaPrincipal, text=texto, font=("Courier New", 20, "bold"), bg=btn_fondo, fg=btn_letra, activebackground=btn_fondoResaltado, activeforeground=btn_letra,
-        width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=5,
-        bd=0, cursor="hand2")
-        boton.grid(row=fila + 4, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=2, sticky="nsew")
+                          width=4, height=2, command=lambda value=texto: [PantallaParaEscribirNúmeros.insert(END, value), formatearEntrada(entrada_widget=PantallaParaEscribirNúmeros)], relief="flat", highlightthickness=0,
+                          bd=0, cursor="hand2")
+        boton.grid(row=fila + 3, column=columna + 1, rowspan=rowspan, columnspan=columnspan, padx=2, pady=6, sticky="nsew")
         
         resaltar, restaurar = clickearBotón(boton, btn_fondoResaltado, btn_fondo, btn_letra)
         boton.bind("<ButtonPress-1>", resaltar)

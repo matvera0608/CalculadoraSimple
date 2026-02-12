@@ -1,7 +1,7 @@
 from tkinter import *
 import tkinter as tk, tkinter.messagebox as mensajeDeTexto
-from calculadora_principal import color, borrarTODO, escribirCeros, formatearEntrada
-from operaciones import formatearNúmeroResultado, parsear
+from calculadora_principal import *
+from operaciones import *
 import os
 """
 watchmedo auto-restart --pattern="*.py" --recursive -- python detector_de_números_primos_y_compuestos.py #Este es para vigilar mi programa cada vez que reinicio la ejecución

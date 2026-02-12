@@ -2,9 +2,9 @@
 chcp 65001
 SETLOCAL ENABLEDELAYEDEXPANSION
 SET MAX_INTENTOS=5
-SET INTENTO=1
+SET INTENTO=0
 SET INTENTO_DE_PUSHEO=1
-SET COMMIT_MESSAGE=Ejecutando mi editor de fotos en una venv e ignorando las carpetas pesadas de venv
+SET COMMIT_MESSAGE=Mejorando mi calculadora
 echo .........................................................................
 echo Giteo v2.3 pro
 echo Iniciando subida a GitHub...
@@ -44,7 +44,9 @@ EXIT /B
     )
 
 CALL :INICIAR_O_ACTUALIZAR
-
+CALL :CHECK_INTERNET
+CALL :INICIAR_O_ACTUALIZAR
+EXIT /B
 :: ................................
 :: FUNCIONES PRINCIPALES
 :: ................................
@@ -125,6 +127,7 @@ echo .........................................................................
     )
     echo Intentando verificar conexión a Internet...
 
+
 echo .........................................................................
 
 :INICIAR_O_ACTUALIZAR
@@ -144,9 +147,29 @@ echo .........................................................................
         git commit -m "%COMMIT_MESSAGE%"
         git branch -M main
         GOTO PUSHEO_INICIAL
+
+    IF %INTERNET_STATUS% EQU 0 (
+    GOTO :EOF
+    ) ELSE (
+        IF !INTENTO! LSS !MAX_INTENTOS! (
+            color 0E
+            SET /A INTENTO+=1
+            echo ERROR: No se detectó la conexión a Internet. Reintentando en 5 segundos... (Intento !INTENTO! de !MAX_INTENTOS!)
+            timeout /t 5 /nobreak > NUL
+            GOTO CHECK_INTERNET
+        ) 
+        ELSE (
+            color 0C
+            echo.
+            echo No se puede gitear sin conexión. El proceso está abortado
+            echo.
+            GOTO END_SCRIPT
+        ) 
+
     )
     GOTO :EOF
 
+echo .........................................................................
 
 :PUSHEO_INICIAL
     echo.
@@ -162,6 +185,7 @@ echo .........................................................................
     echo ⚠️  Error en la subida (Rejected o temporal).
     IF !INTENTO_DE_PUSHEO! LEQ 5 (
         echo Intentando sincronizar y reintentar... (Intento !INTENTO_DE_PUSHEO! de 5)
+
         REM ----------------------------------------------------
         REM PASO 1: INTENTAR CONFIGURAR TRACKING SI ES NECESARIO
         REM Solo intentamos esto en el primer fallo (Intento 1)
@@ -170,6 +194,9 @@ echo .........................................................................
         )
         git pull origin main --no-rebase
         REM ----------------------------------------------------
+
+        git pull --rebase
+
         IF %ERRORLEVEL% NEQ 0 GOTO CONFLICTO
         echo Rebase exitoso. Reintentando subida...
         git push -u origin main
@@ -182,6 +209,7 @@ echo .........................................................................
         GOTO CONFLICTO
     )
 
+
 :CONFLICTO
     color 0C
     echo.
@@ -191,8 +219,7 @@ echo .........................................................................
     echo 2️⃣ Ejecuta: git add .
     echo 3️⃣ Ejecuta: git commit -m "Merge resuelto manualmente"
     echo 4️⃣ Luego intenta el push o corre el script de nuevo.
-    pause
-    GOTO END_SCRIPT
+
 
 :PUSHEO_EXITOSO
     color 0A
