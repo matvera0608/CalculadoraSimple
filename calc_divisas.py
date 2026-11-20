@@ -1,4 +1,4 @@
-import os
+import os, requests, threading
 import tkinter as tk
 from tkinter import ttk
 from PIL import Image, ImageTk
@@ -31,6 +31,42 @@ divisas = {
     }
 }
 
+
+def actualizar_valores_de_forma_dinamica():
+
+     endpoints = {
+          "dólar": "https://dolarapi.com/v1/dolares/blue",
+          "euro": "https://dolarapi.com/v1/cotizaciones/eur",
+          "real brasileño": "https://dolarapi.com/v1/cotizaciones/brl"
+     }
+
+     try:
+          for moneda, url in endpoints.items():
+               respuesta = requests.get(url, timeout=5)
+               if respuesta.status_code == 200:
+                    valor_venta = respuesta.json().get("venta")
+                    if valor_venta is not None:
+                         divisas[moneda]["valor"] = float(valor_venta)
+                         print(f"✅ {moneda.capitalize()} actualizado: ${divisas[moneda]['valor']}")
+                    
+     except Exception as e:
+          print(f"Error de conexión. Usando valores por defecto locales: {e}")
+
+     try:
+          respuesta_intl = requests.get("https://open.er-api.com/v6/latest/USD", timeout=5)
+          if respuesta_intl.status_code == 200:
+               tasas = respuesta_intl.json().get("rates", {})
+               guaranies_por_dolar = tasas.get("PYG")
+            
+               if guaranies_por_dolar:
+                    # Calculamos cuántos pesos vale 1 guaraní
+                    valor_guarani_en_pesos = divisas["dólar"]["valor"] / float(guaranies_por_dolar)
+                    divisas["guaraní"]["valor"] = round(valor_guarani_en_pesos, 4)
+                    print(f"✅ Guaraní actualizado: ${divisas['guaraní']['valor']}")
+     except Exception as e:
+          print(f"Error de actualización con el guaraní")
+
+
 def cargar_imagen(nombre_imágen):
      rutaCompleta = os.path.join(directorio_imágen, "imagenes", nombre_imágen)
      if not os.path.exists(rutaCompleta):
@@ -44,6 +80,10 @@ def cargar_imagen(nombre_imágen):
                print(f"Error al cargar la imagen: {e}")
                return None
 
+def iniciar_actualización():
+     hilo = threading.Thread(target=actualizar_valores_de_forma_dinamica, daemon=True)
+     hilo.start()
+
 def calculadora_de_divisas():
      global ventana
      try:
@@ -52,6 +92,10 @@ def calculadora_de_divisas():
                return
      except:
           pass
+
+     #Esta función actualiza los valores de las divisas de forma dinámica. Pero cuando ejecuto la primera vez la calculadora no muestra los valores actualizados al momento de dar run la primer vez, sino que muestra los valores por defecto.
+     iniciar_actualización()
+
 
      ventana = tk.Toplevel()
      ventana.title("Conversor de divisas")
@@ -162,7 +206,7 @@ def convertir_divisas():
 
           monto_valor = float(monto_str)
           monto_origen = monto_valor * divisas[de]["valor"]
-          conversión = monto_origen/divisas[a]["valor"]
+          conversión = monto_origen / (divisas[a]["valor"])
           conversión_variable.set(f"{símbolo[a]} {formatearNúmeroResultado(conversión)}")
      except ValueError:
           conversión_variable.set("⚠️ INGRESÁ UN NÚMERO VÁLIDO.")

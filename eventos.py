@@ -28,4 +28,4 @@ def abrir__calculadora__de__primos(event=None):
     
 def abrir__tablas__de_mult_o_div(event=None):
     from tablas_de_mult_y_div import interfaz
-    interfaz
+    interfaz()
